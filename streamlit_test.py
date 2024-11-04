@@ -15,9 +15,6 @@ def authenticate(username, password):
 if 'authenticated' not in st.session_state:
     st.session_state.authenticated = False
 
-if 'login_attempted' not in st.session_state:
-    st.session_state.login_attempted = False
-
 # Login form
 if not st.session_state.authenticated:
     st.title("Login")
@@ -26,16 +23,13 @@ if not st.session_state.authenticated:
     login_button = st.button("Login")
 
     if login_button:
-        st.session_state.login_attempted = True  # Mark that a login attempt was made
         if authenticate(username, password):
             st.session_state.authenticated = True
             st.session_state.username = username
             st.success("Login successful! Redirecting...")
         else:
             st.error("Authentication failed. Please check your credentials.")
-
-# Check if login was attempted to control app flow
-if st.session_state.authenticated:
+else:
     # App Title with Icon
     st.title("📢 AI Support Agent")
     st.success(f'Welcome {st.session_state.username}')
