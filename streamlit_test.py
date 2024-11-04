@@ -8,7 +8,11 @@ url = f'https://drive.google.com/uc?export=download&id={file_id}'
 
 # Download the file
 response = requests.get(url)
-secrets = response.json()
+try:
+    secrets = response.json()
+except json.JSONDecodeError:
+    st.error("Failed to decode JSON from the response.")
+    st.stop()
 
 def authenticate(username, password):
     if username == secrets["username"] and password == secrets["password"]:
