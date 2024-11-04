@@ -31,7 +31,7 @@ sample_message = st.selectbox(
 )
 
 # Input for the message
-message = st.text_area("Message")
+message = st.text_area("Enter your custom message")
 
 # Send button
 if st.button("Send"):
