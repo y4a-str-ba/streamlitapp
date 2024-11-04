@@ -30,14 +30,14 @@ if not st.session_state.authenticated:
         if authenticate(username, password):
             st.session_state.authenticated = True
             st.session_state.username = username
-            st.success("Login successful! Redirecting...")
+            st.success("Login successful!")
         else:
             st.error("Authentication failed. Please check your credentials.")
 
 # Check if login was attempted to control app flow
 if st.session_state.authenticated:
     # App Title with Icon
-    st.title("📢 AI Support Agent")
+    st.title("📢 BI Support Agent")
     st.success(f'Welcome {st.session_state.username}')
 
     # Columns for layout
