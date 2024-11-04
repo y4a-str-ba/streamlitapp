@@ -2,6 +2,21 @@ import streamlit as st
 import requests
 import json
 
+st.markdown(
+    """
+    <style>
+    .top-right {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100px; /* Adjust the width as needed */
+    }
+    </style>
+    <img src="logo.png" class="top-right">
+    """,
+    unsafe_allow_html=True
+)
+
 with open('secret.json') as f:
     secrets = json.load(f)
 
