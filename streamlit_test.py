@@ -15,10 +15,6 @@ def authenticate(username, password):
 if 'authenticated' not in st.session_state:
     st.session_state.authenticated = False
 
-# Initialize login message flag
-if 'login_message' not in st.session_state:
-    st.session_state.login_message = ""
-
 # Login form
 if not st.session_state.authenticated:
     st.title("Login")
@@ -30,13 +26,11 @@ if not st.session_state.authenticated:
         if authenticate(username, password):
             st.session_state.authenticated = True
             st.session_state.username = username
-            st.session_state.login_message = "Login successful! Redirecting..."
+            st.success("Login successful! Redirecting...")
+            # Using session state to avoid showing the login form again
+            st.experimental_rerun()  # Refresh the app to show the main interface
         else:
             st.error("Authentication failed. Please check your credentials.")
-
-    # Display login message if it exists
-    if st.session_state.login_message:
-        st.success(st.session_state.login_message)
 else:
     # App Title with Icon
     st.title("📢 AI Support Agent")
