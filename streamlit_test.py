@@ -2,17 +2,17 @@ import streamlit as st
 import requests
 import json
 
+with open('secret.json') as f:
+    secrets = json.load(f)
+
 def authenticate(username, password):
-    if username == st.secrets["user_info"]["username"] and password == st.secrets["user_info"]["password"]:
+    if username == secrets["username"] and password == secrets["password"]:
         return True
     return False
 
 # Initialize session state for authentication status
 if 'authenticated' not in st.session_state:
     st.session_state.authenticated = False
-
-if not st.session_state.authenticated:
-    st.write(st.secrets)  # Debug statement to print secrets
 
 if 'login_attempted' not in st.session_state:
     st.session_state.login_attempted = False
