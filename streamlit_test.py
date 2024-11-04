@@ -2,8 +2,13 @@ import streamlit as st
 import requests
 import json
 
-with open('secret.json') as f:
-    secrets = json.load(f)
+# URL of the secret.json file on Google Drive
+file_id = '1s-1BgPFZWBUVA8ZOQYyVwTfV7jS9Y-PK'
+url = f'https://drive.google.com/uc?export=download&id={file_id}'
+
+# Download the file
+response = requests.get(url)
+secrets = response.json()
 
 def authenticate(username, password):
     if username == secrets["username"] and password == secrets["password"]:
