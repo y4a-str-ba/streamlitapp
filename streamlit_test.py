@@ -29,13 +29,13 @@ if not st.session_state.authenticated:
         if authenticate(username, password):
             st.session_state.authenticated = True
             st.session_state.username = username
-            st.success(f'Welcome {username}')
             st.experimental_rerun()  # Force rerun to update the state immediately
         else:
             st.error("Authentication failed. Please check your credentials.")
 else:
     # App Title with Icon
     st.title("📢 AI Support Agent")
+    st.success(f'Welcome {st.session_state.username}')
 
     # Columns for layout
     col1, col2 = st.columns(2)
