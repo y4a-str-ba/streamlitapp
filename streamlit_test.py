@@ -8,6 +8,7 @@ url = f'https://drive.google.com/uc?export=download&id={file_id}'
 
 # Download the file
 response = requests.get(url)
+st.write(response.content)
 try:
     secrets = response.json()
 except json.JSONDecodeError:
