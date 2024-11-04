@@ -1,7 +1,6 @@
 import streamlit as st
 import requests
 import json
-import streamlit_authenticator as stauth
 import os
 
 # Define user credentials
@@ -15,16 +14,25 @@ def authenticate(username, password):
         return True
     return False
 
-# Login form
-st.title("Login")
-username = st.text_input("Username")
-password = st.text_input("Password", type="password")
-login_button = st.button("Login")
+# Initialize session state for authentication status
+if 'authenticated' not in st.session_state:
+    st.session_state.authenticated = False
 
-if login_button:
-    if authenticate(username, password):
-        st.success(f'Welcome {username}')
+if not st.session_state.authenticated:
+    # Login form
+    st.title("Login")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    login_button = st.button("Login")
 
+    if login_button:
+        if authenticate(username, password):
+            st.session_state.authenticated = True
+            st.session_state.username = username
+            st.success(f'Welcome {username}')
+        else:
+            st.error("Authentication failed. Please check your credentials.")
+else:
     # App Title with Icon
     st.title("📢 AI Support Agent")
 
@@ -103,9 +111,3 @@ if login_button:
                 st.error(f"Failed to send message. Status code: {response.status_code}")
         else:
             st.warning("Please enter a message or select a sample message before sending.")
-
-    # Your app code goes here
-else:
-    st.error('Username/password is incorrect')
-
-
