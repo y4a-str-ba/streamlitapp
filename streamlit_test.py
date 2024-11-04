@@ -50,6 +50,11 @@ else:
 # Combine Messages for Preview
 final_message = message if message else sample_message
 
+if option == 'SFO':
+    final_message += "\n\n---\nSFO Support Agent"
+elif option == 'SSO':
+    final_message += "\n\n---\nSSO Support Agent"
+
 # Dynamic Preview Section
 st.subheader("Message Preview")
 if urgency == 'High':
