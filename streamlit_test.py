@@ -63,7 +63,7 @@ if st.session_state.authenticated:
         st.subheader("Select Urgency Level")
         urgency = st.selectbox(
             'Set urgency level for the message:',
-            ('High', 'Medium', 'Low')
+            ('🚨 High','⚠️ Medium','ℹ️ Low')
         )
 
     # Sample Messages
@@ -84,7 +84,14 @@ if st.session_state.authenticated:
         sample_message = st.selectbox('Select a sample message (optional)', sample_messages)
 
     # Combine Messages for Preview
-    final_message = f"Urgency: {urgency}\n\n" + (message if message else sample_message)
+    urgency_icon = {
+        'High': '🚨',
+        'Medium': '⚠️',
+        'Low': 'ℹ️'
+    }
+
+    # Combine Messages for Preview
+    final_message = f"{urgency_icon[urgency]} Urgency: {urgency}\n\n" + (message if message else sample_message)
 
     if option == 'SFO':
         final_message += "\n\n---\nSFO Support Agent"
