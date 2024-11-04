@@ -2,19 +2,19 @@ import streamlit as st
 import requests
 import json
 
-# Define user credentials
-credentials = {
-    'y4a_bi_team': 'password'
-}
-
 def authenticate(username, password):
-    if username == st.secrets["general"]["username"] and password == st.secrets["general"]["password"]:
+    if username == st.secrets["user_info"]["username"] and password == st.secrets["user_info"]["password"]:
         return True
     return False
 
 # Initialize session state for authentication status
 if 'authenticated' not in st.session_state:
     st.session_state.authenticated = False
+
+if not st.session_state.authenticated:
+    st.write(st.secrets)  # Debug statement to print secrets
+    st.write(st.secrets["user_info"]["username"])  # Debug
+    st.write(st.secrets["user_info"]["password"])  # Debug
 
 if 'login_attempted' not in st.session_state:
     st.session_state.login_attempted = False
