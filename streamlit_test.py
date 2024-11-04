@@ -84,7 +84,7 @@ if st.session_state.authenticated:
         sample_message = st.selectbox('Select a sample message (optional)', sample_messages)
 
     # Combine Messages for Preview
-    final_message = message if message else sample_message
+    final_message = f"Urgency: {urgency}\n\n" + (message if message else sample_message)
 
     if option == 'SFO':
         final_message += "\n\n---\nSFO Support Agent"
