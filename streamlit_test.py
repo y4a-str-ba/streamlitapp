@@ -4,24 +4,26 @@ import json
 import streamlit_authenticator as stauth
 import os
 
-names = ['AI Support Agent']  # This should be a list
-usernames = ['y4a_bi_team']
-passwords = ['password']
+# Define user credentials
+credentials = {
+    'y4a_bi_team': 'password'
+}
 
-api_key = os.getenv('API_KEY')
+# Function to authenticate user
+def authenticate(username, password):
+    if username in credentials and credentials[username] == password:
+        return True
+    return False
 
-authenticator = stauth.Authenticate(
-    names=names,
-    usernames=usernames,
-    passwords=passwords,
-    cookie_expiry_days=30
-)
+# Login form
+st.title("Login")
+username = st.text_input("Username")
+password = st.text_input("Password", type="password")
+login_button = st.button("Login")
 
-# Login
-name, authentication_status = authenticator.login('Login', 'main')
-
-if authentication_status:
-    st.success(f'Welcome {name}')
+if login_button:
+    if authenticate(username, password):
+        st.success(f'Welcome {username}')
 
     # App Title with Icon
     st.title("📢 AI Support Agent")
@@ -103,7 +105,7 @@ if authentication_status:
             st.warning("Please enter a message or select a sample message before sending.")
 
     # Your app code goes here
-elif authentication_status is False:
+else:
     st.error('Username/password is incorrect')
 
 
