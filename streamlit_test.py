@@ -3,7 +3,7 @@ import requests
 import json
 
 # App Title with Icon
-st.title("📢 AI Support Agent - Sales Team Notifications")
+st.title("📢 AI Support Agent")
 
 # Columns for layout
 col1, col2 = st.columns(2)
