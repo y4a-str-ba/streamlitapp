@@ -18,6 +18,9 @@ def authenticate(username, password):
 if 'authenticated' not in st.session_state:
     st.session_state.authenticated = False
 
+if 'button_clicked' not in st.session_state:
+    st.session_state.button_clicked = False
+
 if not st.session_state.authenticated:
     # Login form
     st.title("Login")
@@ -26,6 +29,7 @@ if not st.session_state.authenticated:
     login_button = st.button("Login")
 
     if login_button:
+        st.session_state.button_clicked = True
         if authenticate(username, password):
             st.session_state.authenticated = True
             st.session_state.username = username
