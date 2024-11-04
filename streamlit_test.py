@@ -2,14 +2,19 @@ import streamlit as st
 import requests
 import json
 
-# Title of the app
-st.title("Notify Group Chat")
+# App Title with Icon
+st.title("📢 AI Support Agent - Sales Team Notifications")
 
-# Dropdown list for SFO and SSO
-option = st.selectbox(
-    'Select Group Chat',
-    ('SFO', 'SSO')
-)
+# Columns for layout
+col1, col2 = st.columns(2)
+
+# Select Group Chat Dropdown
+with col1:
+    st.subheader("Select Group Chat")
+    option = st.selectbox(
+        'Choose a team to notify:',
+        ('SFO', 'SSO')
+    )
 
 # Define the URLs
 urls = {
@@ -17,31 +22,42 @@ urls = {
     'SSO': 'https://example.com/sso'
 }
 
-# Professional sample messages
+# Message Importance Dropdown
+with col2:
+    st.subheader("Select Urgency Level")
+    urgency = st.selectbox(
+        'Set urgency level for the message:',
+        ('Low', 'Medium', 'High')
+    )
+
+# Sample Messages
 sample_messages = [
-    "We are currently experiencing issues with the dashboard. Our team is actively working to resolve the problem.",
-    "The dashboard is undergoing maintenance. We expect it to be back online shortly.",
-    "We have identified performance issues with the dashboard and are investigating the cause. Thank you for your patience."
+    "⚠️ We are experiencing dashboard issues; the team is working on it.",
+    "🛠️ Dashboard is under maintenance; back online shortly.",
+    "🔍 We are investigating performance issues. Thanks for your patience."
 ]
 
-# Dropdown for sample messages
+# Message Selection
 sample_message = st.selectbox(
     'Select a sample message (optional)',
     sample_messages
 )
 
-# Input for the message
-message = st.text_area("Enter your custom message")
+# Custom Message Input
+st.subheader("Customize Your Message")
+message = st.text_area("Enter your message")
 
-# Send button
-if st.button("Send"):
+# Urgency Colors and Button Actions
+if st.button("Send Notification"):
     if message or sample_message:
         url = urls[option]
         headers = {'Content-Type': 'application/json'}
-        payload = {'text': message if message else sample_message}
+        final_message = f"**Urgency**: {urgency}\n\n{message if message else sample_message}"
+        payload = {'text': final_message}
         
         response = requests.post(url, headers=headers, data=json.dumps(payload))
         
+        # Display Success or Error Message
         if response.status_code == 200:
             st.success(f"Message sent to {option}: {message if message else sample_message}")
         else:
