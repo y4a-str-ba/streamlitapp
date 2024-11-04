@@ -14,8 +14,9 @@ def authenticate(username, password):
 if 'authenticated' not in st.session_state:
     st.session_state.authenticated = False
 
-st.write(os.getenv("USERNAME"))
-st.write(os.getenv("PASSWORD"))
+# Debug statement to check if environment variables are set
+st.write(f"USERNAME: {os.getenv('USERNAME')}")
+st.write(f"PASSWORD: {os.getenv('PASSWORD')}")
 
 if 'login_attempted' not in st.session_state:
     st.session_state.login_attempted = False
