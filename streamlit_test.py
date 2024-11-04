@@ -49,9 +49,14 @@ message = st.text_area("Enter your message")
 
 final_message = f"**Urgency**: {urgency}\n\n{message if message else sample_message}"
 
-# Preview Section
+# Dynamic Preview Section
 st.subheader("Message Preview")
-st.markdown(final_message)
+if urgency == 'High':
+    st.markdown(f"<span style='color:red;'>{final_message}</span>", unsafe_allow_html=True)
+elif urgency == 'Medium':
+    st.markdown(f"<span style='color:orange;'>{final_message}</span>", unsafe_allow_html=True)
+else:
+    st.markdown(f"<span style='color:green;'>{final_message}</span>", unsafe_allow_html=True)
 
 # Urgency Colors and Button Actions
 if st.button("Send Notification"):
