@@ -32,9 +32,11 @@ with col2:
 
 # Sample Messages
 sample_messages = [
-    "⚠️ We are experiencing dashboard issues; the team is working on it.",
-    "🛠️ Dashboard is under maintenance; back online shortly.",
-    "🔍 We are investigating performance issues. Thanks for your patience."
+    "🔧 Dear Team,\n\nWe have encountered some issues with the dashboard.\nOur technical team is currently investigating the matter and will provide updates shortly.\nThank you for your understanding.",
+    "🛠️ Hello Team,\n\nPlease be informed that the dashboard will undergo scheduled maintenance.\nWe expect it to be back online shortly.\nWe appreciate your patience during this time.",
+    "🚨 Team,\n\nWe are aware of some performance issues affecting the dashboard.\nOur team is actively working to identify and resolve the root cause.\nWe will keep you updated on our progress.",
+    "🔍 Attention Team,\n\nWe are monitoring the system's performance and have noted some irregularities.\nOur team is dedicated to resolving any issues promptly.\nThank you for your cooperation.",
+    "⏳ Dear Team,\n\nWe are currently experiencing a temporary service disruption with the dashboard.\nOur team is working diligently to restore full functionality as soon as possible.\nWe appreciate your patience."
 ]
 
 message = st.text_area("Customize Your Message", height=150, key="custom_message")
