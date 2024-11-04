@@ -10,13 +10,10 @@ passwords = ['password']
 
 api_key = os.getenv('API_KEY')
 
-# Create authenticator object
 authenticator = stauth.Authenticate(
     names=names,
     usernames=usernames,
     passwords=passwords,
-    cookie_name='my_cookie',
-    key='my_key',
     cookie_expiry_days=30
 )
 
