@@ -27,7 +27,7 @@ with col2:
     st.subheader("Select Urgency Level")
     urgency = st.selectbox(
         'Set urgency level for the message:',
-        ('Low', 'Medium', 'High')
+        ('High', 'Medium', 'Low')
     )
 
 # Sample Messages
