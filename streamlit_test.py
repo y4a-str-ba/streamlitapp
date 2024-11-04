@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 import json
 
-st.image("logo.png", width=100)
+st.image("logo.png", width=200)
 
 with open('secret.json') as f:
     secrets = json.load(f)
