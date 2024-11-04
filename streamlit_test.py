@@ -9,14 +9,13 @@ st.markdown(
         position: absolute;
         top: 10px;
         right: 10px;
+        width: 100px; /* Adjust the width as needed */
     }
     </style>
+    <img src="logo.png" class="top-right">
     """,
     unsafe_allow_html=True
 )
-
-st.image("logo.png", width=100, use_column_width=False, caption=None, output_format="auto", clamp=False, channels="RGB", format="PNG")
-
 with open('secret.json') as f:
     secrets = json.load(f)
 
