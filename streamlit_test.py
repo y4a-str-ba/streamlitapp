@@ -15,6 +15,9 @@ def authenticate(username, password):
 if 'authenticated' not in st.session_state:
     st.session_state.authenticated = False
 
+if 'login_attempted' not in st.session_state:
+    st.session_state.login_attempted = False
+
 if not st.session_state.authenticated:
     # Login form
     st.title("Login")
@@ -23,11 +26,18 @@ if not st.session_state.authenticated:
     login_button = st.button("Login")
 
     if login_button:
+        st.session_state.login_attempted = True  # Set login attempt to True
+
+        # Authenticate only if the button was clicked
         if authenticate(username, password):
             st.session_state.authenticated = True
             st.session_state.username = username
         else:
             st.error("Authentication failed. Please check your credentials.")
+
+    # Optional: provide feedback if a login attempt was made but failed
+    if st.session_state.login_attempted and not st.session_state.authenticated:
+        st.warning("Please try again.")
 else:
     # App Title with Icon
     st.title("📢 AI Support Agent")
@@ -100,7 +110,7 @@ else:
             # Ensure line breaks are correctly formatted
             payload = {'text': final_message.replace('\n', '\n')}
             
-            response = requests.post(url, headers=headers, json=payload)  # Use 'json=' instead of 'data='
+            response = requests.post(url, headers=headers, json=payload)
             
             if response.status_code == 200:
                 st.success("Message sent successfully!")
