@@ -37,17 +37,16 @@ sample_messages = [
     "🔍 We are investigating performance issues. Thanks for your patience."
 ]
 
-# Message Selection
-sample_message = st.selectbox(
-    'Select a sample message (optional)',
-    sample_messages
-)
+message = st.text_area("Customize Your Message", height=150, key="custom_message")
 
-# Custom Message Input
-st.subheader("Customize Your Message")
-message = st.text_area("Enter your message")
+# Sample Message Dropdown, Disabled if Custom Message is Entered
+if message:
+    sample_message = st.selectbox('Select a sample message (optional)', sample_messages, disabled=True)
+else:
+    sample_message = st.selectbox('Select a sample message (optional)', sample_messages)
 
-final_message = f"**Urgency**: {urgency}\n\n{message if message else sample_message}"
+# Combine Messages for Preview
+final_message = message if message else sample_message
 
 # Dynamic Preview Section
 st.subheader("Message Preview")
