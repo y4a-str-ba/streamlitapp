@@ -59,19 +59,18 @@ elif urgency == 'Medium':
 else:
     st.markdown(f"<span style='color:green;'>{final_message}</span>", unsafe_allow_html=True)
 
-# Urgency Colors and Button Actions
+# Send Notification Button
 if st.button("Send Notification"):
-    if message or sample_message:
+    if final_message:
         url = urls[option]
         headers = {'Content-Type': 'application/json'}
-        final_message = f"**Urgency**: {urgency}\n\n{message if message else sample_message}"
-        payload = {'text': final_message}
+        # Ensure line breaks are correctly formatted
+        payload = {'text': final_message.replace('\n', '\n')}
         
         response = requests.post(url, headers=headers, data=json.dumps(payload))
         
-        # Display Success or Error Message
         if response.status_code == 200:
-            st.success(f"Message sent to {option}: {message if message else sample_message}")
+            st.success("Message sent successfully!")
         else:
             st.error(f"Failed to send message. Status code: {response.status_code}")
     else:
