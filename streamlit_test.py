@@ -1,12 +1,9 @@
 import streamlit as st
 import requests
 import json
-import os
 
 def authenticate(username, password):
-    env_username = os.getenv("USERNAME")
-    env_password = os.getenv("PASSWORD")
-    if username == env_username and password == env_password:
+    if username == st.secrets["user_info"]["username"] and password == st.secrets["user_info"]["password"]:
         return True
     return False
 
@@ -14,9 +11,8 @@ def authenticate(username, password):
 if 'authenticated' not in st.session_state:
     st.session_state.authenticated = False
 
-# Debug statement to check if environment variables are set
-st.write(f"USERNAME: {os.getenv('USERNAME')}")
-st.write(f"PASSWORD: {os.getenv('PASSWORD')}")
+if not st.session_state.authenticated:
+    st.write(st.secrets)  # Debug statement to print secrets
 
 if 'login_attempted' not in st.session_state:
     st.session_state.login_attempted = False
