@@ -9,7 +9,7 @@ credentials = {
 
 # Function to authenticate user
 def authenticate(username, password):
-    if username == st.secrets["general"]["username"] and password == st.secrets["general"]["password"]:
+    if username == st.secrets.general.username and password == st.secrets.general.password:
         return True
     return False
 
