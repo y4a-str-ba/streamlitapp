@@ -47,6 +47,12 @@ sample_message = st.selectbox(
 st.subheader("Customize Your Message")
 message = st.text_area("Enter your message")
 
+final_message = f"**Urgency**: {urgency}\n\n{message if message else sample_message}"
+
+# Preview Section
+st.subheader("Message Preview")
+st.markdown(final_message)
+
 # Urgency Colors and Button Actions
 if st.button("Send Notification"):
     if message or sample_message:
