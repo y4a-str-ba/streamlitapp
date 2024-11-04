@@ -16,9 +16,6 @@ def authenticate(username, password):
 if 'authenticated' not in st.session_state:
     st.session_state.authenticated = False
 
-if not st.session_state.authenticated:
-    st.write(st.secrets)  # Debug statement to print secrets
-
 if 'login_attempted' not in st.session_state:
     st.session_state.login_attempted = False
 
