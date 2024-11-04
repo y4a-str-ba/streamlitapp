@@ -4,13 +4,14 @@ import json
 import streamlit_authenticator as stauth
 import os
 
-name = 'AI Support Agent'
+names = ['AI Support Agent']  # This should be a list
 usernames = ['y4a_bi_team']
-passwords = ['password1']
+passwords = ['password']
+
 api_key = os.getenv('API_KEY')
 
 # Create authenticator object
-authenticator = stauth.Authenticate(name, usernames, passwords, 'my_cookie', 'my_key', cookie_expiry_days=30)
+authenticator = stauth.Authenticate(names, usernames, passwords, 'my_cookie', 'my_key', cookie_expiry_days=30)
 
 # Login
 name, authentication_status = authenticator.login('Login', 'main')
