@@ -66,6 +66,8 @@ if st.session_state.authenticated:
             ('🚨 High','⚠️ Medium','ℹ️ Low')
         )
 
+    urgency_text = urgency.split(' ')[1]
+
     # Sample Messages
     sample_messages = [
         "🔧 Dear Team,\n\nWe have encountered some issues with the dashboard.\nOur technical team is currently investigating the matter and will provide updates shortly.\nThank you for your understanding.",
@@ -91,7 +93,7 @@ if st.session_state.authenticated:
     }
 
     # Combine Messages for Preview
-    final_message = f"{urgency_icon[urgency]} Urgency: {urgency}\n\n" + (message if message else sample_message)
+    final_message = f"{urgency_icon[urgency_text]} Urgency: {urgency_text}\n\n" + (message if message else sample_message)
 
     if option == 'SFO':
         final_message += "\n\n---\nSFO Support Agent"
