@@ -1,7 +1,6 @@
 import streamlit as st
 import requests
 import json
-import os
 
 # Define user credentials
 credentials = {
@@ -10,16 +9,11 @@ credentials = {
 
 # Function to authenticate user
 def authenticate(username, password):
-    if username in credentials and credentials[username] == password:
-        return True
-    return False
+    return username in credentials and credentials[username] == password
 
 # Initialize session state for authentication status
 if 'authenticated' not in st.session_state:
     st.session_state.authenticated = False
-
-if 'button_clicked' not in st.session_state:
-    st.session_state.button_clicked = False
 
 if not st.session_state.authenticated:
     # Login form
@@ -29,7 +23,6 @@ if not st.session_state.authenticated:
     login_button = st.button("Login")
 
     if login_button:
-        st.session_state.button_clicked = True
         if authenticate(username, password):
             st.session_state.authenticated = True
             st.session_state.username = username
@@ -107,7 +100,7 @@ else:
             # Ensure line breaks are correctly formatted
             payload = {'text': final_message.replace('\n', '\n')}
             
-            response = requests.post(url, headers=headers, data=json.dumps(payload))
+            response = requests.post(url, headers=headers, json=payload)  # Use 'json=' instead of 'data='
             
             if response.status_code == 200:
                 st.success("Message sent successfully!")
