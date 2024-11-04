@@ -29,7 +29,6 @@ if not st.session_state.authenticated:
         if authenticate(username, password):
             st.session_state.authenticated = True
             st.session_state.username = username
-            st.experimental_rerun()  # Force rerun to update the state immediately
         else:
             st.error("Authentication failed. Please check your credentials.")
 else:
