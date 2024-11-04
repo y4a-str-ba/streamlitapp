@@ -9,7 +9,9 @@ credentials = {
 
 # Function to authenticate user
 def authenticate(username, password):
-    return username in credentials and credentials[username] == password
+    if username == st.secrets["general"]["username"] and password == st.secrets["general"]["password"]:
+        return True
+    return False
 
 # Initialize session state for authentication status
 if 'authenticated' not in st.session_state:
