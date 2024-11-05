@@ -1,3 +1,5 @@
 streamlit
 requests
 streamlit-authenticator  # if you are using it
+python-dotenv
+toml
