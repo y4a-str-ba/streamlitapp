@@ -53,9 +53,9 @@ if st.session_state.authenticated:
             ('BI Test Group', 'SFO', 'SSO', 'ATLAS')
         )
 
-with open('.streamlit/secrets.toml') as f:
-    secrets = toml.load(f)
-    urls = secrets['urls']
+    with open('.streamlit/secrets.toml') as f:
+        secrets = toml.load(f)
+        urls = secrets['urls']
 
     # # Define the URLs
     # urls = {
