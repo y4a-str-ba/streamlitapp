@@ -71,32 +71,24 @@ if st.session_state.authenticated:
 
     group_content = st.selectbox(
         'Choose the content type:',
-        ('Issue Notification', 'Maintenance Notice', 'Performance Issue', 'Performance Alert', 'Service Disruption', 'Data Delay Notice', 'Issue Resolved Notice')
+        ('Maintenance Notice', 'Performance Issue', 'Performance Alert', 'Service Disruption', 'Data Delay Notice', 'Issue Resolved Notice')
     )
 
     # Define the messages based on Group Content
     messages = {
-        'Issue Notification': [
-            "🔧 Dear Team,\n\nWe have encountered some issues with the dashboard and our technical team is actively investigating the matter.\nWe are working to resolve this as quickly as possible and will provide updates as soon as they are available.\n\nThank you for your patience and understanding during this time,",
-            "🛠️ Dear Team,\n\nPlease be informed that the dashboard will undergo scheduled maintenance.\n\nWe expect it to be back online shortly and will inform you once it’s available.\nThank you for your patience and understanding during this time,"
-        ],
         'Maintenance Notice': [
             "🛠️ Dear Team,\n\nPlease be informed that the dashboard will undergo scheduled maintenance.\n\nWe expect it to be back online shortly and will inform you once it’s available.\n\nThank you for your patience and understanding during this time,"
         ],
         'Performance Issue': [
-            "🚨 Dear Team,\n\nWe are aware of some performance issues affecting the dashboard.\nOur team is actively working to identify and resolve the root cause.\nWe will keep you updated on our progress.\n\nThank you for your patience and understanding during this time,",
             "🚨 Dear Team,\n\nWe are currently aware of performance issues impacting the dashboard. Our team is actively investigating the root cause and working toward a resolution.\n\nWe will keep you updated on our progress.\n\nThank you for your patience and understanding during this time,"
         ],
         'Performance Alert': [
-            "🔍 Attention Team,\n\nWe are monitoring the system's performance and have noted some irregularities.\nOur team is dedicated to resolving any issues promptly.\nThank you for your cooperation.",
             "🔍 Attention Team,\n\nWe are actively monitoring the system's performance and have detected some irregularities. Our team is dedicated to addressing these issues as quickly as possible.\n\nThank you for your patience and understanding during this time,"
         ],
         'Service Disruption': [
-            "⏳ Dear Team,\n\nWe are currently experiencing a temporary service disruption with the dashboard.\nOur team is working diligently to restore full functionality as soon as possible.\nWe appreciate your patience.",
             "⏳ Dear Team,\n\nWe are currently experiencing a temporary service disruption with the dashboard.\nOur team is working diligently to restore full functionality as soon as possible.\n\nThank you for your patience and understanding during this time,"
         ],
         'Data Delay Notice': [
-            "📊 Dear SFO MKT Team,\n\nPlease be advised that there is an unusual delay in our data source update, causing a lag in real-time data availability. Our team is actively investigating the issue and working on a resolution.\n\nIn the meantime, for monitoring and performance insights, please refer to the YAMS or Hourly Dashboard.\n\nThank you for your patience and understanding,\n\nBest regards,",
             "📊 Dear Team,\n\nPlease be advised that there is an unusual delay in our data source update, causing a lag in real-time data availability. Our team is actively investigating the issue and working on a resolution.\n\nIn the meantime, for monitoring and performance insights, please refer to the YAMS or Hourly Dashboard.\n\nThank you for your patience and understanding during this time,"
         ],
         'Issue Resolved Notice': [
