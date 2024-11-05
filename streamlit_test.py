@@ -52,16 +52,7 @@ if st.session_state.authenticated:
             ('BI Test Group', 'SFO', 'SSO', 'ATLAS')
         )
 
-    
     urls = st.secrets["urls"]
-
-    # # Define the URLs
-    # urls = {
-    #     'BI Test Group': 'https://chat.googleapis.com/v1/spaces/AAAAIw-NZNo/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=zoRXSSFeY4z_4PJKaQ53kDQ08EnVJwtWT6uAs8QIDfU',
-    #     'SSO': 'https://example.com/sso',
-    #     'SFO': 'https://example.com/sfo',
-    #     'ATLAS': 'https://chat.googleapis.com/v1/spaces/AAAAD_qzkDY/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=XhmSpWmA7S9mkt4Tys6l8NPzddzNONGw4mK57VR_AG0'
-    # }
 
     # Message Importance Dropdown
     with col2:
