@@ -150,6 +150,16 @@ if st.session_state.authenticated:
     else:
         st.markdown(f"<span style='color:green;'>{final_message}</span>", unsafe_allow_html=True)
 
+    # Custom CSS for the button
+    st.markdown("""
+        <style>
+        .stButton>button {
+            background-color: #00008B;
+            color: white;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
     # Send Notification Button
     if st.button("Send Notification"):
         if final_message:
