@@ -55,7 +55,8 @@ if st.session_state.authenticated:
     # Define the URLs
     urls = {
         'SFO': 'https://chat.googleapis.com/v1/spaces/AAAAIw-NZNo/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=zoRXSSFeY4z_4PJKaQ53kDQ08EnVJwtWT6uAs8QIDfU',
-        'SSO': 'https://example.com/sso'
+        'SSO': 'https://example.com/sso',
+        'ATLAS': 'https://chat.googleapis.com/v1/spaces/AAAAD_qzkDY/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=XhmSpWmA7S9mkt4Tys6l8NPzddzNONGw4mK57VR_AG0'
     }
 
     # Message Importance Dropdown
@@ -74,7 +75,9 @@ if st.session_state.authenticated:
         "🛠️ Hello Team,\n\nPlease be informed that the dashboard will undergo scheduled maintenance.\nWe expect it to be back online shortly.\nWe appreciate your patience during this time.",
         "🚨 Team,\n\nWe are aware of some performance issues affecting the dashboard.\nOur team is actively working to identify and resolve the root cause.\nWe will keep you updated on our progress.",
         "🔍 Attention Team,\n\nWe are monitoring the system's performance and have noted some irregularities.\nOur team is dedicated to resolving any issues promptly.\nThank you for your cooperation.",
-        "⏳ Dear Team,\n\nWe are currently experiencing a temporary service disruption with the dashboard.\nOur team is working diligently to restore full functionality as soon as possible.\nWe appreciate your patience."
+        "⏳ Dear Team,\n\nWe are currently experiencing a temporary service disruption with the dashboard.\nOur team is working diligently to restore full functionality as soon as possible.\nWe appreciate your patience.",
+        "📊 Dear SFO MKT Team,\n\nPlease be advised that there is an unusual delay in our data source update, causing a lag in real-time data availability. Our team is actively investigating the issue and working on a resolution.\n\nIn the meantime, for monitoring and performance insights, please refer to the YAMS or Hourly Dashboard.\n\nThank you for your patience and understanding.\n\nBest regards,"
+
     ]
 
     message = st.text_area("Customize Your Message", height=150, key="custom_message")
