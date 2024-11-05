@@ -71,11 +71,22 @@ if st.session_state.authenticated:
 
     group_content = st.selectbox(
         'Choose the content type:',
-        ('Maintenance Notice', 'Performance Issue', 'Performance Alert', 'Service Disruption', 'Data Delay Notice', 'Issue Resolved Notice')
+        ('Issue Notification', 'Maintenance Notice', 'Performance Issue', 'Performance Alert', 'Service Disruption', 'Data Delay Notice', 'Issue Resolved Notice')
     )
 
     # Define the messages based on Group Content
     messages = {
+       'Issue Notification': [
+            "🔧 Dear Team,\n\n"
+            "We have acknowledged your current issue and our technical team is actively investigating the matter.\n\n"
+            "We are working to resolve this quickly and will provide updates as soon as they are available.\n\n"
+            "To assist us in addressing the issue more effectively, please provide the following information:\n"
+            "\t- Dashboard name\n"
+            "\t- Dashboard link\n"
+            "\t- Filters currently applied\n"
+            "\t- Specific details about the issue\n\n"
+            "Thank you for your patience and understanding during this time"
+        ],
         'Maintenance Notice': [
             "🛠️ Dear Team,\n\nPlease be informed that the dashboard will undergo scheduled maintenance.\n\nWe expect it to be back online shortly and will inform you once it’s available.\n\nThank you for your patience and understanding during this time,"
         ],
