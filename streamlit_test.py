@@ -38,9 +38,9 @@ if not st.session_state.authenticated:
 # Check if login was attempted to control app flow
 if st.session_state.authenticated:
     # App Title with Icon
-    st.title("📢 BI Support Agent")
+    st.markdown("<h1 style='color:#00008B;'>📢 BI Support Agent</h1>", unsafe_allow_html=True)
     st.success(f'Welcome {st.session_state.username}')
-
+    
     # Columns for layout
     col1, col2 = st.columns(2)
 
