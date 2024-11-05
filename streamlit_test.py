@@ -155,7 +155,7 @@ if st.session_state.authenticated:
     # Send Notification Button
     if st.button("Send Notification"):
         if final_message:
-            url = urls[option]
+            url = urls[option.replace(" ", "_")]
             headers = {'Content-Type': 'application/json'}
             payload = {'text': final_message.replace('\n', '\n')}
             
