@@ -112,10 +112,12 @@ if st.session_state.authenticated:
     # Combine Messages for Preview
     final_message = f"{urgency_icon[urgency_text]} Urgency: {urgency_text}\n\n" + (message if message else sample_message)
 
-    if option == 'SFO':
-        final_message += "\n\n---\nSFO Support Agent"
+    if option == 'SFO_FBP':
+        final_message += "\n\n---\nSFO FBP Support Agent"
     elif option == 'SSO':
         final_message += "\n\n---\nSSO Support Agent"
+    elif option == 'FBP':
+        final_message += "\n\n---\nFBP Support Agent"
     elif option == 'ATLAS':
         final_message += "\n\n---\nATLAS Support Agent"
     elif option == 'BI Test Group':
