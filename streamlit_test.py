@@ -127,7 +127,7 @@ if st.session_state.authenticated:
     }
 
     # Combine Messages for Preview
-    final_message = f"{urgency_icon[urgency_text]} Urgency: {urgency_text}\n\n" + (message if message else messages[group_content])
+    final_message = f"{urgency_icon[urgency_text]} Urgency: {urgency_text}\n\n" + (message if message else sample_message)
 
     if option == 'SFO':
         final_message += "\n\n---\nSFO Support Agent"
