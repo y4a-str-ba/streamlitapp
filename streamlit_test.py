@@ -46,7 +46,7 @@ if st.session_state.authenticated:
 
     # Select Group Chat Dropdown
     with col1:
-        st.subheader("Select Group Chat")
+        st.markdown("<h3 style='color:#00008B;'>Select Group Chat</h3>", unsafe_allow_html=True)
         option = st.selectbox(
             'Choose a team to notify:',
             ('BI Test Group', 'SFO_FBP', 'SSO', 'FBP', 'ATLAS')
@@ -56,7 +56,7 @@ if st.session_state.authenticated:
 
     # Message Importance Dropdown
     with col2:
-        st.subheader("Select Urgency Level")
+        st.markdown("<h3 style='color:#00008B;'>Select Urgency Level</h3>", unsafe_allow_html=True)
         urgency = st.selectbox(
             'Set urgency level for the message:',
             ('🚨 High','⚠️ Medium','ℹ️ Low')
@@ -67,7 +67,7 @@ if st.session_state.authenticated:
     message = st.text_area("Customize Your Message", height=150, key="custom_message")
 
     # Select Group Content Dropdown
-    st.subheader("Select Group Content")
+    st.markdown("<h3 style='color:#00008B;'>Select Group Content</h3>", unsafe_allow_html=True)
 
     group_content = st.selectbox(
         'Choose the content type:',
@@ -142,7 +142,7 @@ if st.session_state.authenticated:
         final_message += "\n\n---\nBI Test Group Support Agent"
 
     # Dynamic Preview Section
-    st.subheader("Message Preview")
+    st.markdown("<h3 style='color:#00008B;'>Message Preview</h3>", unsafe_allow_html=True)
     if urgency == 'High':
         st.markdown(f"<span style='color:red;'>{final_message}</span>", unsafe_allow_html=True)
     elif urgency == 'Medium':
