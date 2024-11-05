@@ -49,7 +49,7 @@ if st.session_state.authenticated:
         st.subheader("Select Group Chat")
         option = st.selectbox(
             'Choose a team to notify:',
-            ('SFO', 'SSO', 'ATLAS', 'BI Test Group')
+            ('BI Test Group', 'SFO', 'SSO', 'ATLAS')
         )
 
     # Define the URLs
