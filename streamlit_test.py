@@ -49,7 +49,7 @@ if st.session_state.authenticated:
         st.subheader("Select Group Chat")
         option = st.selectbox(
             'Choose a team to notify:',
-            ('SFO', 'SSO')
+            ('SFO', 'SSO', 'ATLAS')
         )
 
     # Define the URLs
@@ -102,6 +102,8 @@ if st.session_state.authenticated:
         final_message += "\n\n---\nSFO Support Agent"
     elif option == 'SSO':
         final_message += "\n\n---\nSSO Support Agent"
+    elif option == 'ATLAS':
+        final_message += "\n\n---\nATLAS Support Agent"
 
     # Dynamic Preview Section
     st.subheader("Message Preview")
