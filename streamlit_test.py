@@ -76,14 +76,14 @@ if st.session_state.authenticated:
 
     # Define the messages based on Group Content
     messages = {
-       'Issue Notification': [
+        'Issue Notification': [
             "🔧 Dear Team,\n\n"
             "We have acknowledged your current issue and our technical team is actively investigating the matter.\n\n"
             "We are working to resolve this quickly and will provide updates as soon as they are available.\n\n"
-            "To assist us in addressing the issue more effectively, please provide the following information:\n"
-            "\t- Dashboard name\n"
-            "\t- Dashboard link\n"
-            "\t- Filters currently applied\n"
+            "To assist us in addressing the issue more effectively, please provide the following information:\n\n"
+            "\t- Dashboard name\n\n"
+            "\t- Dashboard link\n\n"
+            "\t- Filters currently applied\n\n"
             "\t- Specific details about the issue\n\n"
             "Thank you for your patience and understanding during this time"
         ],
