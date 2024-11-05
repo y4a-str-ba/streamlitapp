@@ -5,8 +5,7 @@ import toml
 
 st.image("logo.png", width=200)
 
-with open('secret.json') as f:
-    secrets = json.load(f)
+secrets = st.secrets["auth"]
 
 def authenticate(username, password):
     if username == secrets["username"] and password == secrets["password"]:
