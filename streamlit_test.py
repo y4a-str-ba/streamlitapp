@@ -71,7 +71,7 @@ if st.session_state.authenticated:
 
     group_content = st.selectbox(
         'Choose the content type:',
-        ('Issue Notification', 'Maintenance Notice', 'Performance Issue', 'Performance Alert', 'Service Disruption', 'Data Delay Notice', 'Issue Resolved Notice', 'Welcome')
+        ('Issue Notification', 'Maintenance Notice', 'Performance Issue', 'Performance Alert', 'Service Disruption', 'Data Delay Notice', 'Issue Resolved Notice', 'Welcome Message')
     )
 
     # Define the messages based on Group Content
@@ -105,7 +105,7 @@ if st.session_state.authenticated:
         'Issue Resolved Notice': [
             "👌 Dear Team,\n\nWe are pleased to inform you that the reported issue has been resolved. Our technical team has identified and addressed the underlying cause, and the dashboard/report should now be functioning as expected.\n\nPlease verify the functionality on your end, and let us know if you experience any further issues.\n\nThank you for your cooperation and patience throughout this process.\n\nBest regards,"
         ],
-        'Welcome': [
+        'Welcome Message': [
                 "👋 Dear Team,\n\n"
                 "Welcome to the Support Agent service. Our team is here to assist you with any issues or questions you may have regarding the dashboard.\n\n"
                 "Please feel free to reach out to us at any time. We are committed to providing you with the best support possible.\n\n"
