@@ -71,7 +71,16 @@ if st.session_state.authenticated:
 
     group_content = st.selectbox(
         'Choose the content type:',
-        ('Issue Notification', 'Maintenance Notice', 'Performance Issue', 'Performance Alert', 'Service Disruption', 'Data Delay Notice', 'Issue Resolved Notice', 'Welcome Message', 'Out of Office Notice')
+        ('Issue Notification'
+         , 'Maintenance Notice'
+         , 'Performance Issue'
+         , 'Performance Alert'
+         , 'Service Disruption'
+         , 'Data Delay Notice'
+         , 'Issue Resolved Notice'
+         , 'Welcome Message'
+         , 'Out of Office Notice'
+         , 'Dashboard Updated')
     )
 
     # Define the messages based on Group Content
@@ -114,7 +123,12 @@ if st.session_state.authenticated:
             ],
         'Out of Office Notice': [
             "Hello! Our Support Agent is currently unavailable, as we are outside of office hours. Please feel free to leave your questions here, and we’ll be happy to assist you when we’re back tomorrow. Thank you for your patience!"
+        ],
+        'Dashboard Updated': [
+            "The dashboard has been updated. Please take a moment to review the latest data. If you notice any issues or have any concerns, feel free to reach out.\n\n"
+            "Best regards,"
         ]
+            
     }
 
     # Sample Message Dropdown, Disabled if Custom Message is Entered
