@@ -63,7 +63,7 @@ if st.session_state.authenticated:
             index=0
         )
 
-    urgency_text = urgency.split(" ")[-1] if urgency != 'Set Urgency Level' else 'None'
+    urgency_text = urgency.split(' ')[1] if urgency != 'Select Urgency Level' else None
 
     message = st.text_area("Customize Your Message", height=150, key="custom_message")
 
@@ -151,7 +151,7 @@ if st.session_state.authenticated:
         final_message = f"{urgency_icon[urgency_text]} Urgency: {urgency_text}\n\n" + (message if message else sample_message)
     else:
         final_message = message if message else sample_message
-        
+
     if option == 'SFO_FBP':
         final_message += "\n\n---\nSFO FBP Support Agent"
     elif option == 'SSO':
