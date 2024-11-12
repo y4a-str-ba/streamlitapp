@@ -146,9 +146,12 @@ if st.session_state.authenticated:
         'Low': 'ℹ️',
         'None': ''
     }
-    # Combine Messages for Preview
 
-    final_message = message if message else sample_message
+    # Combine Messages for Preview
+    if urgency_text in ('High', 'Medium', 'Low'):
+        final_message = f"{urgency_icon[urgency_text]} Urgency: {urgency_text}\n\n" + (message if message else sample_message)
+    else:
+        final_message = message if message else sample_message
 
     if option == 'SFO_FBP':
         final_message += "\n\n---\nSFO FBP Support Agent"
