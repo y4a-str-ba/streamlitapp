@@ -147,8 +147,11 @@ if st.session_state.authenticated:
         'None': ''
     }
     # Combine Messages for Preview
-    final_message = f"{urgency_icon[urgency_text]} Urgency: {urgency_text}\n\n" + (message if message else sample_message)
-
+    if urgency_text:
+        final_message = f"{urgency_icon[urgency_text]} Urgency: {urgency_text}\n\n" + (message if message else sample_message)
+    else:
+        final_message = message if message else sample_message
+        
     if option == 'SFO_FBP':
         final_message += "\n\n---\nSFO FBP Support Agent"
     elif option == 'SSO':
