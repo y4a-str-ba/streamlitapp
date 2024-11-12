@@ -148,8 +148,7 @@ if st.session_state.authenticated:
     }
     # Combine Messages for Preview
     if urgency_text:
-        urgency_icon = urgency_icon.get(urgency_text, '')
-        final_message = f"{urgency_icon} Urgency: {urgency_text}\n\n" + (message if message else sample_message)
+        final_message = f"{urgency_icon[urgency_text]} Urgency: {urgency_text}\n\n" + (message if message else sample_message)
     else:
         final_message = message if message else sample_message
 
