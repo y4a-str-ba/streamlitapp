@@ -59,10 +59,11 @@ if st.session_state.authenticated:
         st.markdown("<h3 style='color:#00008B;'>Select Urgency Level</h3>", unsafe_allow_html=True)
         urgency = st.selectbox(
             'Set urgency level for the message:',
-            ('🚨 High','⚠️ Medium','ℹ️ Low')
+            ('', '🚨 High', '⚠️ Medium', 'ℹ️ Low'),
+            index=0
         )
 
-    urgency_text = urgency.split(' ')[1]
+    urgency_text = urgency.split(' ')[1] if urgency else "None"
 
     message = st.text_area("Customize Your Message", height=150, key="custom_message")
 
