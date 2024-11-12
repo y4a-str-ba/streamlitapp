@@ -59,11 +59,11 @@ if st.session_state.authenticated:
         st.markdown("<h3 style='color:#00008B;'>Select Urgency Level</h3>", unsafe_allow_html=True)
         urgency = st.selectbox(
             'Set urgency level for the message:',
-            ('', '🚨 High', '⚠️ Medium', 'ℹ️ Low'),
+            ('Set Urgency Level', '🚨 High', '⚠️ Medium', 'ℹ️ Low'),
             index=0
         )
 
-    urgency_text = urgency.split(' ')[1] if urgency else "None"
+    urgency_text = urgency.split(" ")[-1] if urgency != 'Set Urgency Level' else 'None'
 
     message = st.text_area("Customize Your Message", height=150, key="custom_message")
 
@@ -143,9 +143,9 @@ if st.session_state.authenticated:
     urgency_icon = {
         'High': '🚨',
         'Medium': '⚠️',
-        'Low': 'ℹ️'
+        'Low': 'ℹ️',
+        'None': ''
     }
-
     # Combine Messages for Preview
     final_message = f"{urgency_icon[urgency_text]} Urgency: {urgency_text}\n\n" + (message if message else sample_message)
 
