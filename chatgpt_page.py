@@ -34,10 +34,6 @@ def main(client):
         st.warning("Please enter a question before submitting.")
     
     if response_dict:
-        #preview the response
-        st.markdown("<h3 style='color:#00008B;'>ChatGPT Response Preview</h3>", unsafe_allow_html=True)
-        st.markdown(f"<span style='color:green;'>{response_dict}</span>", unsafe_allow_html=True)
-
         st.markdown("<h3 style='color:#00008B;'>Send to Google Chat Groups</h3>", unsafe_allow_html=True)
 
     option = st.selectbox(
@@ -58,6 +54,10 @@ def main(client):
         response_dict += "\n\n---\nATLAS Support Agent"
     elif option == 'BI Test Group':
         response_dict += "\n\n---\nBI Test Group Support Agent"
+
+    #preview the response
+    st.markdown("<h3 style='color:#00008B;'>ChatGPT Response Preview</h3>", unsafe_allow_html=True)
+    st.markdown(f"<span style='color:green;'>{response_dict}</span>", unsafe_allow_html=True)
         
     if st.button("Send to Google Chat"):
         if group_url:
