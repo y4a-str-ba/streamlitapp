@@ -3,6 +3,7 @@ from openai import OpenAI
 
 def main():
     api_key = st.secrets["openai"]["api_key"]
+    st.write(api_key)
     client = OpenAI(api_key=api_key)
 
     st.title("ChatGPT Page")
