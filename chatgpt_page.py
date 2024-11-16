@@ -59,7 +59,8 @@ def main(client):
         st.markdown("<h3 style='color:#00008B;'>ChatGPT Response Preview</h3>", unsafe_allow_html=True)
         st.markdown(f"<span style='color:green;'>{response_dict}</span>", unsafe_allow_html=True)
             
-        if st.button("Send to Google Chat"):
+    if st.button("Send to Google Chat"):
+        if response_dict:
             headers = {'Content-Type': 'application/json'}
             payload = {'text': response_dict.replace('\n', '\n')}
 
@@ -71,4 +72,6 @@ def main(client):
                 st.success("Message sent successfully!")
             else:
                 st.error(f"Failed to send message. Status code: {response.status_code}")
+        else:
+            st.warning("Please enter a question before submitting.")
 
