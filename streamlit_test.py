@@ -10,7 +10,8 @@ st.image("logo.png", width=200)
 
 secrets = st.secrets["auth"]
 api_key = st.secrets["openai"]
-client = OpenAI(api_key["api_key"])
+API_KEY = api_key["api_key"]
+client = OpenAI(api_key=API_KEY)
 
 def authenticate(username, password):
     if username == secrets["username"] and password == secrets["password"]:
