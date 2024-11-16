@@ -35,7 +35,7 @@ def main(client):
     if response_dict:
         #preview the response
         st.markdown("<h3 style='color:#00008B;'>ChatGPT Response Preview</h3>", unsafe_allow_html=True)
-        st.markdown(f"<span style='color:green;'>{response}</span>", unsafe_allow_html=True)
+        st.markdown(f"<span style='color:green;'>{response_dict}</span>", unsafe_allow_html=True)
 
         st.markdown("<h3 style='color:#00008B;'>Send to Google Chat Groups</h3>", unsafe_allow_html=True)
 
