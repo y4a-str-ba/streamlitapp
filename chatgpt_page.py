@@ -62,6 +62,8 @@ def main(client):
         if st.button("Send to Google Chat"):
             headers = {'Content-Type': 'application/json'}
             payload = {'text': response_dict.replace('\n', '\n')}
+
+            st.write("Payload: ", payload)
             
             response = requests.post(group_url, headers=headers, json=payload)
             
