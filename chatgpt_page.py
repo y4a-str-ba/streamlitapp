@@ -10,6 +10,15 @@ def main():
 
     user_question = st.text_area("Enter your question to ChatGPT:", height=150, key="user_question")
 
+    st.markdown("""
+    <style>
+    .stButton>button {
+        background-color: #00008B;
+        color: white;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
     if st.button("Ask ChatGPT"):
         if user_question.strip():
             try:                
@@ -20,14 +29,15 @@ def main():
                     ]
                 )
                 response = completion['choices'][0].message.content
-
-                # Show the response to the user
-                st.markdown("<h3 style='color:#00008B;'>ChatGPT Response</h3>", unsafe_allow_html=True)
-                st.markdown(f"<span style='color:green;'>{response}</span>", unsafe_allow_html=True)
             except Exception as e:
                 st.error(f"An error occurred: {e}")
     else:
         st.warning("Please enter a question before submitting.")
+    
+    if response:
+        #preview the response
+        st.markdown("<h3 style='color:#00008B;'>ChatGPT Response Preview</h3>", unsafe_allow_html=True)
+        st.markdown(f"<span style='color:green;'>{response}</span>", unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
