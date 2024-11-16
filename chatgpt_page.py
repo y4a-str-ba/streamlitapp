@@ -15,7 +15,7 @@ def main(client):
     }
     </style>
     """, unsafe_allow_html=True)
-    response = ''
+    response_dict = ''
     if st.button("Ask ChatGPT"):
         if user_question.strip():
             try:                
@@ -32,7 +32,7 @@ def main(client):
     else:
         st.warning("Please enter a question before submitting.")
     
-    if response:
+    if response_dict:
         #preview the response
         st.markdown("<h3 style='color:#00008B;'>ChatGPT Response Preview</h3>", unsafe_allow_html=True)
         st.markdown(f"<span style='color:green;'>{response}</span>", unsafe_allow_html=True)
@@ -48,20 +48,20 @@ def main(client):
     group_url = urls[option.replace(" ", "_")]
 
     if option == 'SFO_FBP':
-        response += "\n\n---\nSFO FBP Support Agent"
+        response_dict += "\n\n---\nSFO FBP Support Agent"
     elif option == 'SSO':
-        response += "\n\n---\nSSO Support Agent"
+        response_dict += "\n\n---\nSSO Support Agent"
     elif option == 'FBP':
-        response += "\n\n---\nFBP Support Agent"
+        response_dict += "\n\n---\nFBP Support Agent"
     elif option == 'ATLAS':
-        response += "\n\n---\nATLAS Support Agent"
+        response_dict += "\n\n---\nATLAS Support Agent"
     elif option == 'BI Test Group':
-        response += "\n\n---\nBI Test Group Support Agent"
+        response_dict += "\n\n---\nBI Test Group Support Agent"
         
     if st.button("Send to Google Chat"):
         if group_url:
             try:
-                send_to_google_chat(group_url, response)
+                send_to_google_chat(group_url, response_dict)
                 st.success("Message sent to Google Chat group successfully!")
             except Exception as e:
                 st.error(f"An error occurred while sending the message: {e}")
