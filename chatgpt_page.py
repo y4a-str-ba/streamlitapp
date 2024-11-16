@@ -15,7 +15,6 @@ def main(client):
     }
     </style>
     """, unsafe_allow_html=True)
-    response_dict = ''
     if st.button("Ask ChatGPT"):
         if user_question.strip():
             try:                
@@ -33,8 +32,7 @@ def main(client):
     else:
         st.warning("Please enter a question before submitting.")
     
-    if response_dict:
-        st.markdown("<h3 style='color:#00008B;'>Send to Google Chat Groups</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color:#00008B;'>Send to Google Chat Groups</h3>", unsafe_allow_html=True)
 
     option = st.selectbox(
         'Choose a team to notify:',
