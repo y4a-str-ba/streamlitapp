@@ -10,7 +10,7 @@ st.image("logo.png", width=200)
 
 secrets = st.secrets["auth"]
 
-api_key = st.secrets["openai"]["api_key"]
+api_key = st.secrets["openai"]["apikey"]
 client = OpenAI(api_key=api_key)
 
 
