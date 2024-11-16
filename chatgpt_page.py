@@ -61,13 +61,13 @@ def main(client):
         st.markdown(f"<span style='color:green;'>{response_dict}</span>", unsafe_allow_html=True)
             
         if st.button("Send to Google Chat"):
-                headers = {'Content-Type': 'application/json'}
-                payload = {'text': response_dict.replace('\n', '\n')}
-                
-                response = requests.post(group_url, headers=headers, json=payload)
-                
-                if response.status_code == 200:
-                    st.success("Message sent successfully!")
-                else:
-                    st.error(f"Failed to send message. Status code: {response.status_code}")
+            headers = {'Content-Type': 'application/json'}
+            payload = {'text': response_dict.replace('\n', '\n')}
+            
+            response = requests.post(group_url, headers=headers, json=payload)
+            
+            if response.status_code == 200:
+                st.success("Message sent successfully!")
+            else:
+                st.error(f"Failed to send message. Status code: {response.status_code}")
 
