@@ -61,21 +61,13 @@ def main(client):
         st.markdown(f"<span style='color:green;'>{response_dict}</span>", unsafe_allow_html=True)
             
         if st.button("Send to Google Chat"):
-            if group_url:
-                try:
-                    send_to_google_chat(group_url, response_dict)
-                    st.success("Message sent to Google Chat group successfully!")
-                except Exception as e:
-                    st.error(f"An error occurred while sending the message: {e}")
-            else:
-                st.warning("Please select a valid Google Chat Group.")
+                headers = {'Content-Type': 'application/json'}
+                payload = {'text': response_dict.replace('\n', '\n')}
+                
+                response = requests.post(group_url, headers=headers, json=payload)
+                
+                if response.status_code == 200:
+                    st.success("Message sent successfully!")
+                else:
+                    st.error(f"Failed to send message. Status code: {response.status_code}")
 
-def send_to_google_chat(group_url, message):
-    headers = {
-        'Content-Type': 'application/json; charset=UTF-8'
-    }
-    data = {
-        'text': message
-    }
-    response = requests.post(group_url, headers=headers, json=data)
-    response.raise_for_status()
