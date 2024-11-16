@@ -75,13 +75,15 @@ if st.session_state.authenticated:
     if st.button("Ask ChatGPT"):
         if user_question.strip():
             try:
+                import openai
+                
                 completion = openai.ChatCompletion.create(
                     model="gpt-3.5-turbo",
                     messages=[
                         {"role": "user", "content": user_question}
                     ]
                 )
-                response = completion.choices[0].message['content']
+                response = completion['choices'][0]['message']['content']
 
                 # Show the response to the user
                 st.markdown("<h3 style='color:#00008B;'>ChatGPT Response</h3>", unsafe_allow_html=True)
@@ -90,6 +92,7 @@ if st.session_state.authenticated:
                 st.error(f"An error occurred: {e}")
     else:
         st.warning("Please enter a question before submitting.")
+
 
     message = st.text_area("Customize Your Message", height=150, key="custom_message")
 
