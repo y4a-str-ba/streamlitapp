@@ -25,7 +25,10 @@ def main(client):
                     model="gpt-4o-mini-2024-07-18",
                     messages=[
                         {"role": "user", "content": user_question}
-                    ]
+                    ],
+                    temperature=0,
+                    max_tokens=100,
+                    presence_penalty=0.8
                 )
                 response = completion.model_dump()
                 st.session_state.response_dict = response['choices'][0]['message']['content']
