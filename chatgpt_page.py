@@ -5,7 +5,7 @@ import requests
 def main(client):
     st.title("AI Asisstant")
 
-    user_question = st.text_area("Enter your question to ChatGPT:", height=150, key="user_question")
+    user_question = st.text_area("Enter your question to Our AI Assistant:", height=150, key="user_question")
 
     if "response_dict" not in st.session_state:
         st.session_state.response_dict = ""
@@ -18,7 +18,7 @@ def main(client):
     }
     </style>
     """, unsafe_allow_html=True)
-    if st.button("Ask ChatGPT"):
+    if st.button("Ask AI Assistant"):
         if user_question.strip():
             try:                
                 completion = client.chat.completions.create(
@@ -58,7 +58,7 @@ def main(client):
             response_dict += "\n\n---\nBI Test Group Support Agent"
 
         #preview the response
-        st.markdown("<h3 style='color:#00008B;'>ChatGPT Response Preview</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='color:#00008B;'>Response Preview</h3>", unsafe_allow_html=True)
         st.markdown(f"<span style='color:green;'>{response_dict}</span>", unsafe_allow_html=True)
  
     if st.button("Send to Google Chat"):
