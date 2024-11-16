@@ -58,8 +58,11 @@ def main(client):
         #preview the response
         st.markdown("<h3 style='color:#00008B;'>ChatGPT Response Preview</h3>", unsafe_allow_html=True)
         st.markdown(f"<span style='color:green;'>{response_dict}</span>", unsafe_allow_html=True)
-            
+
+    st.write("Debug: response_dict before button click:", response_dict)
+ 
     if st.button("Send to Google Chat"):
+        st.write("Debug: response_dict inside button click:", response_dict)
         if response_dict:
             headers = {'Content-Type': 'application/json'}
             payload = {'text': response_dict.replace('\n', '\n')}
