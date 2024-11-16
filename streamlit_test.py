@@ -77,7 +77,7 @@ if st.session_state.authenticated:
         if user_question.strip():
             try:                
                 completion = client.chat.completions.create(
-                    model="gpt-4o",
+                    model="gpt-3.5-turbo-instruct",
                     messages=[
                         {"role": "user", "content": user_question}
                     ]
