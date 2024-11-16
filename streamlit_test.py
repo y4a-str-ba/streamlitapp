@@ -2,10 +2,15 @@ import streamlit as st
 import requests
 import json
 import toml
+import openai
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
 
 st.image("logo.png", width=200)
 
 secrets = st.secrets["auth"]
+api_key = st.secrets["openai"]
+openai.api_key = api_key["api_key"]
 
 def authenticate(username, password):
     if username == secrets["username"] and password == secrets["password"]:
@@ -64,6 +69,26 @@ if st.session_state.authenticated:
         )
 
     urgency_text = urgency.split(' ')[1] if urgency != 'Select Urgency Level' else None
+
+    user_question = st.text_area("Enter your question to ChatGPT:", height=150, key="user_question")
+
+    if st.button("Ask ChatGPT"):
+        if user_question.strip():
+            try:
+                completion = openai.Completion.create(
+                    model="gpt-3.5-turbo",
+                    messages=[{"role": "user", "content": user_question}]
+                )
+                response = completion.choices[0].message['content']
+
+                #show the response to user
+
+                st.markdown("<h3 style='color:#00008B;'>ChatGPT Response</h3>", unsafe_allow_html=True)
+                st.markdown(f"<span style='color:green;'>{response}</span>", unsafe_allow_html=True)
+            except Exception as e:
+                st.error(f"An error occurred: {e}")
+        else:
+            st.warning("Please enter a question before submitting.")
 
     message = st.text_area("Customize Your Message", height=150, key="custom_message")
 
