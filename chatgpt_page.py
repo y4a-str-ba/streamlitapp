@@ -27,7 +27,7 @@ def main(client):
                         {"role": "user", "content": user_question}
                     ],
                     temperature=0,
-                    max_tokens=100,
+                    max_tokens=200,
                     presence_penalty=0.8
                 )
                 response = completion.model_dump()
