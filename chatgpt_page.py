@@ -25,7 +25,6 @@ def main(client):
                     ]
                 )
                 response_dict = completion.model_dump()
-                st.write(response_dict)
                 st.write(response_dict['choices'][0]['message']['content'])
             except Exception as e:
                 st.error(f"An error occurred: {e}")
