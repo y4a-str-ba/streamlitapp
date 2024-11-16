@@ -22,7 +22,7 @@ def main(client):
         if user_question.strip():
             try:                
                 completion = client.chat.completions.create(
-                    model="gpt-4o-mini",
+                    model="gpt-4o-mini-2024-07-18",
                     messages=[
                         {"role": "user", "content": user_question}
                     ]
