@@ -2,10 +2,9 @@ import streamlit as st
 from openai import OpenAI
 
 def main():
-    api_key = st.secrets["openai"]
-    API_KEY = api_key["api_key"]
-    client = OpenAI(api_key=API_KEY)
-    
+    api_key = st.secrets["openai"]["api_key"]
+    client = OpenAI(api_key=api_key)
+
     st.title("ChatGPT Page")
 
     user_question = st.text_area("Enter your question to ChatGPT:", height=150, key="user_question")
