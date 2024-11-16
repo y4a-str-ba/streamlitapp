@@ -45,8 +45,8 @@ if not st.session_state.authenticated:
 # Check if login was attempted to control app flow
 if st.session_state.authenticated:
     st.sidebar.title("Pages")
-    page = st.sidebar.radio("Go to", ["Home", "AI Agent"])
-    if page == "Home":
+    page = st.sidebar.radio("Go to", ["Issues Notification", "AI Agent"])
+    if page == "Issues Notification":
         # App Title with Icon
         st.markdown("<h1 style='color:#00008B;'>📢 BI Support Agent</h1>", unsafe_allow_html=True)
         st.success(f'Welcome {st.session_state.username}')

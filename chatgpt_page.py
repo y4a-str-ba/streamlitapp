@@ -3,7 +3,7 @@ from openai import OpenAI
 import requests
 
 def main(client):
-    st.title("AI Asisstant")
+    st.markdown("<h1 style='color:#00008B;'>📢 AI Assistant</h1>", unsafe_allow_html=True)
 
     user_question = st.text_area("Enter your question to Our AI Assistant:", height=150, key="user_question")
 
