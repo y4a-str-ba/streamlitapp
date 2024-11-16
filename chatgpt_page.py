@@ -7,6 +7,8 @@ def main(client):
 
     user_question = st.text_area("Enter your question to ChatGPT:", height=150, key="user_question")
 
+    response_dict = ''
+
     st.markdown("""
     <style>
     .stButton>button {
@@ -40,7 +42,7 @@ def main(client):
     )
 
     urls = st.secrets["urls"]
-    group_url = urls[option.replace(" ", "_")]
+    group_url = urls[option.replace(" ", "_")]    
 
     if response_dict:
         if option == 'SFO_FBP':
