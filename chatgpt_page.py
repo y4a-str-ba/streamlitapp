@@ -7,7 +7,8 @@ def main(client):
 
     user_question = st.text_area("Enter your question to ChatGPT:", height=150, key="user_question")
 
-    response_dict = ''
+    if "response_dict" not in st.session_state:
+        st.session_state.response_dict = ""
 
     st.markdown("""
     <style>
@@ -26,8 +27,8 @@ def main(client):
                         {"role": "user", "content": user_question}
                     ]
                 )
-                response_dict = completion.model_dump()
-                response_dict = response_dict['choices'][0]['message']['content']
+                response = completion.model_dump()
+                st.session_state.response_dict = response['choices'][0]['message']['content']
             except Exception as e:
                 st.error(f"An error occurred: {e}")
     else:
@@ -41,7 +42,8 @@ def main(client):
     )
 
     urls = st.secrets["urls"]
-    group_url = urls[option.replace(" ", "_")]    
+    group_url = urls[option.replace(" ", "_")]
+    response_dict = st.session_state.response_dict    
 
     if response_dict:
         if option == 'SFO_FBP':
