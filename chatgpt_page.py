@@ -24,7 +24,7 @@ def main(client):
                         {"role": "user", "content": user_question}
                     ]
                 )
-                response_dict = response.to_dict()
+                response_dict = completion.model_dump()
                 st.write(response_dict)
                 st.write(response_dict['choices'][0]['message']['content'])
             except Exception as e:
