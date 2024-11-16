@@ -209,5 +209,4 @@ if st.session_state.authenticated:
             else:
                 st.warning("Please enter a message or select a sample message before sending.")
     elif page == "ChatGPT":
-        st.write(api_key)
         chatgpt_page.main(client)
