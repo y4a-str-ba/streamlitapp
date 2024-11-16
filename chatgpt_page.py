@@ -65,8 +65,6 @@ def main(client):
         if response_dict:
             headers = {'Content-Type': 'application/json'}
             payload = {'text': response_dict.replace('\n', '\n')}
-
-            st.write("Payload: ", payload)
             
             response = requests.post(group_url, headers=headers, json=payload)
             
