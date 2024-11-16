@@ -18,7 +18,7 @@ def main():
     }
     </style>
     """, unsafe_allow_html=True)
-
+    response = None
     if st.button("Ask ChatGPT"):
         if user_question.strip():
             try:                
