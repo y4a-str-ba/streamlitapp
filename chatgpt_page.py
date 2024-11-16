@@ -1,11 +1,7 @@
 import streamlit as st
 from openai import OpenAI
 
-def main():
-    api_key = st.secrets["open_ai"]["api_key"]
-    st.write(api_key)
-    client = OpenAI(api_key=api_key)
-
+def main(client):
     st.title("ChatGPT Page")
 
     user_question = st.text_area("Enter your question to ChatGPT:", height=150, key="user_question")
@@ -39,6 +35,4 @@ def main():
         st.markdown("<h3 style='color:#00008B;'>ChatGPT Response Preview</h3>", unsafe_allow_html=True)
         st.markdown(f"<span style='color:green;'>{response}</span>", unsafe_allow_html=True)
 
-if __name__ == "__main__":
-    main()
 

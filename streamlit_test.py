@@ -2,11 +2,16 @@ import streamlit as st
 import requests
 import json
 import toml
-import chatgpt_page 
+import chatgpt_page
+from openai import OpenAI
+
 
 st.image("logo.png", width=200)
 
 secrets = st.secrets["auth"]
+
+api_key = st.secrets["open_ai"]["api_key"]
+client = OpenAI(api_key=api_key)
 
 
 def authenticate(username, password):
@@ -204,4 +209,5 @@ if st.session_state.authenticated:
             else:
                 st.warning("Please enter a message or select a sample message before sending.")
     elif page == "ChatGPT":
-        chatgpt_page.main()
+        st.write(api_key)
+        chatgpt_page.main(client)
