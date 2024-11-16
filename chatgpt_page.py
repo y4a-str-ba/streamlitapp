@@ -5,10 +5,7 @@ def main():
     api_key = st.secrets["openai"]
     API_KEY = api_key["api_key"]
     client = OpenAI(api_key=API_KEY)
-
-    #print out api_key to check
-    st.write(f"API_KEY: {API_KEY}")
-
+    
     st.title("ChatGPT Page")
 
     user_question = st.text_area("Enter your question to ChatGPT:", height=150, key="user_question")
