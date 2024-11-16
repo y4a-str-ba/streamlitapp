@@ -45,7 +45,7 @@ if not st.session_state.authenticated:
 # Check if login was attempted to control app flow
 if st.session_state.authenticated:
     st.sidebar.title("Navigation")
-    page = st.sidebar.radio("Go to", ["Home", "ChatGPT"])
+    page = st.sidebar.radio("Go to", ["Home", "AIAgent"])
     if page == "Home":
         # App Title with Icon
         st.markdown("<h1 style='color:#00008B;'>📢 BI Support Agent</h1>", unsafe_allow_html=True)
@@ -208,5 +208,5 @@ if st.session_state.authenticated:
                     st.error(f"Failed to send message. Status code: {response.status_code}")
             else:
                 st.warning("Please enter a message or select a sample message before sending.")
-    elif page == "ChatGPT":
+    elif page == "AIAgent":
         chatgpt_page.main(client)

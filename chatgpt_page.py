@@ -3,7 +3,7 @@ from openai import OpenAI
 import requests
 
 def main(client):
-    st.title("ChatGPT Page")
+    st.title("AI Asisstant")
 
     user_question = st.text_area("Enter your question to ChatGPT:", height=150, key="user_question")
 
