@@ -39,34 +39,34 @@ def main(client):
 
         st.markdown("<h3 style='color:#00008B;'>Send to Google Chat Groups</h3>", unsafe_allow_html=True)
 
-        option = st.selectbox(
-            'Choose a team to notify:',
-            ('BI Test Group', 'SFO_FBP', 'SSO', 'FBP', 'ATLAS')
-        )
+    option = st.selectbox(
+        'Choose a team to notify:',
+        ('BI Test Group', 'SFO_FBP', 'SSO', 'FBP', 'ATLAS')
+    )
 
-        urls = st.secrets["urls"]
-        group_url = urls[option.replace(" ", "_")]
+    urls = st.secrets["urls"]
+    group_url = urls[option.replace(" ", "_")]
 
-        if option == 'SFO_FBP':
-            response += "\n\n---\nSFO FBP Support Agent"
-        elif option == 'SSO':
-            response += "\n\n---\nSSO Support Agent"
-        elif option == 'FBP':
-            response += "\n\n---\nFBP Support Agent"
-        elif option == 'ATLAS':
-            response += "\n\n---\nATLAS Support Agent"
-        elif option == 'BI Test Group':
-            response += "\n\n---\nBI Test Group Support Agent"
-            
-        if st.button("Send to Google Chat"):
-            if group_url:
-                try:
-                    send_to_google_chat(group_url, response)
-                    st.success("Message sent to Google Chat group successfully!")
-                except Exception as e:
-                    st.error(f"An error occurred while sending the message: {e}")
-            else:
-                st.warning("Please select a valid Google Chat Group.")
+    if option == 'SFO_FBP':
+        response += "\n\n---\nSFO FBP Support Agent"
+    elif option == 'SSO':
+        response += "\n\n---\nSSO Support Agent"
+    elif option == 'FBP':
+        response += "\n\n---\nFBP Support Agent"
+    elif option == 'ATLAS':
+        response += "\n\n---\nATLAS Support Agent"
+    elif option == 'BI Test Group':
+        response += "\n\n---\nBI Test Group Support Agent"
+        
+    if st.button("Send to Google Chat"):
+        if group_url:
+            try:
+                send_to_google_chat(group_url, response)
+                st.success("Message sent to Google Chat group successfully!")
+            except Exception as e:
+                st.error(f"An error occurred while sending the message: {e}")
+        else:
+            st.warning("Please select a valid Google Chat Group.")
 
 def send_to_google_chat(group_url, message):
     headers = {
