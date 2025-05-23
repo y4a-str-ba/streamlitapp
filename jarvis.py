@@ -1,33 +1,34 @@
 import streamlit as st
 import pandas as pd
 import gspread
-import json
-from oauth2client.service_account import ServiceAccountCredentials
+from google.oauth2.service_account import Credentials
 
+# ---------------------------
+# 1. Config UI
+# ---------------------------
 st.set_page_config(page_title="Jarvis Dashboard", layout="wide")
 st.title("🔍 Jarvis — Kill Search Terms")
 st.write("These terms are identified as low-performing and should be reviewed before being negativized.")
 
-# ───────────────────────────────────────────────────────
-# 1. Kết nối Google Sheet từ st.secrets
-# ───────────────────────────────────────────────────────
-scope = [
-    "https://spreadsheets.google.com/feeds",
-    "https://www.googleapis.com/auth/drive"
-]
+# ---------------------------
+# 2. Google Sheets Auth
+# ---------------------------
+scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 service_account_info = st.secrets["gcp_service_account"]
-creds = ServiceAccountCredentials.from_json_keyfile_dict(service_account_info, scope)
+creds = Credentials.from_service_account_info(service_account_info, scopes=scope)
 client = gspread.authorize(creds)
 
-# Mở Sheet
-SHEET_NAME = "JARVIS_PREDICT_OUTPUT"  
-sheet = client.open(SHEET_NAME).Summary_Kill_SFO
+# ---------------------------
+# 3. Read Sheet
+# ---------------------------
+SHEET_ID = "1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY"  
+sheet = client.open_by_key(SHEET_ID).Summary_Kill_SFO  
 data = sheet.get_all_records()
 df = pd.DataFrame(data)
 
-# ───────────────────────────────────────────────────────
-# 2. Hiển thị Confirm từng dòng
-# ───────────────────────────────────────────────────────
+# ---------------------------
+# 4. Hiển thị Confirm
+# ---------------------------
 st.write("### Confirm individual terms")
 confirm_status = []
 
@@ -38,20 +39,20 @@ for i in range(len(df)):
         st.write(f"🔎 **{term}** — Sale Prob: {df.loc[i, 'Sale Probability']}, "
                  f"Impr: {df.loc[i, 'Impressions']}, Age: {df.loc[i, 'Day Age']}")
     with col2:
-        confirm = st.checkbox("Confirm", key=f"confirm_{i}", value=df.loc[i, "Confirm"] == "TRUE")
+        confirm = st.checkbox("Confirm", key=f"confirm_{i}", value=str(df.loc[i, "Confirm"]).lower() == "true")
         confirm_status.append(confirm)
 
 df["Confirm"] = confirm_status
 
-# ───────────────────────────────────────────────────────
-# 3. Submit để ghi ngược vào Google Sheet
-# ───────────────────────────────────────────────────────
+# ---------------------------
+# 5. Gửi kết quả xác nhận
+# ---------------------------
 if st.button("📤 Submit Confirmed Terms"):
-    sheet.update([df.columns.values.tolist()] + df.astype(str).values.tolist())
-    st.success("✅ Confirmation status successfully updated to Google Sheet!")
+    sheet.update([df.columns.tolist()] + df.astype(str).values.tolist())
+    st.success("✅ Confirmation status updated to Google Sheet!")
 
-# ───────────────────────────────────────────────────────
-# 4. Hiển thị bảng kết quả
-# ───────────────────────────────────────────────────────
+# ---------------------------
+# 6. Hiển thị bảng
+# ---------------------------
 st.write("### Current Confirmation Status")
 st.dataframe(df)
