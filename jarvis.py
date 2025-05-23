@@ -22,7 +22,7 @@ client = gspread.authorize(creds)
 # 3. Read Sheet
 # ---------------------------
 SHEET_ID = "1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY"  
-sheet = client.open_by_key(SHEET_ID).Summary_Kill_SFO  
+sheet = client.open_by_key(SHEET_ID).worksheet("Summary_Kill_SFO")
 data = sheet.get_all_records()
 df = pd.DataFrame(data)
 
