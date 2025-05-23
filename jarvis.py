@@ -39,7 +39,7 @@ for i in range(len(df)):
         st.write(f"🔎 **{term}** — Sale Prob: {df.loc[i, 'score']}, "
                  f"Impr: {df.loc[i, 'impressions']}, Age: {df.loc[i, 'day_age']}")
     with col2:
-        confirm = st.checkbox("Confirm", key=f"confirm_{i}", value=str(df.loc[i, "Confirm"]).lower() == "true")
+        confirm = st.checkbox("Confirm", key=f"confirm_{i}", value=str(df.loc[i, "confirm_from_mkt"]).lower() == "true")
         confirm_status.append(confirm)
 
 df["Confirm"] = confirm_status
