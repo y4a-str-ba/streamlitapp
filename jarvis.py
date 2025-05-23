@@ -33,7 +33,7 @@ st.write("### Confirm individual terms")
 confirm_status = []
 
 for i in range(len(df)):
-    term = df.loc[i, 'Search Term']
+    term = df.loc[i, 'searchterm']
     col1, col2 = st.columns([0.85, 0.15])
     with col1:
         st.write(f"🔎 **{term}** — Sale Prob: {df.loc[i, 'Sale Probability']}, "
