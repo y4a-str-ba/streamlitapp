@@ -21,38 +21,41 @@ client = gspread.authorize(creds)
 # ---------------------------
 # 3. Read Sheet
 # ---------------------------
-SHEET_ID = "1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY"  
-sheet = client.open_by_key(SHEET_ID).worksheet("Summary_Kill_SFO")
+SHEET_ID = "1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY"
+WORKSHEET_NAME = "Summary_Kill_SFO"
+sheet = client.open_by_key(SHEET_ID).worksheet(WORKSHEET_NAME)
 data = sheet.get_all_records()
 df = pd.DataFrame(data)
 
 # ---------------------------
-# 4. Hiển thị Confirm
+# 4. Chuẩn hóa cột Confirm
 # ---------------------------
-st.write("### Confirm individual terms")
-confirm_status = []
-
-for i in range(len(df)):
-    term = df.loc[i, 'searchterm']
-    col1, col2 = st.columns([0.85, 0.15])
-    with col1:
-        st.write(f"🔎 **{term}** — Sale Prob: {df.loc[i, 'score']}, "
-                 f"Impr: {df.loc[i, 'impressions']}, Age: {df.loc[i, 'day_age']}")
-    with col2:
-        confirm = st.checkbox("Confirm", key=f"confirm_{i}", value=str(df.loc[i, "confirm_from_mkt"]).lower() == "true")
-        confirm_status.append(confirm)
-
-df["Confirm"] = confirm_status
+if "confirm_from_mkt" not in df.columns:
+    df["confirm_from_mkt"] = False
+else:
+    df["confirm_from_mkt"] = df["confirm_from_mkt"].astype(str).str.lower() == "true"
 
 # ---------------------------
-# 5. Gửi kết quả xác nhận
+# 5. Hiển thị bảng checkbox
+# ---------------------------
+st.write("### ✅ Confirm individual terms")
+edited_df = st.data_editor(
+    df,
+    column_config={"confirm_from_mkt": st.column_config.CheckboxColumn("Confirm")},
+    use_container_width=True,
+    num_rows="dynamic",
+    key="confirm_editor"
+)
+
+# ---------------------------
+# 6. Gửi lại vào Google Sheet
 # ---------------------------
 if st.button("📤 Submit Confirmed Terms"):
-    sheet.update([df.columns.tolist()] + df.astype(str).values.tolist())
+    sheet.update([edited_df.columns.tolist()] + edited_df.astype(str).values.tolist())
     st.success("✅ Confirmation status updated to Google Sheet!")
 
 # ---------------------------
-# 6. Hiển thị bảng
+# 7. Hiển thị bảng sau confirm
 # ---------------------------
 st.write("### Current Confirmation Status")
-st.dataframe(df)
+st.dataframe(edited_df)
