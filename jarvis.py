@@ -36,8 +36,8 @@ for i in range(len(df)):
     term = df.loc[i, 'searchterm']
     col1, col2 = st.columns([0.85, 0.15])
     with col1:
-        st.write(f"🔎 **{term}** — Sale Prob: {df.loc[i, 'Sale Probability']}, "
-                 f"Impr: {df.loc[i, 'Impressions']}, Age: {df.loc[i, 'Day Age']}")
+        st.write(f"🔎 **{term}** — Sale Prob: {df.loc[i, 'score']}, "
+                 f"Impr: {df.loc[i, 'impressions']}, Age: {df.loc[i, 'day_age']}")
     with col2:
         confirm = st.checkbox("Confirm", key=f"confirm_{i}", value=str(df.loc[i, "Confirm"]).lower() == "true")
         confirm_status.append(confirm)
