@@ -92,24 +92,29 @@ if st.button("📤 Submit Confirmed Terms"):
 # ---------------------------
 st.subheader("Explain a Search Term")
 selected_term = st.selectbox("Choose a search term", df["searchterm"])
-term_info = df[df["searchterm"] == selected_term].iloc[0]
+term_row = df[df["searchterm"] == selected_term]
 
-col1, col2 = st.columns(2)
-with col1:
-    st.markdown("**Explain this term:**")
-    st.write(f"**Search Term**: {selected_term}")
-    st.write(f"Sales: {term_info['sales']}")
-    st.write(f"CTR: {term_info['ctr']}%")
-    st.write(f"ACOS: {term_info['acos']}%")
-    st.write(f"Day Age: {term_info['day_age']}")
+if not term_row.empty:
+    term_info = term_row.iloc[0]
 
-with col2:
-    st.markdown("**Why was it KILLed?**")
-    if term_info['predict'].upper() == "KILL":
-        reason = f"Based on low CTR ({term_info['ctr']}%), day_age={term_info['day_age']}, and reason: {term_info.get('reason', 'N/A')}"
-    else:
-        reason = "Term is performing well."
-    st.success(reason)
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("**Explain this term:**")
+        st.write(f"**Search Term**: {selected_term}")
+        st.write(f"Sales: {term_info.get('sales', 'N/A')}")
+        st.write(f"CTR: {term_info.get('ctr', 'N/A')}%")
+        st.write(f"ACOS: {term_info.get('acos', 'N/A')}%")
+        st.write(f"Day Age: {term_info.get('day_age', 'N/A')}")
+
+    with col2:
+        st.markdown("**Why was it KILLed?**")
+        if str(term_info.get('predict', '')).upper() == "KILL":
+            reason = f"Based on low CTR ({term_info.get('ctr', '?')}%), day_age={term_info.get('day_age', '?')}, and reason: {term_info.get('reason', 'N/A')}"
+        else:
+            reason = "Term is performing well."
+        st.success(reason)
+else:
+    st.warning("No data available for selected search term.")
 
 # ---------------------------
 # 10. Display final table
