@@ -57,7 +57,7 @@ st.subheader("Search Term Predictions")
 st.data_editor(
     df,
     column_config={"confirm_from_mkt": st.column_config.CheckboxColumn("Confirm")},
-    use_container_width=True,
+    
     num_rows="dynamic",
     key="confirm_editor"
 )
