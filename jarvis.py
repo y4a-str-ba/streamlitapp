@@ -18,7 +18,7 @@ st.markdown("""
 # ---------------------------
 # 2. Sidebar Filters
 # ---------------------------
-st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/5/5e/Yes4All_Logo.png", use_column_width=True)
+st.sidebar.image("logo.png", use_column_width=True)
 st.sidebar.title("Filters")
 department = st.sidebar.selectbox("Department", ["SFO", "SSO"])
 date = st.sidebar.date_input("Date")
