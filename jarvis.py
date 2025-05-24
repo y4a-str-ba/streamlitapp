@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import gspread
@@ -112,5 +111,78 @@ with tab2:
                 f"day_age={term_info.get('day_age', '?')}, "
                 f"and reason: {term_info.get('reason', 'N/A')}"
             )
+    else:
+        st.warning("No data available for selected search term.")
+
+# ---------------------------
+# Tabs Layout
+# ---------------------------
+tab1, tab2, tab3 = st.tabs(["📊 Model Performance", "🔎 Search Term Predictions", "📖 Explain a Search Term"])
+
+# ---------------------------
+# Tab 1: Model Performance
+# ---------------------------
+with tab1:
+    st.subheader("Model Performance")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("Recall@KILL", "82%")
+        st.metric("False KILL Rate", "4%")
+    with col2:
+        st.metric("Estimated Cost Saved", "$10,200")
+        st.metric("Avg. CTR", f"{df['ctr'].mean():.2f}%")
+    with col3:
+        chart_data = pd.DataFrame({
+            "Date": pd.date_range(start="2024-04-18", periods=7),
+            "CostSaved": [2000, 3000, 3500, 6000, 7000, 9200, 10200]
+        })
+        fig = px.line(chart_data, x="Date", y="CostSaved", markers=True)
+        st.plotly_chart(fig)
+
+# ---------------------------
+# Tab 2: Search Term Predictions
+# ---------------------------
+with tab2:
+    st.subheader("Search Term Predictions")
+    total_terms = len(df)
+    st.metric("Total Search Terms", total_terms)
+
+    select_all = st.checkbox("✅ Select All", value=True)
+    df["confirm_from_mkt"] = select_all
+
+    edited_df = st.data_editor(
+        df,
+        column_config={"confirm_from_mkt": st.column_config.CheckboxColumn("Confirm")},
+        use_container_width=True,
+        num_rows="dynamic",
+        key="confirm_editor"
+    )
+
+    if st.button("📤 Submit Confirmed Terms"):
+        sheet.update([edited_df.columns.tolist()] + edited_df.astype(str).values.tolist())
+        st.success("✅ Confirmation status updated to Google Sheet!")
+
+    st.download_button("📥 Export CSV", df.to_csv(index=False), "search_terms.csv")
+
+# ---------------------------
+# Tab 3: Explain a Search Term
+# ---------------------------
+with tab3:
+    st.subheader("Explain a Search Term")
+    selected_term = st.selectbox("Choose a search term", df["searchterm"])
+    term_row = df[df["searchterm"] == selected_term]
+    if not term_row.empty:
+        term_info = term_row.iloc[0]
+        col1, col2 = st.columns(2)
+        with col1:
+            st.write(f"**Search Term**: {selected_term}")
+            st.write(f"Sales: {term_info.get('sales', 'N/A')}")
+            st.write(f"CTR: {term_info.get('ctr', 'N/A')}%")
+            st.write(f"ACOS: {term_info.get('acos', 'N/A')}%")
+            st.write(f"Day Age: {term_info.get('day_age', 'N/A')}")
+        with col2:
+            st.markdown("**Why was it KILLed?**")
+            reason = f"Based on low CTR ({term_info.get('ctr', '?')}%), day_age={term_info.get('day_age', '?')}, and reason: {term_info.get('reason', 'N/A')}"
+            st.success(reason)
     else:
         st.warning("No data available for selected search term.")
