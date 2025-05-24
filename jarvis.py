@@ -52,7 +52,7 @@ with tab1:
 
 with tab2:
     st.subheader("Confirm individual terms")
-    select_all = st.checkbox("✅ Select All", value=True)
+    select_all = st.checkbox("Select All", value=True)
     if select_all:
         df["confirm_from_mkt"] = True
 
