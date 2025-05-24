@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import gspread
@@ -6,11 +5,10 @@ from google.oauth2.service_account import Credentials
 import plotly.express as px
 
 # ---------------------------
-# 1. Config UI
+# 1. UI & Auth Config
 # ---------------------------
 st.set_page_config(page_title="Jarvis Dashboard", layout="wide")
 
-# Sidebar Filters
 st.sidebar.image("logo.png")
 st.sidebar.title("Filters")
 department = st.sidebar.selectbox("Department", ["SFO", "SSO"])
@@ -18,13 +16,14 @@ date = st.sidebar.date_input("Date")
 country = st.sidebar.selectbox("Country", ["US", "UK", "DE", "CA"])
 st.sidebar.button("Apply Filters")
 
-# Google Sheets Auth
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 service_account_info = st.secrets["gcp_service_account"]
 creds = Credentials.from_service_account_info(service_account_info, scopes=scope)
 client = gspread.authorize(creds)
 
-# Read Sheet
+# ---------------------------
+# 2. Load Data
+# ---------------------------
 SHEET_ID = "1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY"
 WORKSHEET_NAME = "Summary_Kill_SFO"
 sheet = client.open_by_key(SHEET_ID).worksheet(WORKSHEET_NAME)
@@ -37,7 +36,7 @@ else:
     df["confirm_from_mkt"] = df["confirm_from_mkt"].astype(str).str.lower() == "true"
 
 # ---------------------------
-# 2. Model KPIs
+# 3. KPIs
 # ---------------------------
 st.subheader("Model Performance")
 col1, col2, col3 = st.columns(3)
@@ -47,32 +46,34 @@ with col1:
 with col2:
     st.metric("Estimated Cost Saved", "$10,200")
 with col3:
-    chart_data = pd.DataFrame({
+    cost_df = pd.DataFrame({
         "Date": pd.date_range(start="2024-04-18", periods=7),
         "CostSaved": [2000, 3000, 3500, 6000, 7000, 9200, 10200]
     })
-    fig = px.line(chart_data, x="Date", y="CostSaved", markers=True)
-    st.plotly_chart(fig)
+    fig = px.line(cost_df, x="Date", y="CostSaved", markers=True)
+    st.plotly_chart(fig, use_container_width=True)
 
 # ---------------------------
-# 3. Tabs UI
+# 4. Tabs
 # ---------------------------
 tab1, tab2 = st.tabs(["📊 Search Term Predictions", "🔍 Explain a Search Term"])
 
 with tab1:
     st.metric("Total Search Terms", len(df))
-    st.metric("Terms Suggested for Kill", (df["predict"].str.upper() == "KILL").sum())
-
-    select_all = st.checkbox("Select All")
+    # Add Select All Checkbox
+    select_all = st.checkbox("✅ Select All", value=False)
     if select_all:
         df["confirm_from_mkt"] = True
 
+    paginated_df = df.copy()
+    paginated_df = paginated_df.reset_index(drop=True)
+
     edited_df = st.data_editor(
-        df,
+        paginated_df,
         column_config={"confirm_from_mkt": st.column_config.CheckboxColumn("Confirm")},
-        num_rows="dynamic",
         use_container_width=True,
-        key="confirm_editor"
+        num_rows="dynamic",
+        key="editor"
     )
 
     if st.button("📤 Submit Confirmed Terms"):
@@ -97,10 +98,7 @@ with tab2:
             st.write(f"Day Age: {term_info.get('day_age', 'N/A')}")
         with col2:
             st.markdown("**Why was it KILLed?**")
-            if str(term_info.get('predict', '')).upper() == "KILL":
-                reason = f"Based on low CTR ({term_info.get('ctr', '?')}%), day_age={term_info.get('day_age', '?')}, and reason: {term_info.get('reason', 'N/A')}"
-            else:
-                reason = "Term is performing well."
-            st.success(reason)
+            reason = f"Based on low CTR ({term_info.get('ctr', '?')}%), day_age={term_info.get('day_age', '?')}, and reason: {term_info.get('reason', 'N/A')}"
+            st.warning(reason)
     else:
         st.warning("No data available for selected search term.")
