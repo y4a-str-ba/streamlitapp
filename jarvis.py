@@ -8,55 +8,8 @@ import plotly.express as px
 # 1. Config UI
 # ---------------------------
 st.set_page_config(page_title="Jarvis Dashboard", layout="wide")
-st.markdown("""
-    <style>
-        body, .reportview-container, .sidebar .sidebar-content {
-            background-color: #0E1117;
-            color: white;
-        }
-        .block-container {
-            padding-top: 2rem;
-        }
-        .stButton>button {
-            width: 100%;
-            background-color: #1F232B;
-            color: white;
-            border: 1px solid white;
-        }
-        .stSelectbox>div>div, .stDateInput>div>div, .stTextInput>div>div {
-            background-color: #1F232B;
-            color: white;
-            border: 1px solid #444;
-        }
-        .stDataFrame, .stMetric {
-            background-color: #1F232B;
-            color: white;
-        }
-        .stSidebar {
-            background-color: #1F232B;
-        }
-        .css-1d391kg, .css-1offfwp, .css-1v0mbdj {
-            background-color: #1F232B !important;
-            color: white !important;
-        }
-        .stDataFrame tbody tr td:nth-child(2) {
-            font-weight: bold;
-        }
-        .stDataFrame tbody tr td:nth-child(2):contains("KILL") {
-            color: #FF4B4B !important;
-        }
-        .stDataFrame tbody tr td:nth-child(2):contains("KEEP") {
-            color: #4CFF4C !important;
-        }
-    </style>
-""", unsafe_allow_html=True)
 
-# Remaining code unchanged
-import pandas as pd
-import gspread
-from google.oauth2.service_account import Credentials
-import plotly.express as px
-
+# Remove dark theme CSS override if present
 # Sidebar Filters
 st.sidebar.image("logo.png", use_column_width=True)
 st.sidebar.title("Filters")
@@ -97,13 +50,6 @@ with col3:
         "CostSaved": [2000, 3000, 3500, 6000, 7000, 9200, 10200]
     })
     fig = px.line(chart_data, x="Date", y="CostSaved", markers=True)
-    fig.update_layout(
-        paper_bgcolor="#0E1117",
-        plot_bgcolor="#0E1117",
-        font_color="white",
-        xaxis=dict(color="white"),
-        yaxis=dict(color="white")
-    )
     st.plotly_chart(fig, use_container_width=True)
 
 # Search Term Predictions
