@@ -10,15 +10,30 @@ import plotly.express as px
 st.set_page_config(page_title="Jarvis Dashboard", layout="wide")
 st.markdown("""
     <style>
-        .block-container { padding-top: 2rem; }
-        .stButton>button { width: 100%; }
+        body {
+            background-color: #0E1117;
+            color: white;
+        }
+        .block-container {
+            padding-top: 2rem;
+            background-color: #0E1117;
+        }
+        .stButton>button {
+            width: 100%;
+            background-color: #1F232B;
+            color: white;
+        }
+        .stSelectbox, .stDateInput, .stTextInput, .stDataFrame, .stMetric {
+            background-color: #1F232B !important;
+            color: white !important;
+        }
     </style>
 """, unsafe_allow_html=True)
 
 # ---------------------------
 # 2. Sidebar Filters
 # ---------------------------
-st.sidebar.image("logo.png", use_column_width=True)
+st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/5/5e/Yes4All_Logo.png", use_column_width=True)
 st.sidebar.title("Filters")
 department = st.sidebar.selectbox("Department", ["SFO", "SSO"])
 date = st.sidebar.date_input("Date")
@@ -58,6 +73,7 @@ with col3:
         "CostSaved": [2000, 3000, 3500, 6000, 7000, 9200, 10200]
     })
     fig = px.line(chart_data, x="Date", y="CostSaved", markers=True)
+    fig.update_layout(paper_bgcolor="#0E1117", plot_bgcolor="#0E1117", font_color="white")
     st.plotly_chart(fig, use_container_width=True)
 
 # ---------------------------
