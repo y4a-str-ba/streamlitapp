@@ -10,20 +10,32 @@ import plotly.express as px
 st.set_page_config(page_title="Jarvis Dashboard", layout="wide")
 st.markdown("""
     <style>
-        body {
+        body, .reportview-container, .sidebar .sidebar-content {
             background-color: #0E1117;
             color: white;
         }
         .block-container {
             padding-top: 2rem;
-            background-color: #0E1117;
         }
         .stButton>button {
             width: 100%;
             background-color: #1F232B;
             color: white;
+            border: 1px solid white;
         }
-        .stSelectbox, .stDateInput, .stTextInput, .stDataFrame, .stMetric {
+        .stSelectbox>div>div, .stDateInput>div>div, .stTextInput>div>div {
+            background-color: #1F232B;
+            color: white;
+            border: 1px solid #444;
+        }
+        .stDataFrame, .stMetric {
+            background-color: #1F232B;
+            color: white;
+        }
+        .stSidebar {
+            background-color: #1F232B;
+        }
+        .css-1d391kg, .css-1offfwp, .css-1v0mbdj {
             background-color: #1F232B !important;
             color: white !important;
         }
@@ -73,7 +85,13 @@ with col3:
         "CostSaved": [2000, 3000, 3500, 6000, 7000, 9200, 10200]
     })
     fig = px.line(chart_data, x="Date", y="CostSaved", markers=True)
-    fig.update_layout(paper_bgcolor="#0E1117", plot_bgcolor="#0E1117", font_color="white")
+    fig.update_layout(
+        paper_bgcolor="#0E1117",
+        plot_bgcolor="#0E1117",
+        font_color="white",
+        xaxis=dict(color="white"),
+        yaxis=dict(color="white")
+    )
     st.plotly_chart(fig, use_container_width=True)
 
 # ---------------------------
