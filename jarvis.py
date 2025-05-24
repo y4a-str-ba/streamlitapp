@@ -39,39 +39,51 @@ st.markdown("""
             background-color: #1F232B !important;
             color: white !important;
         }
+        .stDataFrame tbody tr td:nth-child(2) {
+            font-weight: bold;
+        }
+        .stDataFrame tbody tr td:nth-child(2):contains("KILL") {
+            color: #FF4B4B !important;
+        }
+        .stDataFrame tbody tr td:nth-child(2):contains("KEEP") {
+            color: #4CFF4C !important;
+        }
     </style>
 """, unsafe_allow_html=True)
 
-# ---------------------------
-# 2. Sidebar Filters
-# ---------------------------
-st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/5/5e/Yes4All_Logo.png", use_column_width=True)
+# Remaining code unchanged
+import pandas as pd
+import gspread
+from google.oauth2.service_account import Credentials
+import plotly.express as px
+
+# Sidebar Filters
+st.sidebar.image("logo.png", use_column_width=True)
 st.sidebar.title("Filters")
 department = st.sidebar.selectbox("Department", ["SFO", "SSO"])
 date = st.sidebar.date_input("Date")
 country = st.sidebar.selectbox("Country", ["US", "UK", "DE", "CA"])
 st.sidebar.button("Apply Filters")
 
-# ---------------------------
-# 3. Google Sheets Auth
-# ---------------------------
+# Google Sheets Auth
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 service_account_info = st.secrets["gcp_service_account"]
 creds = Credentials.from_service_account_info(service_account_info, scopes=scope)
 client = gspread.authorize(creds)
 
-# ---------------------------
-# 4. Read Sheet
-# ---------------------------
+# Read Sheet
 SHEET_ID = "1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY"
 WORKSHEET_NAME = "Summary_Kill_SFO"
 sheet = client.open_by_key(SHEET_ID).worksheet(WORKSHEET_NAME)
 data = sheet.get_all_records()
 df = pd.DataFrame(data)
 
-# ---------------------------
-# 5. Model Performance
-# ---------------------------
+if "confirm_from_mkt" not in df.columns:
+    df["confirm_from_mkt"] = False
+else:
+    df["confirm_from_mkt"] = df["confirm_from_mkt"].astype(str).str.lower() == "true"
+
+# Model Performance
 st.subheader("Model Performance")
 col1, col2, col3 = st.columns(3)
 with col1:
@@ -94,17 +106,7 @@ with col3:
     )
     st.plotly_chart(fig, use_container_width=True)
 
-# ---------------------------
-# 6. Chuẩn hóa cột Confirm
-# ---------------------------
-if "confirm_from_mkt" not in df.columns:
-    df["confirm_from_mkt"] = False
-else:
-    df["confirm_from_mkt"] = df["confirm_from_mkt"].astype(str).str.lower() == "true"
-
-# ---------------------------
-# 7. Search Term Predictions
-# ---------------------------
+# Search Term Predictions
 st.subheader("Search Term Predictions")
 st.data_editor(
     df,
@@ -114,23 +116,17 @@ st.data_editor(
     key="confirm_editor"
 )
 
-# ---------------------------
-# 8. Submit to Sheet
-# ---------------------------
+# Submit
 if st.button("📤 Submit Confirmed Terms"):
     sheet.update([df.columns.tolist()] + df.astype(str).values.tolist())
     st.success("✅ Confirmation status updated to Google Sheet!")
 
-# ---------------------------
-# 9. Explain a Search Term
-# ---------------------------
+# Explain a Term
 st.subheader("Explain a Search Term")
 selected_term = st.selectbox("Choose a search term", df["searchterm"])
 term_row = df[df["searchterm"] == selected_term]
-
 if not term_row.empty:
     term_info = term_row.iloc[0]
-
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("**Explain this term:**")
@@ -139,7 +135,6 @@ if not term_row.empty:
         st.write(f"CTR: {term_info.get('ctr', 'N/A')}%")
         st.write(f"ACOS: {term_info.get('acos', 'N/A')}%")
         st.write(f"Day Age: {term_info.get('day_age', 'N/A')}")
-
     with col2:
         st.markdown("**Why was it KILLed?**")
         if str(term_info.get('predict', '')).upper() == "KILL":
@@ -150,8 +145,6 @@ if not term_row.empty:
 else:
     st.warning("No data available for selected search term.")
 
-# ---------------------------
-# 10. Display final table
-# ---------------------------
+# Final
 st.write("### Current Confirmation Status")
 st.dataframe(df, use_container_width=True)
