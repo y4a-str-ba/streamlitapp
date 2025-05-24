@@ -50,7 +50,7 @@ with col3:
         "CostSaved": [2000, 3000, 3500, 6000, 7000, 9200, 10200]
     })
     fig = px.line(chart_data, x="Date", y="CostSaved", markers=True)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig)
 
 # Search Term Predictions
 st.subheader("Search Term Predictions")
@@ -93,4 +93,4 @@ else:
 
 # Final
 st.write("### Current Confirmation Status")
-st.dataframe(df, use_container_width=True)
+st.dataframe(df)
