@@ -11,7 +11,7 @@ st.set_page_config(page_title="Jarvis Dashboard", layout="wide")
 
 # Remove dark theme CSS override if present
 # Sidebar Filters
-st.sidebar.image("logo.png", use_column_width=True)
+st.sidebar.image("logo.png")
 st.sidebar.title("Filters")
 department = st.sidebar.selectbox("Department", ["SFO", "SSO"])
 date = st.sidebar.date_input("Date")
