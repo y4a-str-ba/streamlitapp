@@ -6,7 +6,6 @@ from google.oauth2.service_account import Credentials
 import gspread
 import requests
 
-# Setup page
 st.set_page_config(page_title="Jarvis Dashboard", layout="wide")
 
 # =====================
@@ -58,28 +57,23 @@ if st.sidebar.button("Apply Filters"):
 
 df = pd.DataFrame()
 if st.session_state["apply_filters"]:
-    # Connect to Google Sheets
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"], scopes=scope)
     client = gspread.authorize(creds)
 
-    # Load worksheet
     sheet_name = f"Summary_Kill_{department}"
     sheet = client.open_by_key("1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY").worksheet(sheet_name)
     data = sheet.get_all_records()
     df = pd.DataFrame(data)
 
-    # Filter by country
     if "country_code_2" in df.columns and country != "All":
         df = df[df["country_code_2"] == country]
 
-    # Normalize confirm column
     if "confirm_from_mkt" not in df.columns:
         df["confirm_from_mkt"] = True
     else:
         df["confirm_from_mkt"] = df["confirm_from_mkt"].astype(str).str.lower() == "true"
 
-    # Tabs
     tab1, tab2, tab3 = st.tabs(["📊 Model Performance", "📝 Search Term Predictions", "🔍 Explain a Search Term"])
 
     # Tab 1
@@ -92,16 +86,11 @@ if st.session_state["apply_filters"]:
         sales_col = pd.to_numeric(df["sales"], errors="coerce") if "sales" in df else None
 
         col1, col2, col3, col4, col5 = st.columns(5)
-        with col1:
-            st.metric("Total Search Terms", len(df))
-        with col2:
-            st.metric("Estimated Cost Saved", "$10,200")
-        with col3:
-            st.metric("Avg ACOS", f"{acos_col.mean():.2%}" if acos_col is not None and not acos_col.dropna().empty else "N/A")
-        with col4:
-            st.metric("Avg CTR", f"{ctr_col.mean():.2%}" if ctr_col is not None and not ctr_col.dropna().empty else "N/A")
-        with col5:
-            st.metric("Avg Sales", f"{sales_col.mean():.0f}" if sales_col is not None and not sales_col.dropna().empty else "N/A")
+        with col1: st.metric("Total Search Terms", len(df))
+        with col2: st.metric("Estimated Cost Saved", "$10,200")
+        with col3: st.metric("Avg ACOS", f"{acos_col.mean():.2%}" if acos_col is not None and not acos_col.dropna().empty else "N/A")
+        with col4: st.metric("Avg CTR", f"{ctr_col.mean():.2%}" if ctr_col is not None and not ctr_col.dropna().empty else "N/A")
+        with col5: st.metric("Avg Sales", f"{sales_col.mean():.0f}" if sales_col is not None and not sales_col.dropna().empty else "N/A")
 
         trend_df = pd.DataFrame({
             "Date": pd.date_range(start="2024-04-18", periods=7),
@@ -164,37 +153,35 @@ if st.session_state["apply_filters"]:
 
     # Tab 3
     with tab3:
-    st.subheader("🔍 Explain a Search Term")
-    selected_term = st.selectbox("Choose a search term", df["searchterm"])
-    term_row = df[df["searchterm"] == selected_term]
+        st.subheader("🔍 Explain a Search Term")
+        selected_term = st.selectbox("Choose a search term", df["searchterm"])
+        term_row = df[df["searchterm"] == selected_term]
 
-    if not term_row.empty:
-        term_info = term_row.iloc[0]
-        col1, col2 = st.columns(2)
+        if not term_row.empty:
+            term_info = term_row.iloc[0]
+            col1, col2 = st.columns(2)
 
-        with col1:
-            st.markdown("**Search Term Info**")
-            st.write(f"🔎 **Search Term**: {selected_term}")
-            st.write(f"Sales: {term_info.get('sales', 'N/A')}")
-            st.write(f"CTR: {float(term_info.get('ctr', 0)):.2%}" if term_info.get('ctr') not in [None, ''] else "CTR: N/A")
-            st.write(f"ACOS: {float(term_info.get('acos', 0)):.2%}" if term_info.get('acos') not in [None, ''] else "ACOS: N/A")
-            st.write(f"Day Age: {term_info.get('day_age', 'N/A')}")
-            st.write(f"Cost: {term_info.get('cost', 'N/A')}")
-            st.write(f"CPC: {term_info.get('cpc', 'N/A')}")
-            st.write(f"Conversion Rate: {float(term_info.get('conversion_rate', 0)):.2%}" if term_info.get('conversion_rate') not in [None, ''] else "Conversion Rate: N/A")
-            st.write(f"Clicks: {term_info.get('clicks', 'N/A')}")
-            st.write(f"Spend/Day: {term_info.get('spend_per_day', 'N/A')}")
-            st.write(f"Purchases: {term_info.get('purchases', 'N/A')}")
-            st.write(f"Units Sold: {term_info.get('unitssold', 'N/A')}")
-            st.write(f"Score: {term_info.get('score', 'N/A')}")
+            with col1:
+                st.markdown("**Search Term Info**")
+                st.write(f"🔎 **Search Term**: {selected_term}")
+                st.write(f"Sales: {term_info.get('sales', 'N/A')}")
+                st.write(f"CTR: {float(term_info.get('ctr', 0)):.2%}" if term_info.get('ctr') not in [None, ''] else "CTR: N/A")
+                st.write(f"ACOS: {float(term_info.get('acos', 0)):.2%}" if term_info.get('acos') not in [None, ''] else "ACOS: N/A")
+                st.write(f"Day Age: {term_info.get('day_age', 'N/A')}")
+                st.write(f"Cost: {term_info.get('cost', 'N/A')}")
+                st.write(f"CPC: {term_info.get('cpc', 'N/A')}")
+                st.write(f"Conversion Rate: {float(term_info.get('conversion_rate', 0)):.2%}" if term_info.get('conversion_rate') not in [None, ''] else "Conversion Rate: N/A")
+                st.write(f"Clicks: {term_info.get('clicks', 'N/A')}")
+                st.write(f"Spend/Day: {term_info.get('spend_per_day', 'N/A')}")
+                st.write(f"Purchases: {term_info.get('purchases', 'N/A')}")
+                st.write(f"Units Sold: {term_info.get('unitssold', 'N/A')}")
+                st.write(f"Score: {term_info.get('score', 'N/A')}")
 
-        with col2:
-            st.markdown("**Why was it KILLed?**")
-            st.info(f"📌 Reason: {term_info.get('kill_reason', 'N/A')}")
-    else:
-        st.warning("No data available for selected search term.")
-
-    
+            with col2:
+                st.markdown("**Why was it KILLed?**")
+                st.info(f"📌 Reason: {term_info.get('kill_reason', 'N/A')}")
+        else:
+            st.warning("No data available for selected search term.")
 
 else:
     st.warning("👈 Please select filters and click 'Apply Filters' to view data.")
