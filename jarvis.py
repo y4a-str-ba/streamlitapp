@@ -17,9 +17,10 @@ if "department" not in st.session_state:
 
 department = st.sidebar.selectbox("Department", ["SFO", "SSO"], index=0)
 country = st.sidebar.selectbox("Country", ["US", "UK", "DE", "CA"])
-# Filter by country_code_2 column if exists
+    # Filter by country_code_2 column if exists
     if "country_code_2" in df.columns:
         df = df[df["country_code_2"] == country]
+
 # Setup session state for Apply button
 if "apply_filters" not in st.session_state:
     st.session_state["apply_filters"] = True  # auto-load SFO by default
@@ -29,6 +30,7 @@ if st.sidebar.button("Apply Filters"):
 
 # Load data only after user clicks Apply
 df = pd.DataFrame()
+
 if st.session_state["apply_filters"]:
     # Connect to Google Sheet
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -40,6 +42,10 @@ if st.session_state["apply_filters"]:
     sheet = client.open_by_key("1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY").worksheet(sheet_name)
     data = sheet.get_all_records()
     df = pd.DataFrame(data)
+
+    # Filter by country_code_2 column if exists
+    if "country_code_2" in df.columns:
+        df = df[df["country_code_2"] == country]
 
     # Normalize confirm column
     if "confirm_from_mkt" not in df.columns:
