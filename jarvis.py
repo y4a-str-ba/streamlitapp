@@ -47,7 +47,7 @@ if "department" not in st.session_state:
     st.session_state["department"] = "SFO"
 
 department = st.sidebar.selectbox("Department", ["SFO", "SSO"], index=0)
-country = st.sidebar.selectbox("Country", ["All", "US", "UK", "DE", "CA"])
+country = st.sidebar.selectbox("Country", ["All", "US", "UK", "DE", "CA","MX","SA","JP","ES","AU","GB","AE"])
 
 if "apply_filters" not in st.session_state:
     st.session_state["apply_filters"] = True
