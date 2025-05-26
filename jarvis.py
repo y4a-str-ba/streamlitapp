@@ -19,10 +19,14 @@ st.sidebar.button("Apply Filters")
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"], scopes=scope)
 client = gspread.authorize(creds)
-sheet = client.open_by_key("1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY").worksheet("Summary_Kill_SFO")
+
+# Tự động chọn sheet theo Department
+sheet_name = f"Summary_Kill_{department}"
+sheet = client.open_by_key("1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY").worksheet(sheet_name)
 data = sheet.get_all_records()
 df = pd.DataFrame(data)
 
+# Chuẩn hóa cột confirm
 if "confirm_from_mkt" not in df.columns:
     df["confirm_from_mkt"] = True
 else:
@@ -31,22 +35,26 @@ else:
 # Tabs
 tab1, tab2, tab3 = st.tabs(["📊 Model Performance", "📝 Search Term Predictions", "🔍 Explain a Search Term"])
 
+# ===========================
 # Tab 1 - Model Performance
+# ===========================
 with tab1:
     st.subheader("📊 Model Performance Summary")
+    st.markdown(f"📂 Currently viewing: **{sheet_name}**")
+
     col1, col2, col3, col4, col5 = st.columns(5)
     with col1:
         st.metric("Total Search Terms", len(df))
     with col2:
-        st.metric("Estimated Cost Saved", "$10,200")
+        st.metric("Estimated Cost Saved", "$10,200")  # Optional: dynamic calc
     with col3:
-        st.metric("Avg ACOS", "0.01%")
+        st.metric("Avg ACOS", f"{df['acos'].mean():.2%}" if 'acos' in df else "N/A")
     with col4:
-        st.metric("Avg CTR", "0.27%")
+        st.metric("Avg CTR", f"{df['ctr'].mean():.2%}" if 'ctr' in df else "N/A")
     with col5:
-        st.metric("Avg Sales", "0")
+        st.metric("Avg Sales", f"{df['sales'].mean():.0f}" if 'sales' in df else "N/A")
 
-    # Biểu đồ
+    # Fake trend data (replace with real if needed)
     trend_df = pd.DataFrame({
         "Date": pd.date_range(start="2024-04-18", periods=7),
         "CTR": [0.2, 0.22, 0.25, 0.28, 0.27, 0.3, 0.32],
@@ -59,7 +67,9 @@ with tab1:
     fig.update_layout(title="CTR & ACOS Trend", xaxis_title="Date", yaxis_title="Rate", template="plotly_white")
     st.plotly_chart(fig, use_container_width=True)
 
+# ===========================
 # Tab 2 - Search Term Predictions
+# ===========================
 with tab2:
     st.subheader("✅ Confirm individual terms")
     select_all = st.checkbox("☑ Select All", value=True)
@@ -78,7 +88,9 @@ with tab2:
 
     st.download_button("📥 Export CSV", edited_df.to_csv(index=False), "search_terms.csv")
 
+# ===========================
 # Tab 3 - Explain a Search Term
+# ===========================
 with tab3:
     st.subheader("🔍 Explain a Search Term")
     selected_term = st.selectbox("Choose a search term", df["searchterm"])
