@@ -40,7 +40,6 @@ if not st.session_state.logged_in:
 # =====================
 # MAIN DASHBOARD
 # =====================
-st.set_page_config(page_title="Jarvis Dashboard", layout="wide")
 
 # Sidebar filters
 st.sidebar.image("logo.png", width=180)
