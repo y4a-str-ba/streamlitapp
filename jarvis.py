@@ -17,9 +17,6 @@ if "department" not in st.session_state:
 
 department = st.sidebar.selectbox("Department", ["SFO", "SSO"], index=0)
 country = st.sidebar.selectbox("Country", ["US", "UK", "DE", "CA"])
-    # Filter by country_code_2 column if exists
-    if "country_code_2" in df.columns:
-        df = df[df["country_code_2"] == country]
 
 # Setup session state for Apply button
 if "apply_filters" not in st.session_state:
