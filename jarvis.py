@@ -11,7 +11,11 @@ st.set_page_config(page_title="Jarvis Dashboard", layout="wide")
 st.sidebar.image("logo.png", width=180)
 st.sidebar.title("Filters")
 
-department = st.sidebar.selectbox("Department", ["SFO", "SSO"])
+# Set default department to "SFO"
+if "department" not in st.session_state:
+    st.session_state["department"] = "SFO"
+
+department = st.sidebar.selectbox("Department", ["SFO", "SSO"], index=["SFO", "SSO"].index(st.session_state["department"]))
 date = st.sidebar.date_input("Date")
 country = st.sidebar.selectbox("Country", ["US", "UK", "DE", "CA"])
 
@@ -21,6 +25,7 @@ if "apply_filters" not in st.session_state:
 
 if st.sidebar.button("Apply Filters"):
     st.session_state["apply_filters"] = True
+    st.session_state["department"] = department
 
 # Load data only after user clicks Apply
 df = pd.DataFrame()
@@ -31,7 +36,7 @@ if st.session_state["apply_filters"]:
     client = gspread.authorize(creds)
 
     # Load correct worksheet
-    sheet_name = f"Summary_Kill_{department}"
+    sheet_name = f"Summary_Kill_{st.session_state['department']}"
     sheet = client.open_by_key("1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY").worksheet(sheet_name)
     data = sheet.get_all_records()
     df = pd.DataFrame(data)
