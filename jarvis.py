@@ -35,7 +35,7 @@ if st.session_state["apply_filters"]:
     client = gspread.authorize(creds)
 
     # Load correct worksheet
-    sheet_name = f"Summary_Kill_{st.session_state['department']}"
+    sheet_name = f"Summary_Kill_{department}"
     sheet = client.open_by_key("1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY").worksheet(sheet_name)
     data = sheet.get_all_records()
     df = pd.DataFrame(data)
