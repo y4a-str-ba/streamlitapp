@@ -16,7 +16,7 @@ if "department" not in st.session_state:
     st.session_state["department"] = "SFO"
 
 department = st.sidebar.selectbox("Department", ["SFO", "SSO"], index=0)
-country = st.sidebar.selectbox("Country", ["US", "UK", "DE", "CA"])
+country = st.sidebar.selectbox("Country", ["All", "US", "UK", "DE", "CA"])
 
 # Setup session state for Apply button
 if "apply_filters" not in st.session_state:
@@ -41,7 +41,7 @@ if st.session_state["apply_filters"]:
     df = pd.DataFrame(data)
 
     # Filter by country_code_2 column if exists
-    if "country_code_2" in df.columns:
+    if "country_code_2" in df.columns and country != "All":
         df = df[df["country_code_2"] == country]
 
     # Normalize confirm column
