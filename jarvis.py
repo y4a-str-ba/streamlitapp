@@ -130,9 +130,12 @@ if st.session_state["apply_filters"]:
     # =====================
     # Tab 2: Search Term Predictions
     # =====================
+        # =====================
+    # Tab 2: Search Term Predictions
+    # =====================
     with tab2:
-        st.subheader("\u2705 Confirm individual terms")
-        select_all = st.checkbox("\u2611 Select All", value=True)
+        st.subheader("✅ Confirm individual terms")
+        select_all = st.checkbox("☑ Select All", value=True)
         df["confirm_from_mkt"] = select_all
 
         edited_df = st.data_editor(
@@ -142,11 +145,33 @@ if st.session_state["apply_filters"]:
             key="confirm_editor"
         )
 
-        if st.button("\U0001F4E4 Submit Confirmed Terms"):
+        if st.button("📤 Submit Confirmed Terms"):
+            # Update to Google Sheet
             sheet.update([edited_df.columns.tolist()] + edited_df.astype(str).values.tolist())
-            st.success("\u2705 Confirmation status updated to Google Sheet!")
+            st.success("✅ Confirmation status updated to Google Sheet!")
 
-        st.download_button("\U0001F4E5 Export CSV", edited_df.to_csv(index=False), "search_terms.csv")
+            # 🔔 Send alert to Google Chat if any term was NOT confirmed
+            unconfirmed_df = edited_df[edited_df["confirm_from_mkt"] == False]
+            if not unconfirmed_df.empty:
+                import requests
+
+                webhook_url = "https://chat.googleapis.com/v1/spaces/AAQA4vfwkIw/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=TyhGKT_IfWTpa8e5A2N2KlVvK-ZSpu4PMclPG2YmtXs"
+                unconfirmed_terms = unconfirmed_df["searchterm"].tolist()
+                user = st.session_state.user
+
+                msg = f"📢 *Jarvis Alert*\n👤 User `{user}` did *NOT* confirm `{len(unconfirmed_terms)}` search terms:\n"
+                for term in unconfirmed_terms[:10]:
+                    msg += f"• {term}\n"
+                if len(unconfirmed_terms) > 10:
+                    msg += f"...and `{len(unconfirmed_terms) - 10}` more."
+
+                try:
+                    requests.post(webhook_url, json={"text": msg})
+                except Exception as e:
+                    st.warning(f"⚠️ Failed to send alert to Google Chat: {e}")
+
+        st.download_button("📥 Export CSV", edited_df.to_csv(index=False), "search_terms.csv")
+
 
     # =====================
     # Tab 3: Explain a Search Term
