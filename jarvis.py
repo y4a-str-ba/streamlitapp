@@ -32,7 +32,7 @@ if not st.session_state.logged_in:
         if username in users and hashlib.sha256(password.encode()).hexdigest() == hashlib.sha256(users[username].encode()).hexdigest():
             st.session_state.logged_in = True
             st.session_state.user = username
-            st.experimental_rerun()
+            st.rerun()
         else:
             st.error("❌ Invalid username or password")
     st.stop()
