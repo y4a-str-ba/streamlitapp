@@ -21,7 +21,7 @@ country = st.sidebar.selectbox("Country", ["US", "UK", "DE", "CA"])
 
 # Setup session state for Apply button
 if "apply_filters" not in st.session_state:
-    st.session_state["apply_filters"] = False
+    st.session_state["apply_filters"] = True  # auto-load SFO by default
 
 if st.sidebar.button("Apply Filters"):
     st.session_state["apply_filters"] = True
