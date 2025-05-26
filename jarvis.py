@@ -164,24 +164,37 @@ if st.session_state["apply_filters"]:
 
     # Tab 3
     with tab3:
-        st.subheader("🔍 Explain a Search Term")
-        selected_term = st.selectbox("Choose a search term", df["searchterm"])
-        term_row = df[df["searchterm"] == selected_term]
-        if not term_row.empty:
-            term_info = term_row.iloc[0]
-            col1, col2 = st.columns(2)
-            with col1:
-                st.markdown("**Search Term Info**")
-                st.write(f"🔎 **Search Term**: {selected_term}")
-                st.write(f"Sales: {term_info.get('sales', 'N/A')}")
-                st.write(f"CTR: {term_info.get('ctr', 'N/A')}%")
-                st.write(f"ACOS: {term_info.get('acos', 'N/A')}%")
-                st.write(f"Day Age: {term_info.get('day_age', 'N/A')}")
-            with col2:
-                st.markdown("**Why was it KILLed?**")
-                st.info(f"📌 Reason: {term_info.get('kill_reason', 'N/A')}")
-        else:
-            st.warning("No data available for selected search term.")
+    st.subheader("🔍 Explain a Search Term")
+    selected_term = st.selectbox("Choose a search term", df["searchterm"])
+    term_row = df[df["searchterm"] == selected_term]
+
+    if not term_row.empty:
+        term_info = term_row.iloc[0]
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.markdown("**Search Term Info**")
+            st.write(f"🔎 **Search Term**: {selected_term}")
+            st.write(f"Sales: {term_info.get('sales', 'N/A')}")
+            st.write(f"CTR: {float(term_info.get('ctr', 0)):.2%}" if term_info.get('ctr') not in [None, ''] else "CTR: N/A")
+            st.write(f"ACOS: {float(term_info.get('acos', 0)):.2%}" if term_info.get('acos') not in [None, ''] else "ACOS: N/A")
+            st.write(f"Day Age: {term_info.get('day_age', 'N/A')}")
+            st.write(f"Cost: {term_info.get('cost', 'N/A')}")
+            st.write(f"CPC: {term_info.get('cpc', 'N/A')}")
+            st.write(f"Conversion Rate: {float(term_info.get('conversion_rate', 0)):.2%}" if term_info.get('conversion_rate') not in [None, ''] else "Conversion Rate: N/A")
+            st.write(f"Clicks: {term_info.get('clicks', 'N/A')}")
+            st.write(f"Spend/Day: {term_info.get('spend_per_day', 'N/A')}")
+            st.write(f"Purchases: {term_info.get('purchases', 'N/A')}")
+            st.write(f"Units Sold: {term_info.get('unitssold', 'N/A')}")
+            st.write(f"Score: {term_info.get('score', 'N/A')}")
+
+        with col2:
+            st.markdown("**Why was it KILLed?**")
+            st.info(f"📌 Reason: {term_info.get('kill_reason', 'N/A')}")
+    else:
+        st.warning("No data available for selected search term.")
+
+    
 
 else:
     st.warning("👈 Please select filters and click 'Apply Filters' to view data.")
