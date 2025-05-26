@@ -24,7 +24,6 @@ if st.sidebar.button("Apply Filters"):
 
 # Load data only after user clicks Apply
 df = pd.DataFrame()
-
 if st.session_state["apply_filters"]:
     # Connect to Google Sheet
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -44,31 +43,38 @@ if st.session_state["apply_filters"]:
         df["confirm_from_mkt"] = df["confirm_from_mkt"].astype(str).str.lower() == "true"
 
     # Tabs
-    tab1, tab2, tab3 = st.tabs(["📊 Model Performance", "📝 Search Term Predictions", "🔍 Explain a Search Term"])
+    tab1, tab2, tab3 = st.tabs(["\U0001F4CA Model Performance", "\U0001F4DD Search Term Predictions", "\U0001F50D Explain a Search Term"])
 
     # =====================
     # Tab 1: Model Performance
     # =====================
     with tab1:
-        st.subheader("📊 Model Performance Summary")
-        st.markdown(f"📂 Currently viewing: **{sheet_name}**")
+        st.subheader("\U0001F4CA Model Performance Summary")
+        st.markdown(f"\U0001F4C2 Currently viewing: **{sheet_name}**")
 
+        # Convert to numeric safely
+        acos_col = pd.to_numeric(df["acos"], errors="coerce") if "acos" in df else None
+        ctr_col = pd.to_numeric(df["ctr"], errors="coerce") if "ctr" in df else None
+        sales_col = pd.to_numeric(df["sales"], errors="coerce") if "sales" in df else None
+
+        # Display metrics
         col1, col2, col3, col4, col5 = st.columns(5)
         with col1:
             st.metric("Total Search Terms", len(df))
         with col2:
-            st.metric("Estimated Cost Saved", "$10,200")  # Placeholder
+            st.metric("Estimated Cost Saved", "$10,200")
         with col3:
-            st.metric("Avg ACOS", f"{df['acos'].mean():.2%}" if 'acos' in df else "N/A")
+            st.metric("Avg ACOS", f"{acos_col.mean():.2%}" if acos_col is not None and not acos_col.dropna().empty else "N/A")
         with col4:
-            st.metric("Avg CTR", f"{df['ctr'].mean():.2%}" if 'ctr' in df else "N/A")
+            st.metric("Avg CTR", f"{ctr_col.mean():.2%}" if ctr_col is not None and not ctr_col.dropna().empty else "N/A")
         with col5:
-            st.metric("Avg Sales", f"{df['sales'].mean():.0f}" if 'sales' in df else "N/A")
+            st.metric("Avg Sales", f"{sales_col.mean():.0f}" if sales_col is not None and not sales_col.dropna().empty else "N/A")
 
+        # Dummy chart for trend
         trend_df = pd.DataFrame({
             "Date": pd.date_range(start="2024-04-18", periods=7),
-            "CTR": [0.2, 0.22, 0.25, 0.28, 0.27, 0.3, 0.32],
-            "ACOS": [0.01, 0.012, 0.011, 0.009, 0.008, 0.009, 0.01]
+            "CTR": [0.20, 0.22, 0.25, 0.28, 0.27, 0.29, 0.32],
+            "ACOS": [0.08, 0.10, 0.09, 0.11, 0.07, 0.09, 0.10]
         })
 
         fig = go.Figure()
@@ -81,8 +87,8 @@ if st.session_state["apply_filters"]:
     # Tab 2: Search Term Predictions
     # =====================
     with tab2:
-        st.subheader("✅ Confirm individual terms")
-        select_all = st.checkbox("☑ Select All", value=True)
+        st.subheader("\u2705 Confirm individual terms")
+        select_all = st.checkbox("\u2611 Select All", value=True)
         df["confirm_from_mkt"] = select_all
 
         edited_df = st.data_editor(
@@ -92,17 +98,17 @@ if st.session_state["apply_filters"]:
             key="confirm_editor"
         )
 
-        if st.button("📤 Submit Confirmed Terms"):
+        if st.button("\U0001F4E4 Submit Confirmed Terms"):
             sheet.update([edited_df.columns.tolist()] + edited_df.astype(str).values.tolist())
-            st.success("✅ Confirmation status updated to Google Sheet!")
+            st.success("\u2705 Confirmation status updated to Google Sheet!")
 
-        st.download_button("📥 Export CSV", edited_df.to_csv(index=False), "search_terms.csv")
+        st.download_button("\U0001F4E5 Export CSV", edited_df.to_csv(index=False), "search_terms.csv")
 
     # =====================
     # Tab 3: Explain a Search Term
     # =====================
     with tab3:
-        st.subheader("🔍 Explain a Search Term")
+        st.subheader("\U0001F50D Explain a Search Term")
         selected_term = st.selectbox("Choose a search term", df["searchterm"])
         term_row = df[df["searchterm"] == selected_term]
         if not term_row.empty:
@@ -110,16 +116,16 @@ if st.session_state["apply_filters"]:
             col1, col2 = st.columns(2)
             with col1:
                 st.markdown("**Search Term Info**")
-                st.write(f"🔎 **Search Term**: {selected_term}")
+                st.write(f"\U0001F50E **Search Term**: {selected_term}")
                 st.write(f"Sales: {term_info.get('sales', 'N/A')}")
                 st.write(f"CTR: {term_info.get('ctr', 'N/A')}%")
                 st.write(f"ACOS: {term_info.get('acos', 'N/A')}%")
                 st.write(f"Day Age: {term_info.get('day_age', 'N/A')}")
             with col2:
                 st.markdown("**Why was it KILLed?**")
-                st.info(f"📌 Reason: {term_info.get('kill_reason', 'N/A')}")
+                st.info(f"\U0001F4CC Reason: {term_info.get('kill_reason', 'N/A')}")
         else:
             st.warning("No data available for selected search term.")
 
 else:
-    st.warning("👈 Please select filters and click 'Apply Filters' to view data.")
+    st.warning("\U0001F448 Please select filters and click 'Apply Filters' to view data.")
