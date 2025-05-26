@@ -4,6 +4,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from google.oauth2.service_account import Credentials
 import gspread
+import requests
 
 # Setup page
 st.set_page_config(page_title="Jarvis Dashboard", layout="wide")
@@ -20,12 +21,11 @@ if not st.session_state.logged_in:
     password = st.text_input("Password", type="password")
     login_button = st.button("Login")
 
-    # Multi-user credential check
     users = {
         "admin": "yes4all123",
         "hanhbth@yes4all.com": "h@nhBI2025",
         "duylk@yes4all.com": "duyTeam123",
-        "ngatpth@yes4all.com":"ngat123"
+        "ngatpth@yes4all.com": "ngat123"
     }
 
     if login_button:
@@ -40,43 +40,36 @@ if not st.session_state.logged_in:
 # =====================
 # MAIN DASHBOARD
 # =====================
-
-# Sidebar filters
 st.sidebar.image("logo.png", width=180)
 st.sidebar.title("Filters")
-
 st.sidebar.markdown(f"👤 Logged in as: **{st.session_state.user}**")
 
-# Set default department to "SFO"
 if "department" not in st.session_state:
     st.session_state["department"] = "SFO"
 
 department = st.sidebar.selectbox("Department", ["SFO", "SSO"], index=0)
 country = st.sidebar.selectbox("Country", ["All", "US", "UK", "DE", "CA"])
 
-# Setup session state for Apply button
 if "apply_filters" not in st.session_state:
-    st.session_state["apply_filters"] = True  # auto-load SFO by default
+    st.session_state["apply_filters"] = True
 
 if st.sidebar.button("Apply Filters"):
     st.session_state["apply_filters"] = True
 
-# Load data only after user clicks Apply
 df = pd.DataFrame()
-
 if st.session_state["apply_filters"]:
-    # Connect to Google Sheet
+    # Connect to Google Sheets
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"], scopes=scope)
     client = gspread.authorize(creds)
 
-    # Load correct worksheet
+    # Load worksheet
     sheet_name = f"Summary_Kill_{department}"
     sheet = client.open_by_key("1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY").worksheet(sheet_name)
     data = sheet.get_all_records()
     df = pd.DataFrame(data)
 
-    # Filter by country_code_2 column if exists
+    # Filter by country
     if "country_code_2" in df.columns and country != "All":
         df = df[df["country_code_2"] == country]
 
@@ -87,21 +80,17 @@ if st.session_state["apply_filters"]:
         df["confirm_from_mkt"] = df["confirm_from_mkt"].astype(str).str.lower() == "true"
 
     # Tabs
-    tab1, tab2, tab3 = st.tabs(["\U0001F4CA Model Performance", "\U0001F4DD Search Term Predictions", "\U0001F50D Explain a Search Term"])
+    tab1, tab2, tab3 = st.tabs(["📊 Model Performance", "📝 Search Term Predictions", "🔍 Explain a Search Term"])
 
-    # =====================
-    # Tab 1: Model Performance
-    # =====================
+    # Tab 1
     with tab1:
-        st.subheader("\U0001F4CA Model Performance Summary")
-        st.markdown(f"\U0001F4C2 Currently viewing: **{sheet_name}**")
+        st.subheader("📊 Model Performance Summary")
+        st.markdown(f"📂 Currently viewing: **{sheet_name}**")
 
-        # Convert to numeric safely
         acos_col = pd.to_numeric(df["acos"], errors="coerce") if "acos" in df else None
         ctr_col = pd.to_numeric(df["ctr"], errors="coerce") if "ctr" in df else None
         sales_col = pd.to_numeric(df["sales"], errors="coerce") if "sales" in df else None
 
-        # Display metrics
         col1, col2, col3, col4, col5 = st.columns(5)
         with col1:
             st.metric("Total Search Terms", len(df))
@@ -114,7 +103,6 @@ if st.session_state["apply_filters"]:
         with col5:
             st.metric("Avg Sales", f"{sales_col.mean():.0f}" if sales_col is not None and not sales_col.dropna().empty else "N/A")
 
-        # Dummy chart for trend
         trend_df = pd.DataFrame({
             "Date": pd.date_range(start="2024-04-18", periods=7),
             "CTR": [0.20, 0.22, 0.25, 0.28, 0.27, 0.29, 0.32],
@@ -127,12 +115,7 @@ if st.session_state["apply_filters"]:
         fig.update_layout(title="CTR & ACOS Trend", xaxis_title="Date", yaxis_title="Rate", template="plotly_white")
         st.plotly_chart(fig, use_container_width=True)
 
-    # =====================
-    # Tab 2: Search Term Predictions
-    # =====================
-        # =====================
-    # Tab 2: Search Term Predictions
-    # =====================
+    # Tab 2
     with tab2:
         st.subheader("✅ Confirm individual terms")
         select_all = st.checkbox("☑ Select All", value=True)
@@ -146,38 +129,42 @@ if st.session_state["apply_filters"]:
         )
 
         if st.button("📤 Submit Confirmed Terms"):
-            # Update to Google Sheet
             sheet.update([edited_df.columns.tolist()] + edited_df.astype(str).values.tolist())
             st.success("✅ Confirmation status updated to Google Sheet!")
 
-            # 🔔 Send alert to Google Chat if any term was NOT confirmed
+            total_confirmed = (edited_df["confirm_from_mkt"] == True).sum()
+            total_unconfirmed = (edited_df["confirm_from_mkt"] == False).sum()
+            user = st.session_state.user
+            current_sheet = sheet.title
+
+            msg = (
+                "📢 *Jarvis Confirmation Report*\n"
+                f"👤 User: `{user}`\n"
+                f"📄 Sheet: `{current_sheet}`\n"
+                f"✅ Confirmed: `{total_confirmed}`\n"
+                f"❌ Not Confirmed: `{total_unconfirmed}`"
+            )
+
             unconfirmed_df = edited_df[edited_df["confirm_from_mkt"] == False]
             if not unconfirmed_df.empty:
-                import requests
-
-                webhook_url = "https://chat.googleapis.com/v1/spaces/AAQA4vfwkIw/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=TyhGKT_IfWTpa8e5A2N2KlVvK-ZSpu4PMclPG2YmtXs"
                 unconfirmed_terms = unconfirmed_df["searchterm"].tolist()
-                user = st.session_state.user
-
-                msg = f"📢 *Jarvis Alert*\n👤 User `{user}` did *NOT* confirm `{len(unconfirmed_terms)}` search terms:\n"
+                msg += "\n\n🔍 *Unconfirmed Terms:*"
                 for term in unconfirmed_terms[:10]:
-                    msg += f"• {term}\n"
+                    msg += f"\n• {term}"
                 if len(unconfirmed_terms) > 10:
-                    msg += f"...and `{len(unconfirmed_terms) - 10}` more."
+                    msg += f"\n...and `{len(unconfirmed_terms) - 10}` more."
 
-                try:
-                    requests.post(webhook_url, json={"text": msg})
-                except Exception as e:
-                    st.warning(f"⚠️ Failed to send alert to Google Chat: {e}")
+            webhook_url = "https://chat.googleapis.com/v1/spaces/AAQA4vfwkIw/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=TyhGKT_IfWTpa8e5A2N2KlVvK-ZSpu4PMclPG2YmtXs"
+            try:
+                requests.post(webhook_url, json={"text": msg})
+            except Exception as e:
+                st.warning(f"⚠️ Failed to send alert to Google Chat: {e}")
 
         st.download_button("📥 Export CSV", edited_df.to_csv(index=False), "search_terms.csv")
 
-
-    # =====================
-    # Tab 3: Explain a Search Term
-    # =====================
+    # Tab 3
     with tab3:
-        st.subheader("\U0001F50D Explain a Search Term")
+        st.subheader("🔍 Explain a Search Term")
         selected_term = st.selectbox("Choose a search term", df["searchterm"])
         term_row = df[df["searchterm"] == selected_term]
         if not term_row.empty:
@@ -185,16 +172,16 @@ if st.session_state["apply_filters"]:
             col1, col2 = st.columns(2)
             with col1:
                 st.markdown("**Search Term Info**")
-                st.write(f"\U0001F50E **Search Term**: {selected_term}")
+                st.write(f"🔎 **Search Term**: {selected_term}")
                 st.write(f"Sales: {term_info.get('sales', 'N/A')}")
                 st.write(f"CTR: {term_info.get('ctr', 'N/A')}%")
                 st.write(f"ACOS: {term_info.get('acos', 'N/A')}%")
                 st.write(f"Day Age: {term_info.get('day_age', 'N/A')}")
             with col2:
                 st.markdown("**Why was it KILLed?**")
-                st.info(f"\U0001F4CC Reason: {term_info.get('kill_reason', 'N/A')}")
+                st.info(f"📌 Reason: {term_info.get('kill_reason', 'N/A')}")
         else:
             st.warning("No data available for selected search term.")
 
 else:
-    st.warning("\U0001F448 Please select filters and click 'Apply Filters' to view data.")
+    st.warning("👈 Please select filters and click 'Apply Filters' to view data.")
