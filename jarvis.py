@@ -17,7 +17,7 @@ if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
 if not st.session_state.logged_in:
-    st.title("🔐 Login to Jarvis Dashboard")
+    st.title("Login to Jarvis Dashboard")
     username = st.text_input("Username")
     password = st.text_input("Password", type="password")
     login_button = st.button("Login")
@@ -35,7 +35,7 @@ if not st.session_state.logged_in:
             st.session_state.user = username
             st.rerun()
         else:
-            st.error("❌ Invalid username or password")
+            st.error("Invalid username or password")
     st.stop()
 
 # =====================
@@ -43,7 +43,7 @@ if not st.session_state.logged_in:
 # =====================
 st.sidebar.image("logo.png", width=180)
 st.sidebar.title("Filters")
-st.sidebar.markdown(f"👤 Logged in as: **{st.session_state.user}**")
+st.sidebar.markdown(f"Logged in as: **{st.session_state.user}**")
 
 if "department" not in st.session_state:
     st.session_state["department"] = "SFO"
@@ -79,21 +79,20 @@ if st.session_state["apply_filters"]:
     if "reason_reject" not in df.columns:
         df["reason_reject"] = ""
 
-    tab1, tab2, tab3 = st.tabs(["\ud83d\udcca Model Performance", "\ud83d\udcdd Search Term Predictions", "\ud83d\udd0d Explain a Search Term"])
+    tab1, tab2, tab3 = st.tabs(["Model Performance", "Search Term Predictions", "Explain a Search Term"])
 
     with tab1:
-        st.subheader("\ud83d\udcca Model Performance Summary")
-        st.markdown(f"\ud83d\udcc2 Currently viewing: **{sheet_name}**")
-        # You can keep your chart logic here as before
+        st.subheader("Model Performance Summary")
+        st.markdown(f"Currently viewing: **{sheet_name}**")
 
     with tab2:
-        st.subheader("\u2705 Confirm individual terms")
+        st.subheader("Confirm individual terms")
 
         campaigns = ["All"] + sorted(df["campaignname"].dropna().unique().tolist())
         adgroups = ["All"] + sorted(df["adgroupname"].dropna().unique().tolist())
 
-        selected_campaign = st.selectbox("\ud83d\udce6 Filter by Campaign", campaigns, index=0)
-        selected_adgroup = st.selectbox("\ud83e\udde9 Filter by Ad Group", adgroups, index=0)
+        selected_campaign = st.selectbox("Filter by Campaign", campaigns, index=0)
+        selected_adgroup = st.selectbox("Filter by Ad Group", adgroups, index=0)
 
         df_filtered = df.copy()
         if selected_campaign != "All":
@@ -101,28 +100,28 @@ if st.session_state["apply_filters"]:
         if selected_adgroup != "All":
             df_filtered = df_filtered[df_filtered["adgroupname"] == selected_adgroup]
 
-        select_all = st.checkbox("\u2611 Select All", value=True)
+        select_all = st.checkbox("Select All", value=True)
         df_filtered["confirm_from_mkt"] = select_all
 
         edited_df = st.data_editor(
             df_filtered,
             column_config={
-                "confirm_from_mkt": st.column_config.CheckboxColumn("\u2705 Confirm"),
-                "reason_reject": st.column_config.TextColumn("\u270f\ufe0f Reason (if Unconfirmed)")
+                "confirm_from_mkt": st.column_config.CheckboxColumn("Confirm"),
+                "reason_reject": st.column_config.TextColumn("Reason (if Unconfirmed)")
             },
             num_rows="dynamic",
             key="confirm_editor"
         )
 
-        if st.button("\ud83d\udce4 Submit Confirmed Terms"):
+        if st.button("Submit Confirmed Terms"):
             invalid_rows = edited_df[(edited_df["confirm_from_mkt"] == False) & (edited_df["reason_reject"].str.strip() == "")]
             if not invalid_rows.empty:
-                st.error("\u274c Please provide a reason for ALL unconfirmed terms before submitting.")
+                st.error("Please provide a reason for ALL unconfirmed terms before submitting.")
                 st.stop()
 
             df.update(edited_df)
             sheet.update([df.columns.tolist()] + df.astype(str).values.tolist())
-            st.success("\u2705 Confirmation status updated to Google Sheet!")
+            st.success("Confirmation status updated to Google Sheet!")
 
             total_confirmed = (df["confirm_from_mkt"] == True).sum()
             total_unconfirmed = (df["confirm_from_mkt"] == False).sum()
@@ -130,17 +129,17 @@ if st.session_state["apply_filters"]:
             current_sheet = sheet.title
 
             msg = (
-                "\ud83d\udce2 *Jarvis Confirmation Report*\n"
-                f"\ud83d\udc64 User: `{user}`\n"
-                f"\ud83d\udcc4 Sheet: `{current_sheet}`\n"
-                f"\u2705 Confirmed: `{total_confirmed}`\n"
-                f"\u274c Not Confirmed: `{total_unconfirmed}`"
+                "Jarvis Confirmation Report\n"
+                f"User: `{user}`\n"
+                f"Sheet: `{current_sheet}`\n"
+                f"Confirmed: `{total_confirmed}`\n"
+                f"Not Confirmed: `{total_unconfirmed}`"
             )
 
             unconfirmed_df = df[df["confirm_from_mkt"] == False]
             if not unconfirmed_df.empty:
                 unconfirmed_terms = unconfirmed_df["searchterm"].tolist()
-                msg += "\n\n\ud83d\udd0d *Unconfirmed Terms:*"
+                msg += "\n\nUnconfirmed Terms:"
                 for term in unconfirmed_terms[:10]:
                     msg += f"\n• {term}"
                 if len(unconfirmed_terms) > 10:
@@ -149,10 +148,10 @@ if st.session_state["apply_filters"]:
             webhook_url = "https://chat.googleapis.com/v1/spaces/AAQA4vfwkIw/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=TyhGKT_IfWTpa8e5A2N2KlVvK-ZSpu4PMclPG2YmtXs"
             requests.post(webhook_url, json={"text": msg})
 
-        st.download_button("\ud83d\udcc5 Export CSV", df.astype(str).to_csv(index=False), "search_terms.csv")
+        st.download_button("Export CSV", df.astype(str).to_csv(index=False), "search_terms.csv")
 
     with tab3:
-        st.subheader("\ud83d\udd0d Explain a Search Term")
+        st.subheader("Explain a Search Term")
         selected_term = st.selectbox("Choose a search term", df["searchterm"])
         term_row = df[df["searchterm"] == selected_term]
 
@@ -162,7 +161,7 @@ if st.session_state["apply_filters"]:
 
             with col1:
                 st.markdown("**Search Term Info**")
-                st.write(f"\ud83d\udd0e **Search Term**: {selected_term}")
+                st.write(f"Search Term: {selected_term}")
                 st.write(f"Sales: {term_info.get('sales', 'N/A')}")
                 ctr_val = pd.to_numeric(term_info.get("ctr", None), errors="coerce")
                 acos_val = pd.to_numeric(term_info.get("acos", None), errors="coerce")
@@ -182,6 +181,6 @@ if st.session_state["apply_filters"]:
 
             with col2:
                 st.markdown("**Why was it KILLed?**")
-                st.info(f"\ud83d\udccc Reason: {term_info.get('kill_reason', 'N/A')}")
+                st.info(f"Reason: {term_info.get('kill_reason', 'N/A')}")
         else:
             st.warning("No data available for selected search term.")
