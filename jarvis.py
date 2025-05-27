@@ -5,7 +5,10 @@ import plotly.graph_objects as go
 from google.oauth2.service_account import Credentials
 import gspread
 import requests
-
+import streamlit as st
+import pandas as pd
+import numpy as np
+import plotly.express as px
 st.set_page_config(page_title="Jarvis Dashboard", layout="wide")
 
 # =====================
@@ -91,6 +94,43 @@ if st.session_state["apply_filters"]:
         with col2: st.metric("Total Campaign Impact","290")
         with col3: st.metric("Estimated Cost Saved", "$10,200")
         with col4: st.metric("Avg ACOS", "19%")
+    
+
+        # Fake data
+        np.random.seed(42)
+        date_range = pd.date_range(start="2024-05-01", end="2024-07-01")
+        cutoff_date = pd.to_datetime("2024-06-01")
+
+        # Giả lập ACOS: cao hơn trước khi dùng Jarvis
+        acos_values = [
+        np.random.uniform(0.23, 0.30) if d < cutoff_date else np.random.uniform(0.13, 0.20)
+        for d in date_range]
+
+        df = pd.DataFrame({
+        "report_date": date_range,
+        "acos": acos_values
+        })
+
+        df["period"] = df["report_date"].apply(lambda x: "Before Jarvis" if x < cutoff_date else "After Jarvis")
+
+        # Vẽ biểu đồ
+        fig = px.line(
+            df,
+            x="report_date",
+            y="acos",
+            color="period",
+            title="📉 ACOS Before vs After Using Jarvis",
+            markers=True
+        )
+
+        fig.update_layout(
+        xaxis_title="Date",
+        yaxis_title="ACOS",
+        template="plotly_white"
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
+
 
         trend_df = pd.DataFrame({
             "Date": pd.date_range(start="2024-04-18", periods=7),
