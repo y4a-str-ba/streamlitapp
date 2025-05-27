@@ -123,6 +123,13 @@ if st.session_state["apply_filters"]:
             markers=True
         )
 
+        fig.add_vline(
+                x=cutoff_date,
+                line_dash="dash",
+                line_color="red",
+                annotation_text="🚀 Jarvis Launched",
+                annotation_position="top left"
+        )
         fig.update_layout(
         xaxis_title="Date",
         yaxis_title="ACOS",
