@@ -105,24 +105,38 @@ if st.session_state["apply_filters"]:
         st.plotly_chart(fig, use_container_width=True)
 
     # Tab 2
-    with tab2:
-        st.subheader("✅ Confirm individual terms")
-        select_all = st.checkbox("☑ Select All", value=True)
-        df["confirm_from_mkt"] = select_all
+    # =====================
+# Tab 2: Search Term Predictions
+# =====================
+with tab2:
+    st.subheader("✅ Confirm individual terms")
+    
+    # Gán giá trị default cho toàn bộ df
+    select_all = st.checkbox("☑ Select All", value=True)
+    df["confirm_from_mkt"] = select_all
 
-        edited_df = st.data_editor(
-            df,
-            column_config={"confirm_from_mkt": st.column_config.CheckboxColumn("Confirm")},
-            num_rows="dynamic",
-            key="confirm_editor"
-        )
+    # Tạo bản copy để hiển thị (nếu sau này bạn filter thêm search)
+    df_display = df.copy()
 
-        if st.button("📤 Submit Confirmed Terms"):
-            sheet.update([edited_df.columns.tolist()] + edited_df.astype(str).values.tolist())
+    edited_df = st.data_editor(
+        df_display,
+        column_config={"confirm_from_mkt": st.column_config.CheckboxColumn("Confirm")},
+        num_rows="dynamic",
+        key="confirm_editor"
+    )
+
+    if st.button("📤 Submit Confirmed Terms"):
+        try:
+            # ✅ Cập nhật lại vào df gốc
+            df.update(edited_df)
+
+            # ✅ Ghi lại toàn bộ sheet để tránh append lỗi
+            sheet.update([df.columns.tolist()] + df.astype(str).values.tolist())
             st.success("✅ Confirmation status updated to Google Sheet!")
 
-            total_confirmed = (edited_df["confirm_from_mkt"] == True).sum()
-            total_unconfirmed = (edited_df["confirm_from_mkt"] == False).sum()
+            # 🔔 Tính toán số lượng và gửi alert
+            total_confirmed = (df["confirm_from_mkt"] == True).sum()
+            total_unconfirmed = (df["confirm_from_mkt"] == False).sum()
             user = st.session_state.user
             current_sheet = sheet.title
 
@@ -134,7 +148,7 @@ if st.session_state["apply_filters"]:
                 f"❌ Not Confirmed: `{total_unconfirmed}`"
             )
 
-            unconfirmed_df = edited_df[edited_df["confirm_from_mkt"] == False]
+            unconfirmed_df = df[df["confirm_from_mkt"] == False]
             if not unconfirmed_df.empty:
                 unconfirmed_terms = unconfirmed_df["searchterm"].tolist()
                 msg += "\n\n🔍 *Unconfirmed Terms:*"
@@ -144,12 +158,13 @@ if st.session_state["apply_filters"]:
                     msg += f"\n...and `{len(unconfirmed_terms) - 10}` more."
 
             webhook_url = "https://chat.googleapis.com/v1/spaces/AAQA4vfwkIw/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=TyhGKT_IfWTpa8e5A2N2KlVvK-ZSpu4PMclPG2YmtXs"
-            try:
-                requests.post(webhook_url, json={"text": msg})
-            except Exception as e:
-                st.warning(f"⚠️ Failed to send alert to Google Chat: {e}")
+            requests.post(webhook_url, json={"text": msg})
 
-        st.download_button("📥 Export CSV", edited_df.to_csv(index=False), "search_terms.csv")
+        except Exception as e:
+            st.error(f"❌ Update failed: {e}")
+
+    st.download_button("📥 Export CSV", df.astype(str).to_csv(index=False), "search_terms.csv")
+
 
     # Tab 3
     with tab3:
