@@ -201,6 +201,3 @@ with tab2:
                 st.info(f"📌 Reason: {term_info.get('kill_reason', 'N/A')}")
         else:
             st.warning("No data available for selected search term.")
-
-else:
-    st.warning("👈 Please select filters and click 'Apply Filters' to view data.")
