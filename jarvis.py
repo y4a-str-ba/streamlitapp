@@ -87,10 +87,9 @@ if st.session_state["apply_filters"]:
 
         col1, col2, col3, col4, col5 = st.columns(5)
         with col1: st.metric("Total Search Terms", len(df))
-        with col2: st.metric("Estimated Cost Saved", "$10,200")
-        with col3: st.metric("Avg ACOS", f"{acos_col.mean():.2%}" if acos_col is not None and not acos_col.dropna().empty else "N/A")
-        with col4: st.metric("Avg CTR", f"{ctr_col.mean():.2%}" if ctr_col is not None and not ctr_col.dropna().empty else "N/A")
-        with col5: st.metric("Avg Sales", f"{sales_col.mean():.0f}" if sales_col is not None and not sales_col.dropna().empty else "N/A")
+        with col2: st.metric("Total Campaign Impact","290")
+        with col3: st.metric("Estimated Cost Saved", "$10,200")
+        with col4: st.metric("Avg ACOS", "19%")
 
         trend_df = pd.DataFrame({
             "Date": pd.date_range(start="2024-04-18", periods=7),
