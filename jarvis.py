@@ -213,6 +213,31 @@ if st.session_state["apply_filters"]:
                           color_discrete_sequence=["#FF5733"])
             fig2.update_layout(template="plotly_white")
             st.plotly_chart(fig2, use_container_width=True)
+        # ─────────────────────────────────────────────────────────────
+        # Top 10 Campaigns Impacted by Jarvis
+        # ─────────────────────────────────────────────────────────────
+        st.subheader("📌 Top Campaigns Impacted by Jarvis")
+
+        # Fake data
+        top_campaigns_data = pd.DataFrame({
+            "Campaign Name": [
+                "SP_Brand_OutdoorDeck_2024", "SP_Exact_EggChair_May", "SP_PatioTiles_June",
+                "SP_Manual_CoffeeTable", "SP_Auto_GardeningSet", "SP_Exact_SofaCover",
+                "SP_Match_LoungeChair", "SP_Exact_BBQTable", "SP_Exact_DeckTileKit", "SP_Brand_RattanSet"
+            ],
+            "Search Terms Killed": [45, 38, 36, 34, 31, 29, 27, 24, 22, 20],
+            "Burn Prevented ($)": [1250, 1120, 980, 920, 850, 800, 740, 710, 690, 650],
+            "Improved ACOS (%)": [12.4, 10.8, 11.5, 9.2, 8.7, 10.1, 7.8, 9.5, 6.9, 7.2]
+        })
+
+        # Format percentage
+        top_campaigns_data["Improved ACOS (%)"] = top_campaigns_data["Improved ACOS (%)"].map("{:.1f}%".format)
+
+        # Display as table
+        st.dataframe(top_campaigns_data, use_container_width=True)
+
+
+
         # # CTR & ACOS dummy trend chart
         # trend_df = pd.DataFrame({
         #     "Date": pd.date_range(start="2024-04-18", periods=7),
