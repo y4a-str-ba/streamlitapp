@@ -154,19 +154,43 @@ if st.session_state["apply_filters"]:
             template="plotly_white"
         )
         st.plotly_chart(fig, use_container_width=True)
+        # Biểu đồ 2 cột: 1. CTR & ACOS  2. Burn Prevented
+        col1, col2 = st.columns(2)
+
+        with col1:
+            trend_df = pd.DataFrame({
+                "Date": pd.date_range(start="2024-04-18", periods=7),
+                "CTR": [0.20, 0.22, 0.25, 0.28, 0.27, 0.29, 0.32],
+                "ACOS": [0.08, 0.10, 0.09, 0.11, 0.07, 0.09, 0.10]
+            })
+
+            fig1 = go.Figure()
+            fig1.add_trace(go.Scatter(x=trend_df["Date"], y=trend_df["CTR"], name="CTR", line=dict(color="green", width=3)))
+            fig1.add_trace(go.Scatter(x=trend_df["Date"], y=trend_df["ACOS"], name="ACOS", line=dict(color="orange", width=3)))
+            fig1.update_layout(title="CTR & ACOS Trend", xaxis_title="Date", yaxis_title="Rate", template="plotly_white")
+            st.plotly_chart(fig1, use_container_width=True)
+
+        with col2:
+            burn_df = pd.DataFrame({
+                "Date": pd.date_range(start="2024-04-18", periods=7),
+                "Burn Prevented ($)": [120, 150, 180, 130, 160, 200, 210]
+            })
     
-        # CTR & ACOS dummy trend chart
-        trend_df = pd.DataFrame({
-            "Date": pd.date_range(start="2024-04-18", periods=7),
-            "CTR": [0.20, 0.22, 0.25, 0.28, 0.27, 0.29, 0.32],
-            "ACOS": [0.08, 0.10, 0.09, 0.11, 0.07, 0.09, 0.10]
-        })
+            fig2 = px.bar(burn_df, x="Date", y="Burn Prevented ($)", title="🔥 Burn Prevented by Jarvis", color_discrete_sequence=["#FF5733"])
+            fig2.update_layout(template="plotly_white")
+            st.plotly_chart(fig2, use_container_width=True)
+        # # CTR & ACOS dummy trend chart
+        # trend_df = pd.DataFrame({
+        #     "Date": pd.date_range(start="2024-04-18", periods=7),
+        #     "CTR": [0.20, 0.22, 0.25, 0.28, 0.27, 0.29, 0.32],
+        #     "ACOS": [0.08, 0.10, 0.09, 0.11, 0.07, 0.09, 0.10]
+        # })
     
-        fig2 = go.Figure()
-        fig2.add_trace(go.Scatter(x=trend_df["Date"], y=trend_df["CTR"], name="CTR", line=dict(color="green", width=3)))
-        fig2.add_trace(go.Scatter(x=trend_df["Date"], y=trend_df["ACOS"], name="ACOS", line=dict(color="orange", width=3)))
-        fig2.update_layout(title="CTR & ACOS Trend", xaxis_title="Date", yaxis_title="Rate", template="plotly_white")
-        st.plotly_chart(fig2, use_container_width=True)
+        # fig2 = go.Figure()
+        # fig2.add_trace(go.Scatter(x=trend_df["Date"], y=trend_df["CTR"], name="CTR", line=dict(color="green", width=3)))
+        # fig2.add_trace(go.Scatter(x=trend_df["Date"], y=trend_df["ACOS"], name="ACOS", line=dict(color="orange", width=3)))
+        # fig2.update_layout(title="CTR & ACOS Trend", xaxis_title="Date", yaxis_title="Rate", template="plotly_white")
+        # st.plotly_chart(fig2, use_container_width=True)
 
 
     # Tab 2
