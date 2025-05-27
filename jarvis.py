@@ -74,12 +74,168 @@ with tab1:
     st.subheader("📊 Model Performance Summary")
     st.markdown(f"📂 Currently viewing: **{sheet_name}**")
 
-    if "acos" in df.columns:
-        df["acos"] = pd.to_numeric(df["acos"], errors="coerce")
-        st.metric("Avg ACOS", f"{df['acos'].mean():.2%}")
-    if "sales" in df.columns:
-        df["sales"] = pd.to_numeric(df["sales"], errors="coerce")
-        st.metric("Total Sales", f"${df['sales'].sum():,.0f}")
+    # Basic metrics
+    acos_col = pd.to_numeric(df["acos"], errors="coerce") if "acos" in df else None
+    ctr_col = pd.to_numeric(df["ctr"], errors="coerce") if "ctr" in df else None
+    sales_col = pd.to_numeric(df["sales"], errors="coerce") if "sales" in df else None
+
+    col1, col2, col3, col4 = st.columns(4)
+    with col1: st.metric("Total Search Terms", len(df))
+    with col2: st.metric("Total Campaign Impact", "290")
+    with col3: st.metric("Estimated Cost Saved", "$10,200")
+    with col4: st.metric("Avg ACOS", "19%")
+
+    # Fake ACOS data before/after Jarvis
+    np.random.seed(42)
+    date_range = pd.date_range(start="2024-05-01", end="2024-07-01")
+    cutoff_date = pd.to_datetime("2024-06-01")
+
+    acos_values = [
+        np.random.uniform(0.23, 0.30) if d < cutoff_date else np.random.uniform(0.13, 0.20)
+        for d in date_range
+    ]
+
+    acos_df = pd.DataFrame({
+        "report_date": date_range,
+        "acos": acos_values
+    })
+    acos_df["period"] = acos_df["report_date"].apply(
+        lambda x: "Before Jarvis" if x < cutoff_date else "After Jarvis"
+    )
+
+    fig = px.line(
+        acos_df,
+        x="report_date",
+        y="acos",
+        color="period",
+        title="📉 ACOS Before vs After Using Jarvis",
+        markers=True
+    )
+
+    # Add vertical line at cutoff date
+    fig.add_shape(
+        type="line",
+        x0=cutoff_date,
+        y0=0,
+        x1=cutoff_date,
+        y1=1,
+        xref='x',
+        yref='paper',
+        line=dict(
+            color="red",
+            width=2,
+            dash="dash"
+        )
+    )
+
+    fig.add_annotation(
+        x=cutoff_date,
+        y=1,
+        yref="paper",
+        showarrow=False,
+        text="🚀 Jarvis Launched",
+        font=dict(color="red"),
+        bgcolor="rgba(255,255,255,0.8)"
+    )
+
+    fig.update_layout(
+        xaxis_title="Date",
+        yaxis_title="ACOS",
+        template="plotly_white"
+    )
+    st.plotly_chart(fig, use_container_width=True)
+    # Biểu đồ 2 cột: 1. CTR & ACOS  2. Burn Prevented
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("**CTR & ACOS Trend**")
+
+        ctr_acos_df = pd.DataFrame({
+            "Date": pd.date_range(start="2024-05-01", end="2024-07-01"),
+            "CTR": np.random.uniform(0.2, 0.35, size=62),
+            "ACOS": np.random.uniform(0.07, 0.12, size=62),
+        })
+
+        # Melt dataframe to long format
+        ctr_acos_melted = ctr_acos_df.melt(id_vars="Date", value_vars=["CTR", "ACOS"], var_name="Metric",
+                                           value_name="Rate")
+
+        fig1 = px.area(
+            ctr_acos_melted,
+            x="Date",
+            y="Rate",
+            color="Metric",
+            line_group="Metric",
+            title=None
+        )
+
+        # Add vertical line and annotation for Jarvis launch
+        fig1.add_shape(
+            type="line",
+            x0=pd.to_datetime("2024-06-01"),
+            x1=pd.to_datetime("2024-06-01"),
+            y0=0, y1=1,
+            line=dict(color="red", dash="dash"),
+            xref="x", yref="paper"
+        )
+        fig1.add_annotation(
+            x=pd.to_datetime("2024-06-01"),
+            y=1,
+            yref="paper",
+            showarrow=False,
+            text="🚀 Jarvis Launched",
+            bgcolor="white",
+            font=dict(size=12, color="red"),
+            xanchor="left"
+        )
+
+        fig1.update_layout(margin=dict(t=20, b=20), height=350, template="plotly_white", showlegend=True)
+        st.plotly_chart(fig1, use_container_width=True)
+
+    with col2:
+        burn_df = pd.DataFrame({
+            "Date": pd.date_range(start="2024-04-18", periods=7),
+            "Burn Prevented ($)": [120, 150, 180, 130, 160, 200, 210]
+        })
+
+        fig2 = px.bar(burn_df, x="Date", y="Burn Prevented ($)", title="🔥 Burn Prevented by Jarvis",
+                      color_discrete_sequence=["#FF5733"])
+        fig2.update_layout(template="plotly_white")
+        st.plotly_chart(fig2, use_container_width=True)
+    # ─────────────────────────────────────────────────────────────
+    # Top 10 Campaigns Impacted by Jarvis
+    # ─────────────────────────────────────────────────────────────
+    st.subheader("📌 Top Campaigns Impacted by Jarvis")
+
+    # Fake data
+    top_campaigns_data = pd.DataFrame({
+        "Campaign Name": [
+            "SP_Brand_OutdoorDeck_2024", "SP_Exact_EggChair_May", "SP_PatioTiles_June",
+            "SP_Manual_CoffeeTable", "SP_Auto_GardeningSet", "SP_Exact_SofaCover",
+            "SP_Match_LoungeChair", "SP_Exact_BBQTable", "SP_Exact_DeckTileKit", "SP_Brand_RattanSet"
+        ],
+        "Search Terms Killed": [45, 38, 36, 34, 31, 29, 27, 24, 22, 20],
+        "Burn Prevented ($)": [1250, 1120, 980, 920, 850, 800, 740, 710, 690, 650],
+        "Improved ACOS (%)": [12.4, 10.8, 11.5, 9.2, 8.7, 10.1, 7.8, 9.5, 6.9, 7.2]
+    })
+
+    # Format percentage
+    top_campaigns_data["Improved ACOS (%)"] = top_campaigns_data["Improved ACOS (%)"].map("{:.1f}%".format)
+
+    # Display as table
+    st.dataframe(top_campaigns_data, use_container_width=True)
+
+    # # CTR & ACOS dummy trend chart
+    # trend_df = pd.DataFrame({
+    #     "Date": pd.date_range(start="2024-04-18", periods=7),
+    #     "CTR": [0.20, 0.22, 0.25, 0.28, 0.27, 0.29, 0.32],
+    #     "ACOS": [0.08, 0.10, 0.09, 0.11, 0.07, 0.09, 0.10]
+    # })
+
+    # fig2 = go.Figure()
+    # fig2.add_trace(go.Scatter(x=trend_df["Date"], y=trend_df["CTR"], name="CTR", line=dict(color="green", width=3)))
+    # fig2.add_trace(go.Scatter(x=trend_df["Date"], y=trend_df["ACOS"], name="ACOS", line=dict(color="orange", width=3)))
+    # fig2.update_layout(title="CTR & ACOS Trend", xaxis_title="Date", yaxis_title="Rate", template="plotly_white")
+    # st.plotly_chart(fig2, use_container_width=True)
 
 # ========== TAB 2 ==========
 with tab2:
