@@ -164,7 +164,7 @@ with tab2:
             if len(unconfirmed_terms) > 10:
                 msg += f"\n...and `{len(unconfirmed_terms) - 10}` more."
 
-        webhook_url = st.secrets["https://chat.googleapis.com/v1/spaces/AAQA4vfwkIw/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=TyhGKT_IfWTpa8e5A2N2KlVvK-ZSpu4PMclPG2YmtXs"]
+        webhook_url = st.secrets["webhook_url"]
         requests.post(webhook_url, json={"text": msg})
 
     st.download_button("📥 Export CSV", df.astype(str).to_csv(index=False), "search_terms.csv")
