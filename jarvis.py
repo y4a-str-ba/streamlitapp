@@ -85,7 +85,7 @@ if st.session_state["apply_filters"]:
         ctr_col = pd.to_numeric(df["ctr"], errors="coerce") if "ctr" in df else None
         sales_col = pd.to_numeric(df["sales"], errors="coerce") if "sales" in df else None
 
-        col1, col2, col3, col4, col5 = st.columns(4)
+        col1, col2, col3, col4 = st.columns(4)
         
         with col1: st.metric("Total Search Terms", len(df))
         with col2: st.metric("Total Campaign Impact","290")
