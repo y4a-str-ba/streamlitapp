@@ -156,18 +156,44 @@ if st.session_state["apply_filters"]:
         st.plotly_chart(fig, use_container_width=True)
         # Biểu đồ 2 cột: 1. CTR & ACOS  2. Burn Prevented
         col1, col2 = st.columns(2)
-
         with col1:
+            # Giả lập dữ liệu từ 01/05 đến 01/07
             trend_df = pd.DataFrame({
-                "Date": pd.date_range(start="2024-04-18", periods=7),
-                "CTR": [0.20, 0.22, 0.25, 0.28, 0.27, 0.29, 0.32],
-                "ACOS": [0.08, 0.10, 0.09, 0.11, 0.07, 0.09, 0.10]
+                "Date": pd.date_range(start="2024-05-01", end="2024-07-01"),
             })
-
+            np.random.seed(42)
+            trend_df["CTR"] = np.random.uniform(0.20, 0.32, len(trend_df))
+            trend_df["ACOS"] = np.random.uniform(0.07, 0.13, len(trend_df))
+        
+            # Vẽ area chart với đường cắt 01/06
             fig1 = go.Figure()
-            fig1.add_trace(go.Scatter(x=trend_df["Date"], y=trend_df["CTR"], name="CTR", line=dict(color="green", width=3)))
-            fig1.add_trace(go.Scatter(x=trend_df["Date"], y=trend_df["ACOS"], name="ACOS", line=dict(color="orange", width=3)))
-            fig1.update_layout(title="CTR & ACOS Trend", xaxis_title="Date", yaxis_title="Rate", template="plotly_white")
+            fig1.add_trace(go.Scatter(
+                x=trend_df["Date"], y=trend_df["CTR"],
+                name="CTR", fill='tozeroy',
+                mode='lines+markers',
+                line=dict(color="green")
+            ))
+            fig1.add_trace(go.Scatter(
+                x=trend_df["Date"], y=trend_df["ACOS"],
+                name="ACOS", fill='tozeroy',
+                mode='lines+markers',
+                line=dict(color="orange")
+            ))
+        
+            # Vẽ đường thẳng cắt 01/06
+            fig1.add_vline(
+                x=pd.to_datetime("2024-06-01"),
+                line_dash="dash", line_color="red",
+                annotation_text="🚀 Jarvis Launched",
+                annotation_position="top left"
+            )
+        
+            fig1.update_layout(
+                title="CTR & ACOS Trend (Area Chart)",
+                xaxis_title="Date",
+                yaxis_title="Rate",
+                template="plotly_white"
+            )
             st.plotly_chart(fig1, use_container_width=True)
 
         with col2:
