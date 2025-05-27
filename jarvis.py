@@ -63,7 +63,6 @@ else:
 
 if "reason_reject" not in df.columns:
     df["reason_reject"] = ""
-
 if "reason_category" not in df.columns:
     df["reason_category"] = "8. Other  → Other (please specify)"
 
@@ -84,13 +83,13 @@ with tab1:
 
 # ========== TAB 2 ==========
 with tab2:
-    st.subheader("✅ Confirm individual terms")
+    st.subheader("Confirm individual terms")
 
     campaigns = ["All"] + sorted(df["campaignname"].dropna().unique().tolist())
     adgroups = ["All"] + sorted(df["adgroupname"].dropna().unique().tolist())
 
-    selected_campaign = st.selectbox("📦 Filter by Campaign", campaigns, index=0)
-    selected_adgroup = st.selectbox("🧩 Filter by Ad Group", adgroups, index=0)
+    selected_campaign = st.selectbox("Filter by Campaign", campaigns, index=0)
+    selected_adgroup = st.selectbox("Filter by Ad Group", adgroups, index=0)
 
     df_filtered = df.copy()
     if selected_campaign != "All":
@@ -98,7 +97,7 @@ with tab2:
     if selected_adgroup != "All":
         df_filtered = df_filtered[df_filtered["adgroupname"] == selected_adgroup]
 
-    select_all = st.checkbox("☑ Select All", value=True)
+    select_all = st.checkbox("Select All", value=True)
     df_filtered["confirm_from_mkt"] = select_all
 
     reason_options = [
@@ -112,33 +111,37 @@ with tab2:
         "8. Other  → Other (please specify)"
     ]
 
+    preferred_cols = ["confirm_from_mkt", "reason_category", "reason_reject"]
+    df_filtered = df_filtered[preferred_cols + [col for col in df_filtered.columns if col not in preferred_cols]]
+
     edited_df = st.data_editor(
         df_filtered,
         column_config={
             "confirm_from_mkt": st.column_config.CheckboxColumn("Confirm"),
-            "reason_category": st.column_config.SelectboxColumn("Reason Category (if Unconfirmed)", options=reason_options),
+            "reason_category": st.column_config.SelectboxColumn(
+                "Reason Category (if Unconfirmed)",
+                options=reason_options
+            ),
             "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)")
         },
         num_rows="dynamic",
         key="confirm_editor"
     )
 
-    if st.button("📤 Submit Confirmed Terms"):
-        # Nếu chọn Other mà không nhập lý do
+    if st.button("Submit Confirmed Terms"):
         invalid_rows = edited_df[
             (edited_df["confirm_from_mkt"] == False) &
             (edited_df["reason_category"] == reason_options[-1]) &
             (edited_df["reason_reject"].str.strip() == "")
         ]
         if not invalid_rows.empty:
-            st.error("⚠️ You selected 'Other' as reason category but did not provide a free text reason.")
+            st.error("You selected 'Other' as reason category but did not provide a free text reason.")
             st.stop()
 
         df.update(edited_df)
         sheet.update([df.columns.tolist()] + df.astype(str).values.tolist())
-        st.success("✅ Confirmation status updated to Google Sheet!")
+        st.success("Confirmation status updated to Google Sheet!")
 
-        # Alert via Google Chat
         total_confirmed = (df["confirm_from_mkt"] == True).sum()
         total_unconfirmed = (df["confirm_from_mkt"] == False).sum()
         user = st.session_state.user
@@ -168,7 +171,7 @@ with tab2:
 
 # ========== TAB 3 ==========
 with tab3:
-    st.subheader("🔍 Explain a Search Term")
+    st.subheader("Explain a Search Term")
     selected_term = st.selectbox("Choose a search term", df["searchterm"])
     term_row = df[df["searchterm"] == selected_term]
 
