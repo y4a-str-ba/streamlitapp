@@ -24,7 +24,10 @@ if not st.session_state.logged_in:
         "hanhbth@yes4all.com": "h@nhBI2025",
         "duylk@yes4all.com": "duyTeam123",
         "ngatpth@yes4all.com": "ngat123",
-        "anhttn1@yes4all.com":"anh123"
+        "anhttn1@yes4all.com":"anh123",
+        "daona@yes4all.com":"dao123",
+        "nhinth@yes4all.com":"nhi123",
+        "baong@yes4all.com":"bao123"
     }
 
     if login_button:
