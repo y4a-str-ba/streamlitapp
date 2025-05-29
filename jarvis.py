@@ -27,7 +27,8 @@ if not st.session_state.logged_in:
         "anhttn1@yes4all.com":"anh123",
         "daona@yes4all.com":"dao123",
         "nhinth@yes4all.com":"nhi123",
-        "baong@yes4all.com":"bao123"
+        "baong@yes4all.com":"bao123",
+        "quocla@yes4all.com":"quoc123"
     }
 
     if login_button:
