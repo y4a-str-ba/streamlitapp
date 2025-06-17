@@ -28,7 +28,6 @@ if not st.session_state.logged_in:
         "daona@yes4all.com":"dao123",
         "nhinth@yes4all.com":"nhi123",
         "baong@yes4all.com":"bao123",
-        "quocla@yes4all.com":"quoc123",
         "tuongnq@yes4all.com":"tuong123"
     }
 
