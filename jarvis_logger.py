@@ -24,16 +24,18 @@ def log_all_terms(edited_df, user, sheet_id, sheet_name, service_account_info):
     edited_df = edited_df[selected_columns]
 
     # Connect to Google Sheets
-    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    scope = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
     creds = Credentials.from_service_account_info(service_account_info, scopes=scope)
     client = gspread.authorize(creds)
     sheet = client.open_by_key(sheet_id).worksheet(sheet_name)
 
-    # Add header
-    existing_values = sheet.get_all_values()
-    if not existing_values and not edited_df.empty:
+    # Check if sheet is truly empty (cell A1 is blank)
+    first_cell = sheet.acell("A1").value
+
+    if not first_cell and not edited_df.empty:
+        # Sheet is empty → write header + data
         all_data = [edited_df.columns.tolist()] + edited_df.astype(str).values.tolist()
         sheet.update("A1", all_data, value_input_option="USER_ENTERED")
     elif not edited_df.empty:
-        # Append rows
+        # Sheet has data → only append data
         sheet.append_rows(edited_df.astype(str).values.tolist(), value_input_option="USER_ENTERED")
