@@ -20,19 +20,19 @@ if not st.session_state.logged_in:
     login_button = st.button("Login")
 
     users = {
-        "admin": "yes4all123",
-        "hanhbth@yes4all.com": "h@nhBI2025",
-        "anhdtt@yes4all.com": "anh1234",
-        "hanhhk@yes4all.com": "hanh123",
-        "khanhdnt@yes4all.com":"khanh123",
-        "lyntb@yes4all.com":"ly123",
-        "hoangl@yes4all.com":"hoang123",
-        "anhttn1@yes4all.com":"anh123",
-        "tuongnq@yes4all.com":"tuong123"
-    }
+    "admin": "9fef2e62d7d3a8cb8025d0c660ffdbb3b4fdc1a28d2065c9cb10a770d6b164c0",
+    "hanhbth@yes4all.com": "b5a06c68c110e897ff2a2c267012167347e0b20286a481c6c2b0ac01272898a2",
+    "anhdt@yes4all.com": "2a4f527388de8f6efdd334f87a2f17f840b1989022ea6d42004232eb2ed24a84",
+    "hanhkh@yes4all.com": "50a7432752743c7e4288476ad7793c1c4edb66be1e7764c4c2d547a8d32df51d",
+    "khanhdnt@yes4all.com": "50a7432752743c7e4288476ad7793c1c4edb66be1e7764c4c2d547a8d32df51d",
+    "lyndt@yes4all.com": "4329e67f85e99dd517ea25d6e9f32025c1a7d27d2ef7b3d1ad7f1b75c5aa7fd3",
+    "hoangtl@yes4all.com": "3a89d6c8b0cb777be29092ae99446f0a42b759adf0cf2b15c42d902e5050e6e7",
+    "anhltt@yes4all.com": "2a4f527388de8f6efdd334f87a2f17f840b1989022ea6d42004232eb2ed24a84",
+    "tuongng@y4a.com": "3eadd0413a8713f3f36f42ed07a3491a6df75f6f5c89cf307dd12b1628dcfc70"}
+
 
     if login_button:
-        if username in users and hashlib.sha256(password.encode()).hexdigest() == hashlib.sha256(users[username].encode()).hexdigest():
+        if username in users and hashlib.sha256(password.encode()).hexdigest() == users[username]:
             st.session_state.logged_in = True
             st.session_state.user = username
             st.rerun()
