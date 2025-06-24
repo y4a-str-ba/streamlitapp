@@ -33,7 +33,7 @@ def log_all_terms(edited_df, user, sheet_id, sheet_name, service_account_info):
     existing_values = sheet.get_all_values()
     header = edited_df.columns.tolist()
     if not existing_values:
-        sheet.append_row(header, value_input_option="USER_ENTERED")
+        sheet.insert_row(header, index=1, value_input_option="USER_ENTERED")
 
     # Append rows
     sheet.append_rows(edited_df.astype(str).values.tolist(), value_input_option="USER_ENTERED")
