@@ -31,10 +31,9 @@ def log_all_terms(edited_df, user, sheet_id, sheet_name, service_account_info):
 
     # Add header
     existing_values = sheet.get_all_values()
-    header = edited_df.columns.tolist()
     if not existing_values and not edited_df.empty:
-        sheet.insert_row(header, index=1, value_input_option="USER_ENTERED")
-
-    # Append rows
-    if not edited_df.empty:
+        all_data = [edited_df.columns.tolist()] + edited_df.astype(str).values.tolist()
+        sheet.update("A1", all_data, value_input_option="USER_ENTERED")
+    elif not edited_df.empty:
+        # Append rows
         sheet.append_rows(edited_df.astype(str).values.tolist(), value_input_option="USER_ENTERED")
