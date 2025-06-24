@@ -22,12 +22,12 @@ if not st.session_state.logged_in:
     users = {
         "admin": "yes4all123",
         "hanhbth@yes4all.com": "h@nhBI2025",
-        "duylk@yes4all.com": "duyTeam123",
-        "ngatpth@yes4all.com": "ngat123",
+        "anhdtt@yes4all.com": "anh1234",
+        "hanhhk@yes4all.com": "hanh123",
+        "khanhdnt@yes4all.com":"khanh123",
+        "lyntb@yes4all.com":"ly123",
+        "hoangl@yes4all.com":"hoang123",
         "anhttn1@yes4all.com":"anh123",
-        "daona@yes4all.com":"dao123",
-        "nhinth@yes4all.com":"nhi123",
-        "baong@yes4all.com":"bao123",
         "tuongnq@yes4all.com":"tuong123"
     }
 
