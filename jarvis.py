@@ -6,6 +6,7 @@ import numpy as np
 import requests
 import gspread
 from google.oauth2.service_account import Credentials
+from logger import log_all_terms
 
 st.set_page_config(page_title="Jarvis Dashboard", layout="wide")
 
@@ -303,6 +304,15 @@ with tab2:
         sheet.update([df.columns.tolist()] + df.astype(str).values.tolist())
         st.success("Confirmation status updated to Google Sheet!")
 
+        # Log Writer (Confirmed + Unconfirmed)
+        log_all_terms(
+            edited_df=edited_df,
+            user=st.session_state.user,
+            sheet_id="1xORIj-ha6_yXddi-V_6nMNsxM8-A5imI6HSoPUPv9Aw",        
+            sheet_name="Jarvis Confirmation Log",        
+            service_account_info=st.secrets["gcp_service_account"]
+        )
+    
         total_confirmed = (df["confirm_from_mkt"] == True).sum()
         total_unconfirmed = (df["confirm_from_mkt"] == False).sum()
         user = st.session_state.user
