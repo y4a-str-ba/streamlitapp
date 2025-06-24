@@ -4,12 +4,29 @@ import pandas as pd
 import pytz
 
 def log_all_terms(edited_df, user, sheet_id, sheet_name, service_account_info):
-    edited_df = edited_df.copy()
 
+    # Filter Unconfirmed rows
+    edited_df = edited_df[edited_df["confirm_from_mkt"] == False]
+    edited_df.loc[:, "confirm_from_mkt"] = "Rejected"
+    edited_df.rename(columns={"confirm_from_mkt": "confirmation_status"}, inplace=True)
+    
+    # List of Columns
+    selected_columns = [
+        "confirm_from_mkt", "reason_category", "reason_reject",
+        "campaignname", "adgroupid", "adgroupname", "searchterm",
+        "keywordtext", "country_code_2", "cumulative_clicks",
+        "cumulative_impressions", "cumulative_cost", "cumulative_sales",
+        "country", "department", "confirmed_by", "submitted_at"
+    ]
+    
+    edited_df = edited_df.copy()
+    
     # Add user and submitted_at
     submitted_at = pd.Timestamp.now(tz=pytz.timezone('Asia/Ho_Chi_Minh')).strftime("%Y-%m-%d %H:%M:%S")
     edited_df["confirmed_by"] = user
     edited_df["submitted_at"] = submitted_at
+
+    edited_df = edited_df.loc[:, selected_columns]
 
     # Connect to Google Sheets
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
