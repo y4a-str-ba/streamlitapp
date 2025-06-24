@@ -6,7 +6,7 @@ import numpy as np
 import requests
 import gspread
 from google.oauth2.service_account import Credentials
-from logger import log_all_terms
+from jarvis_logger import log_all_terms
 
 st.set_page_config(page_title="Jarvis Dashboard", layout="wide")
 
