@@ -1,27 +1,27 @@
-import gspread
 from google.oauth2.service_account import Credentials
-from datetime import datetime
-import pytz
+import gspread
 import pandas as pd
+import pytz
 
 def log_all_terms(edited_df, user, sheet_id, sheet_name, service_account_info):
-
     edited_df = edited_df.copy()
-    
+
+    # Add user and submitted_at
     submitted_at = pd.Timestamp.now(tz=pytz.timezone('Asia/Ho_Chi_Minh')).strftime("%Y-%m-%d %H:%M:%S")
     edited_df["confirmed_by"] = user
     edited_df["submitted_at"] = submitted_at
 
-    # Google Sheets API
+    # Connect to Google Sheets
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     creds = Credentials.from_service_account_info(service_account_info, scopes=scope)
     client = gspread.authorize(creds)
     sheet = client.open_by_key(sheet_id).worksheet(sheet_name)
 
-    # Write Header
-    if not sheet.get_all_values():
-        sheet.append_row(edited_df.columns.tolist(), value_input_option="USER_ENTERED")
+    # Add header
+    existing_values = sheet.get_all_values()
+    header = edited_df.columns.tolist()
+    if not existing_values or existing_values[0] != header:
+        sheet.insert_row(header, index=1, value_input_option="USER_ENTERED")
 
-    # Append Rows
+    # Append rows
     sheet.append_rows(edited_df.astype(str).values.tolist(), value_input_option="USER_ENTERED")
-
