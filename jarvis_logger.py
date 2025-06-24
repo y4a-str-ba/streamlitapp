@@ -11,7 +11,7 @@ def log_all_terms(edited_df, user, sheet_id, sheet_name, service_account_info):
 
     # Add user and submitted_at
     edited_df["confirmed_by"] = user
-    edited_df["submitted_at"] = pd.timestamp.now(tz=pytz.timezone('Asia/Ho_Chi_Minh')).strftime("%Y-%m-%d %H:%M:%S")
+    edited_df["submitted_at"] = pd.Timestamp.now(tz=pytz.timezone('Asia/Ho_Chi_Minh')).strftime("%Y-%m-%d %H:%M:%S")
 
     # Select columns
     selected_columns = [
