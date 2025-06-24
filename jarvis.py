@@ -12,34 +12,34 @@ st.set_page_config(page_title="Jarvis Dashboard", layout="wide")
 # ========== LOGIN ==========
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
-####
+
 if not st.session_state.logged_in:
-    st.title("🔐 Login to Jarvis Dashboard")
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
+    st.title("\U0001F510 Login to Jarvis Dashboard")
+    username = st.text_input("Username").strip()
+    password = st.text_input("Password", type="password").strip()
     login_button = st.button("Login")
 
     users = {
-    "admin": "9fef2e62d7d3a8cb8025d0c660ffdbb3b4fdc1a28d2065c9cb10a770d6b164c0",
-    "hanhbth@yes4all.com": "b5a06c68c110e897ff2a2c267012167347e0b20286a481c6c2b0ac01272898a2",
-    "anhdt@yes4all.com": "2a4f527388de8f6efdd334f87a2f17f840b1989022ea6d42004232eb2ed24a84",
-    "hanhkh@yes4all.com": "50a7432752743c7e4288476ad7793c1c4edb66be1e7764c4c2d547a8d32df51d",
-    "khanhdnt@yes4all.com": "50a7432752743c7e4288476ad7793c1c4edb66be1e7764c4c2d547a8d32df51d",
-    "lyndt@yes4all.com": "4329e67f85e99dd517ea25d6e9f32025c1a7d27d2ef7b3d1ad7f1b75c5aa7fd3",
-    "hoangtl@yes4all.com": "3a89d6c8b0cb777be29092ae99446f0a42b759adf0cf2b15c42d902e5050e6e7",
-    "anhltt@yes4all.com": "2a4f527388de8f6efdd334f87a2f17f840b1989022ea6d42004232eb2ed24a84",
-    "tuongng@y4a.com": "3eadd0413a8713f3f36f42ed07a3491a6df75f6f5c89cf307dd12b1628dcfc70"}
-
+        "admin": hashlib.sha256("yes4all123".encode()).hexdigest(),
+        "hanhbth@yes4all.com": hashlib.sha256("h@nhBI2025".encode()).hexdigest(),
+        "anhdtt@yes4all.com": hashlib.sha256("anh1234".encode()).hexdigest(),
+        "hanhhk@yes4all.com": hashlib.sha256("hanh123".encode()).hexdigest(),
+        "khanhdnt@yes4all.com": hashlib.sha256("khanh123".encode()).hexdigest(),
+        "lyntb@yes4all.com": hashlib.sha256("ly123".encode()).hexdigest(),
+        "hoangl@yes4all.com": hashlib.sha256("hoang123".encode()).hexdigest(),
+        "anhttn1@yes4all.com": hashlib.sha256("anh123".encode()).hexdigest(),
+        "tuongnq@yes4all.com": hashlib.sha256("tuong123".encode()).hexdigest()
+    }
 
     if login_button:
-        if username in users and hashlib.sha256(password.encode()).hexdigest() == users[username]:
+        hashed_input_password = hashlib.sha256(password.encode()).hexdigest()
+        if username in users and hashed_input_password == users[username]:
             st.session_state.logged_in = True
             st.session_state.user = username
             st.rerun()
         else:
-            st.error("❌ Invalid username or password")
+            st.error("\u274c Invalid username or password")
     st.stop()
-
 # ========== SIDEBAR ==========
 st.sidebar.image("logo.png", width=180)
 st.sidebar.title("Filters")
