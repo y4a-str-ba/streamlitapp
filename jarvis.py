@@ -46,7 +46,7 @@ st.sidebar.image("logo.png", width=180)
 st.sidebar.title("Filters")
 st.sidebar.markdown(f"👤 Logged in as: **{st.session_state.user}**")
 
-department = st.sidebar.selectbox("Department", ["SFO", "SSO"], index=0)
+department = st.sidebar.selectbox("Department", ["SFO", "SSO"], index=1)
 country = st.sidebar.selectbox("Country", ["All", "US", "UK", "DE", "CA", "MX", "SA", "JP", "ES", "AU", "GB", "AE"])
 
 # ========== LOAD DATA ==========
