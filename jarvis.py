@@ -283,26 +283,30 @@ with tab1:
     ]
 
     df_filtered["original_index"] = df_filtered.index
-    df_filtered.insert(0, "#", range(1, len(df_filtered) + 1))
-    df_filtered = df_filtered[["#"] + preferred_cols + additional_cols + ["original_index"]]
+    df_display = df_filtered.copy()
+    df_display.insert(0, "#", range(1, len(df_display) + 1))
+    df_display = df_display[["#"] + preferred_cols + additional_cols]
 
     edited_df = st.data_editor(
-        df_filtered,
-        column_config={
-            "#": st.column_config.NumberColumn("#", disabled=True),
-            "confirm_from_mkt": st.column_config.CheckboxColumn("Confirm"),
-            "reason_category": st.column_config.SelectboxColumn(
-                "Reason Category (if Unconfirmed)",
-                options=reason_options
-            ),
-            "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)")
-        },
-        num_rows="dynamic",
-        hide_index=True, 
-        key="confirm_editor"
-    )
+    df_display,
+    column_config={
+        "#": st.column_config.NumberColumn("#", disabled=True),
+        "confirm_from_mkt": st.column_config.CheckboxColumn("Confirm"),
+        "reason_category": st.column_config.SelectboxColumn(
+            "Reason Category (if Unconfirmed)",
+            options=reason_options
+        ),
+        "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)")
+    },
+    num_rows="dynamic",
+    hide_index=True,
+    key="confirm_editor"
+)
 
-    if st.button("Submit Confirmed Terms"):
+if st.button("Submit Confirmed Terms"):
+        edited_df.index = df_filtered["original_index"]
+    
+
         invalid_rows = edited_df[
             (edited_df["confirm_from_mkt"] == False) &
             (edited_df["reason_category"] == reason_options[-1]) &
@@ -311,9 +315,10 @@ with tab1:
         if not invalid_rows.empty:
             st.error("You selected 'Other' as reason category but did not provide a free text reason.")
             st.stop()
+    
 
-        edited_df.set_index("original_index", inplace=True)
         df.update(edited_df)
+
         sheet.update([df.columns.tolist()] + df.astype(str).values.tolist())
         st.success("Confirmation status updated to Google Sheet!")
 
