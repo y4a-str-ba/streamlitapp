@@ -73,10 +73,10 @@ if "reason_category" not in df.columns:
     df["reason_category"] = "8. Other  → Other (please specify)"
 
 # ========== TABS ==========
-tab1, tab2, tab3 = st.tabs(["Model Performance", "Search Term Predictions", "Explain a Search Term"])
+tab1, tab2, tab3 = st.tabs(["Search Term Predictions", "Model Performance", "Explain a Search Term"])
 
-# ========== TAB 1 ==========
-with tab1:
+# ========== TAB 2 ==========
+with tab2:
     st.subheader("📊 Model Performance Summary")
     st.markdown(f"📂 Currently viewing: **{sheet_name}**")
 
@@ -243,8 +243,8 @@ with tab1:
     # fig2.update_layout(title="CTR & ACOS Trend", xaxis_title="Date", yaxis_title="Rate", template="plotly_white")
     # st.plotly_chart(fig2, use_container_width=True)
 
-# ========== TAB 2 ==========
-with tab2:
+# ========== TAB 1 ==========
+with tab1:
     st.subheader("Confirm individual terms")
 
     campaigns = ["All"] + sorted(df["campaignname"].dropna().unique().tolist())
