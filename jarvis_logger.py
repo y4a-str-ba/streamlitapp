@@ -15,11 +15,11 @@ def log_all_terms(edited_df, user, sheet_id, sheet_name, service_account_info):
 
     # Select columns
     selected_columns = [
-        "confirmation_status", "reason_category", "reason_reject",
+        "confirmed_by", "submitted_at", "confirmation_status", "reason_category", "reason_reject",
         "campaignname", "adgroupname", "searchterm",
         "keywordtext", "country_code_2", "cumulative_clicks",
         "cumulative_impressions", "cumulative_cost", "cumulative_sales",
-        "country", "department", "confirmed_by", "submitted_at"
+        "country", "department" 
     ]
     edited_df = edited_df[selected_columns]
 
