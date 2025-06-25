@@ -285,7 +285,7 @@ with tab1:
     df_filtered = df_filtered[preferred_cols + additional_cols]
 
     if "#" in df_filtered.columns:
-    df_filtered = df_filtered.drop(columns=["#"])
+        df_filtered = df_filtered.drop(columns=["#"])
 
     edited_df = st.data_editor(
         df_filtered,
