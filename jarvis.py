@@ -303,7 +303,7 @@ with tab1:
     key="confirm_editor"
 )
 
-if st.button("Submit Confirmed Terms"):
+    if st.button("Submit Confirmed Terms"):
         edited_df.index = df_filtered["original_index"]
     
 
