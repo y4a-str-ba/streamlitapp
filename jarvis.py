@@ -295,7 +295,8 @@ with tab1:
                 "Reason Category (if Unconfirmed)",
                 options=reason_options
             ),
-            "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)")
+            "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)"),
+            "original_index": st.column_config.NumberColumn("Original Index", disabled=True, visible=False)
         },
         num_rows="dynamic",
         hide_index=True, 
