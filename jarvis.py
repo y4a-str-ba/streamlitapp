@@ -295,6 +295,7 @@ with tab1:
             "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)")
         },
         num_rows="dynamic",
+        hide_index=False,
         key="confirm_editor"
     )
 
