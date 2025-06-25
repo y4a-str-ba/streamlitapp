@@ -274,7 +274,14 @@ with tab1:
     ]
 
     preferred_cols = ["confirm_from_mkt", "reason_category", "reason_reject"]
-    df_filtered = df_filtered[preferred_cols + [col for col in df_filtered.columns if col not in preferred_cols]]
+    additional_cols = [
+    "campaignname", "adgroupname", "searchterm",
+    "keywordtext", "country_code_2", "cumulative_clicks",
+    "cumulative_impressions", "cumulative_cost", "cumulative_sales",
+    "country", "department"
+    ]
+
+    df_filtered = df_filtered[preferred_cols + additional_cols]
 
     edited_df = st.data_editor(
         df_filtered,
