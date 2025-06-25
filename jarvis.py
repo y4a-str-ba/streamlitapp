@@ -248,14 +248,15 @@ with tab1:
     st.subheader("Confirm individual terms")
 
     campaigns = ["All"] + sorted(df["campaignname"].dropna().unique().tolist())
-    adgroups = ["All"] + sorted(df["adgroupname"].dropna().unique().tolist())
-
     selected_campaign = st.selectbox("Filter by Campaign", campaigns, index=0)
-    selected_adgroup = st.selectbox("Filter by Ad Group", adgroups, index=0)
 
     df_filtered = df.copy()
     if selected_campaign != "All":
         df_filtered = df_filtered[df_filtered["campaignname"] == selected_campaign]
+
+    adgroups = ["All"] + sorted(df_filtered["adgroupname"].dropna().unique().tolist())
+    selected_adgroup = st.selectbox("Filter by Ad Group", adgroups, index=0)
+
     if selected_adgroup != "All":
         df_filtered = df_filtered[df_filtered["adgroupname"] == selected_adgroup]
 
