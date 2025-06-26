@@ -19,7 +19,7 @@ def log_all_terms(edited_df, user, sheet_id, sheet_name, service_account_info):
         "campaignname", "adgroupname", "searchterm",
         "keywordtext", "country_code_2", "cumulative_clicks",
         "cumulative_impressions", "cumulative_cost", "cumulative_sales",
-        "country", "department" 
+        "country_code", "department" 
     ]
     edited_df = edited_df[selected_columns]
 
