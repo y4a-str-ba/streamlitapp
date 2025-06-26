@@ -305,7 +305,7 @@ with tab1:
             (edited_df["reason_reject"].str.strip() == "")
         ]
         if not invalid_rows.empty:
-            st.error("You selected 'Other' as reason category but did not provide a free text reason.")
+            st.error("Please add a reason for any 'Other' selections before submitting!")
             st.stop()
 
         df.update(edited_df)
