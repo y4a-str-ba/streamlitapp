@@ -47,7 +47,7 @@ st.sidebar.title("Filters")
 st.sidebar.markdown(f"👤 Logged in as: **{st.session_state.user}**")
 
 department = st.sidebar.selectbox("Department", ["SFO", "SSO"], index=1)
-country = st.sidebar.selectbox("Country", ["All", "US", "UK", "DE", "CA", "MX", "SA", "JP", "ES", "AU", "GB", "AE"])
+country = st.sidebar.selectbox("Country", ["All", "US", "INT"])
 
 # ========== LOAD DATA ==========
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -59,8 +59,8 @@ sheet = client.open_by_key("1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY").works
 data = sheet.get_all_records()
 df = pd.DataFrame(data)
 
-if "country_code_2" in df.columns and country != "All":
-    df = df[df["country_code_2"] == country]
+if "country_code" in df.columns and country != "All":
+    df = df[df["country_code"] == country]
 
 if "confirm_from_mkt" not in df.columns:
     df["confirm_from_mkt"] = True
@@ -279,7 +279,7 @@ with tab1:
     "campaignname", "adgroupname", "searchterm",
     "keywordtext", "country_code_2", "cumulative_clicks",
     "cumulative_impressions", "cumulative_cost", "cumulative_sales",
-    "country", "department"
+    "country_code", "department"
     ]
 
     df_filtered = df_filtered[preferred_cols + additional_cols]
