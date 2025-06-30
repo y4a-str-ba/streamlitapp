@@ -63,7 +63,7 @@ data = sheet.get_all_records()
 df = pd.DataFrame(data)
 
 # Team filter
-team = st.sidebar.selectbox("Team", ["ALL", "INT", "US"], index=0)
+team = st.sidebar.selectbox("Team", ["All", "INT", "US"], index=0)
 
 # Country filter
 if "country_code_2" in df.columns:
