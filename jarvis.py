@@ -50,7 +50,7 @@ st.sidebar.markdown(f"👤 Logged in as: **{st.session_state.user}**")
 # country = st.sidebar.selectbox("Country", ["All", "US", "INT"], index=2)
 
 department = "SSO"
-country = "INT" 
+#country = "INT"
 
 # ========== LOAD DATA ==========
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -62,8 +62,16 @@ sheet = client.open_by_key("1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY").works
 data = sheet.get_all_records()
 df = pd.DataFrame(data)
 
-if "country_code" in df.columns and country != "All":
-    df = df[df["country_code"] == country]
+# Country filter
+with st.sidebar.expander("🔽 Advanced Filters", expanded=False):
+    if "country_code_2" in df.columns:
+        country_options = ["All"] + sorted(df["country_code_2"].dropna().unique().tolist())
+        country = st.selectbox("Country", country_options, index=0)
+    else:
+        country = "All"
+        
+if "country_code_2" in df.columns and country != "All":
+    df = df[df["country_code_2"] == country]
 
 if "confirm_from_mkt" not in df.columns:
     df["confirm_from_mkt"] = True
