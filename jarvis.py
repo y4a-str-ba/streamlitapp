@@ -62,15 +62,32 @@ sheet = client.open_by_key("1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY").works
 data = sheet.get_all_records()
 df = pd.DataFrame(data)
 
+# Team filter
+team = st.sidebar.selectbox("Team", ["ALL", "INT", "US"], index=0)
+
 # Country filter
 if "country_code_2" in df.columns:
-    country_options = ["All"] + sorted(df["country_code_2"].dropna().unique().tolist())
+    all_countries = sorted(df["country_code_2"].dropna().unique())
+    if team == "US":
+        filtered_countries = ["US"]
+    elif team == "INT":
+        filtered_countries = [c for c in all_countries if c != "US"]
+    else:  # ALL
+        filtered_countries = all_countries
+
+    country_options = ["All"] + filtered_countries
     country = st.sidebar.selectbox("Country", country_options, index=0)
 else:
     country = "All"
-        
-if "country_code_2" in df.columns and country != "All":
-    df = df[df["country_code_2"] == country]
+    
+if "country_code_2" in df.columns:
+    if team == "US":
+        df = df[df["country_code_2"] == "US"]
+    elif team == "INT":
+        df = df[df["country_code_2"] != "US"]
+
+    if country != "All":
+        df = df[df["country_code_2"] == country]
 
 if "confirm_from_mkt" not in df.columns:
     df["confirm_from_mkt"] = True
