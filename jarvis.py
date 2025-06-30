@@ -63,12 +63,11 @@ data = sheet.get_all_records()
 df = pd.DataFrame(data)
 
 # Country filter
-with st.sidebar.expander("🔽 Advanced Filters", expanded=False):
-    if "country_code_2" in df.columns:
-        country_options = ["All"] + sorted(df["country_code_2"].dropna().unique().tolist())
-        country = st.selectbox("Country", country_options, index=0)
-    else:
-        country = "All"
+if "country_code_2" in df.columns:
+    country_options = ["All"] + sorted(df["country_code_2"].dropna().unique().tolist())
+    country = st.sidebar.selectbox("Country", country_options, index=0)
+else:
+    country = "All"
         
 if "country_code_2" in df.columns and country != "All":
     df = df[df["country_code_2"] == country]
