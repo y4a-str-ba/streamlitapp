@@ -30,6 +30,12 @@ if not st.session_state.logged_in:
         "hoangl@yes4all.com": hashlib.sha256("hoang123".encode()).hexdigest(),
         "anhttn1@yes4all.com": hashlib.sha256("anh123".encode()).hexdigest(),
         "tuongnq@yes4all.com": hashlib.sha256("tuong123".encode()).hexdigest()
+        "duylk@yes4all.com": hashlib.sha256("kduyle".encode()).hexdigest(),
+        "loint1@yes4all.com": hashlib.sha256("loi123".encode()).hexdigest(),
+        "vynty@yes4all.com": hashlib.sha256("vy123".encode()).hexdigest(),
+        "duongttt@yes4all.com": hashlib.sha256("duong123".encode()).hexdigest(),
+        "thula@yes4all.com": hashlib.sha256("thu123".encode()).hexdigest(),
+        "huonghtk@yes4all.com": hashlib.sha256("huong123".encode()).hexdigest()
     }
 
     if login_button:
