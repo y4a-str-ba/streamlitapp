@@ -29,7 +29,7 @@ if not st.session_state.logged_in:
         "lyntb@yes4all.com": hashlib.sha256("ly123".encode()).hexdigest(),
         "hoangl@yes4all.com": hashlib.sha256("hoang123".encode()).hexdigest(),
         "anhttn1@yes4all.com": hashlib.sha256("anh123".encode()).hexdigest(),
-        "tuongnq@yes4all.com": hashlib.sha256("tuong123".encode()).hexdigest()
+        "tuongnq@yes4all.com": hashlib.sha256("tuong123".encode()).hexdigest(),
         "duylk@yes4all.com": hashlib.sha256("kduyle".encode()).hexdigest(),
         "loint1@yes4all.com": hashlib.sha256("loi123".encode()).hexdigest(),
         "vynty@yes4all.com": hashlib.sha256("vy123".encode()).hexdigest(),
