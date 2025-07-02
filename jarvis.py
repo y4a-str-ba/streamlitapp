@@ -69,6 +69,33 @@ sheet = client.open_by_key("1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY").works
 data = sheet.get_all_records()
 df = pd.DataFrame(data)
 
+# Team filter
+team = st.sidebar.selectbox("Team", ["All", "INT", "US"], index=0)
+
+# Country filter
+if "country_code_2" in df.columns:
+    all_countries = sorted(df["country_code_2"].dropna().unique())
+    if team == "US":
+        filtered_countries = ["US"]
+    elif team == "INT":
+        filtered_countries = [c for c in all_countries if c != "US"]
+    else:  # ALL
+        filtered_countries = all_countries
+
+    country_options = ["All"] + filtered_countries
+    country = st.sidebar.selectbox("Country", country_options, index=0)
+else:
+    country = "All"
+    
+if "country_code_2" in df.columns:
+    if team == "US":
+        df = df[df["country_code_2"] == "US"]
+    elif team == "INT":
+        df = df[df["country_code_2"] != "US"]
+
+    if country != "All":
+        df = df[df["country_code_2"] == country]
+
 if "confirm_from_mkt" not in df.columns:
     df["confirm_from_mkt"] = True
 else:
@@ -78,26 +105,6 @@ if "reason_reject" not in df.columns:
     df["reason_reject"] = ""
 if "reason_category" not in df.columns:
     df["reason_category"] = "8. Other  → Other (please specify)"
-
-# Team filter
-team = st.sidebar.selectbox("Team", ["All", "INT", "US"], index=0)
-
-# Country filter
-country = "All"
-if "country_code_2" in df.columns:
-    all_countries = sorted(df["country_code_2"].dropna().unique())
-
-    if team == "US":
-        df = df[df["country_code_2"] == "US"]
-    elif team == "INT":
-        df = df[df["country_code_2"] != "US"]
-
-    filtered_countries = sorted(df["country_code_2"].dropna().unique())
-    country_options = ["All"] + filtered_countries
-    country = st.sidebar.selectbox("Country", country_options, index=0)
-
-    if country != "All":
-        df = df[df["country_code_2"] == country]
 
 # ========== TABS ==========
 tab1, tab2, tab3 = st.tabs(["Search Term Predictions", "Model Performance", "Explain a Search Term"])
@@ -273,12 +280,11 @@ with tab2:
 # ========== TAB 1 ==========
 with tab1:
     st.subheader("Confirm individual terms")
-    df_filtered = df.copy()
 
     campaigns = ["All"] + sorted(df["campaignname"].dropna().unique().tolist())
     selected_campaign = st.selectbox("Filter by Campaign", campaigns, index=0)
 
-
+    df_filtered = df.copy()
     if selected_campaign != "All":
         df_filtered = df_filtered[df_filtered["campaignname"] == selected_campaign]
 
@@ -339,9 +345,8 @@ with tab1:
             st.error("Please add a text reason for any 'Other' selections before submitting!")
             st.stop()
 
-        # df.update(edited_df)
+        df.update(edited_df)
         # df.loc[edited_df.index] = edited_df
-        df.loc[edited_df.index, edited_df.columns] = edited_df
 
         sheet.update([df.columns.tolist()] + df.astype(str).values.tolist())
         
