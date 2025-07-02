@@ -72,6 +72,7 @@ data = sheet.get_all_records()
 
 # df = pd.DataFrame(data)
 
+# Quoc add
 df_full = pd.DataFrame(sheet.get_all_records())
 df = df_full.copy()
 
@@ -340,6 +341,14 @@ with tab1:
        hide_index=False
     )
 
+    rows_to_update = []
+    for idx in edited_df.index:
+        original_row = df_full.loc[idx, df_filtered.columns]
+        new_row = edited_df.loc[idx, df_filtered.columns]
+        if not original_row.equals(new_row):
+            df_full.loc[idx, df_filtered.columns] = new_row
+            rows_to_update.append(idx)
+
     if st.button("Submit Confirmed Terms"):
         invalid_rows = edited_df[
             (edited_df["confirm_from_mkt"] == False) &
@@ -355,26 +364,37 @@ with tab1:
 
         # sheet.update([df.columns.tolist()] + df.astype(str).values.tolist())
 
-        changed_rows = edited_df[df_filtered.columns].ne(df_filtered).any(axis=1)
-        rows_to_update = edited_df[changed_rows]
+        # changed_rows = edited_df[df_filtered.columns].ne(df_filtered).any(axis=1)
+        # rows_to_update = edited_df[changed_rows]
         
-        if not rows_to_update.empty:
-            # for idx in rows_to_update.index:
-            #     row_num = idx + 2  # +2 vì Google Sheets bắt đầu từ 1 và dòng 1 là header
-            #     sheet.update(f"A{row_num}:{chr(65 + len(df.columns) - 1)}{row_num}",
-            #                  [df.loc[idx].astype(str).tolist()])
-            # for idx in rows_to_update.index:
-            #     df_full.loc[idx] = edited_df.loc[idx] 
-            #     row_num = idx + 2
-            #     sheet.update(f"A{row_num}:{chr(64 + len(df_full.columns))}{row_num}",
-            #                  [df_full.loc[idx].astype(str).tolist()])
-            for idx in rows_to_update.index:
+        # if not rows_to_update.empty:
+        #     # for idx in rows_to_update.index:
+        #     #     row_num = idx + 2  # +2 vì Google Sheets bắt đầu từ 1 và dòng 1 là header
+        #     #     sheet.update(f"A{row_num}:{chr(65 + len(df.columns) - 1)}{row_num}",
+        #     #                  [df.loc[idx].astype(str).tolist()])
+        #     # for idx in rows_to_update.index:
+        #     #     df_full.loc[idx] = edited_df.loc[idx] 
+        #     #     row_num = idx + 2
+        #     #     sheet.update(f"A{row_num}:{chr(64 + len(df_full.columns))}{row_num}",
+        #     #                  [df_full.loc[idx].astype(str).tolist()])
+        #     for idx in rows_to_update.index:
+        #         row_num = idx + 2
+        #         row_data = [str(x) if x is not None else "" for x in df_full.loc[idx]]
+        #         start_cell = rowcol_to_a1(row_num, 1)
+        #         end_cell = rowcol_to_a1(row_num, len(df_full.columns))
+        #         cell_range = f"{start_cell}:{end_cell}"
+        #         sheet.update(cell_range, [row_data])
+        # Quoc add
+        if rows_to_update:
+            for idx in rows_to_update:
                 row_num = idx + 2
                 row_data = [str(x) if x is not None else "" for x in df_full.loc[idx]]
                 start_cell = rowcol_to_a1(row_num, 1)
                 end_cell = rowcol_to_a1(row_num, len(df_full.columns))
-                cell_range = f"{start_cell}:{end_cell}"
-                sheet.update(cell_range, [row_data])
+                sheet.update(f"{start_cell}:{end_cell}", [row_data])
+            st.success("✅ Dữ liệu đã được cập nhật thành công.")
+        else:
+            st.info("📭 Không có thay đổi nào để cập nhật.")
         
         st.success("Confirmation status updated to Google Sheet!")
 
