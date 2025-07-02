@@ -375,8 +375,8 @@ with tab1:
         # total_confirmed = (df["confirm_from_mkt"] == True).sum()
         # total_unconfirmed = (df["confirm_from_mkt"] == False).sum()
 
-        total_confirmed = (df_full["confirm_from_mkt"] == True).sum()
-        total_unconfirmed = (df_full["confirm_from_mkt"] == False).sum()
+        total_confirmed = df_full["confirm_from_mkt"].eq(True).sum() if "confirm_from_mkt" in df_full else 0
+        total_unconfirmed = df_full["confirm_from_mkt"].eq(False).sum() if "confirm_from_mkt" in df_full else 0
     
         user = st.session_state.user
         current_sheet = sheet.title
