@@ -316,7 +316,8 @@ with tab1:
     "country_code", "department"
     ]
 
-    df_filtered = df_filtered[preferred_cols + additional_cols]
+    # df_filtered = df_filtered[preferred_cols + additional_cols]
+    df_filtered = df.loc[mask, preferred_cols + additional_cols]
 
     edited_df = st.data_editor(
         df_filtered,
@@ -344,7 +345,6 @@ with tab1:
 
         # df.update(edited_df)
         df.loc[edited_df.index] = edited_df
-        
         sheet.update([df.columns.tolist()] + df.astype(str).values.tolist())
         
         st.success("Confirmation status updated to Google Sheet!")
