@@ -330,7 +330,9 @@ with tab1:
             "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)")
         },
         num_rows="dynamic",
-        key="confirm_editor"
+        key="confirm_editor",
+        use_container_width=True,
+        hide_index=False
     )
 
     if st.button("Submit Confirmed Terms"):
