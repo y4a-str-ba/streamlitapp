@@ -302,7 +302,12 @@ with tab1:
         df_filtered = df_filtered[df_filtered["adgroupname"] == selected_adgroup]
 
     select_all = st.checkbox("Select All", value=True)
-    df_filtered["confirm_from_mkt"] = select_all
+    #df_filtered["confirm_from_mkt"] = select_all
+    # Quoc add
+    if "confirm_from_mkt" in df_filtered.columns:
+        df_filtered["confirm_from_mkt"] = df_filtered["confirm_from_mkt"].fillna(select_all)
+    else:
+        df_filtered["confirm_from_mkt"] = select_all
 
     reason_options = [
         "1. High CR → Strong conversion rate",
@@ -342,12 +347,13 @@ with tab1:
     )
 
     rows_to_update = []
-    for idx in edited_df.index:
-        original_row = df_full.loc[idx, df_filtered.columns]
-        new_row = edited_df.loc[idx, df_filtered.columns]
-        if not original_row.equals(new_row):
-            df_full.loc[idx, df_filtered.columns] = new_row
-            rows_to_update.append(idx)
+        compare_cols = df_filtered.columns.intersection(df_full.columns)
+        for idx in edited_df.index:
+            original_row = df_full.loc[idx, compare_cols]
+            new_row = edited_df.loc[idx, compare_cols]
+            if not original_row.equals(new_row):
+                df_full.loc[idx, compare_cols] = new_row
+                rows_to_update.append(idx)
 
     if st.button("Submit Confirmed Terms"):
         invalid_rows = edited_df[
@@ -367,23 +373,34 @@ with tab1:
         # changed_rows = edited_df[df_filtered.columns].ne(df_filtered).any(axis=1)
         # rows_to_update = edited_df[changed_rows]
         
-        if not rows_to_update.empty:
-            # for idx in rows_to_update.index:
-            #     row_num = idx + 2  # +2 vì Google Sheets bắt đầu từ 1 và dòng 1 là header
-            #     sheet.update(f"A{row_num}:{chr(65 + len(df.columns) - 1)}{row_num}",
-            #                  [df.loc[idx].astype(str).tolist()])
-            # for idx in rows_to_update.index:
-            #     df_full.loc[idx] = edited_df.loc[idx] 
-            #     row_num = idx + 2
-            #     sheet.update(f"A{row_num}:{chr(64 + len(df_full.columns))}{row_num}",
-            #                  [df_full.loc[idx].astype(str).tolist()])
-            for idx in rows_to_update.index:
+        # if not rows_to_update.empty:
+        #     # for idx in rows_to_update.index:
+        #     #     row_num = idx + 2  # +2 vì Google Sheets bắt đầu từ 1 và dòng 1 là header
+        #     #     sheet.update(f"A{row_num}:{chr(65 + len(df.columns) - 1)}{row_num}",
+        #     #                  [df.loc[idx].astype(str).tolist()])
+        #     # for idx in rows_to_update.index:
+        #     #     df_full.loc[idx] = edited_df.loc[idx] 
+        #     #     row_num = idx + 2
+        #     #     sheet.update(f"A{row_num}:{chr(64 + len(df_full.columns))}{row_num}",
+        #     #                  [df_full.loc[idx].astype(str).tolist()])
+        #     for idx in rows_to_update.index:
+        #         row_num = idx + 2
+        #         row_data = [str(x) if x is not None else "" for x in df_full.loc[idx]]
+        #         start_cell = rowcol_to_a1(row_num, 1)
+        #         end_cell = rowcol_to_a1(row_num, len(df_full.columns))
+        #         cell_range = f"{start_cell}:{end_cell}"
+        #         sheet.update(cell_range, [row_data])
+        if rows_to_update:  # fix .empty bug
+            from gspread.utils import rowcol_to_a1
+            for idx in rows_to_update:
                 row_num = idx + 2
                 row_data = [str(x) if x is not None else "" for x in df_full.loc[idx]]
                 start_cell = rowcol_to_a1(row_num, 1)
                 end_cell = rowcol_to_a1(row_num, len(df_full.columns))
-                cell_range = f"{start_cell}:{end_cell}"
-                sheet.update(cell_range, [row_data])
+                sheet.update(f"{start_cell}:{end_cell}", [row_data])
+            st.success("✅ Confirmation status updated to Google Sheet!")
+        else:
+            st.info("📭 No changes to update.")
 
         
         st.success("Confirmation status updated to Google Sheet!")
