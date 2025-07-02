@@ -8,6 +8,8 @@ import gspread
 from google.oauth2.service_account import Credentials
 from jarvis_logger import log_all_terms
 
+from gspread.utils import rowcol_to_a1 # Quoc add
+
 st.set_page_config(page_title="Jarvis Dashboard", layout="wide")
 
 # ========== LOGIN ==========
@@ -366,6 +368,13 @@ with tab1:
                 row_num = idx + 2
                 sheet.update(f"A{row_num}:{chr(64 + len(df_full.columns))}{row_num}",
                              [df_full.loc[idx].astype(str).tolist()])
+            for idx in rows_to_update.index:
+                row_num = idx + 2
+                row_data = [str(x) if x is not None else "" for x in df_full.loc[idx]]
+                start_cell = rowcol_to_a1(row_num, 1)
+                end_cell = rowcol_to_a1(row_num, len(df_full.columns))
+                cell_range = f"{start_cell}:{end_cell}"
+                sheet.update(cell_range, [row_data])
         
         st.success("Confirmation status updated to Google Sheet!")
 
