@@ -302,12 +302,7 @@ with tab1:
         df_filtered = df_filtered[df_filtered["adgroupname"] == selected_adgroup]
 
     select_all = st.checkbox("Select All", value=True)
-    #df_filtered["confirm_from_mkt"] = select_all
-    # Quoc add
-    if "confirm_from_mkt" in df_filtered.columns:
-        df_filtered["confirm_from_mkt"] = df_filtered["confirm_from_mkt"].fillna(select_all)
-    else:
-        df_filtered["confirm_from_mkt"] = select_all
+    df_filtered["confirm_from_mkt"] = select_all
 
     reason_options = [
         "1. High CR → Strong conversion rate",
