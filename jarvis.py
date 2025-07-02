@@ -69,6 +69,9 @@ sheet = client.open_by_key("1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY").works
 data = sheet.get_all_records()
 df = pd.DataFrame(data)
 
+# Quoc add
+df["row_index"] = df.index
+
 # Team filter
 team = st.sidebar.selectbox("Team", ["All", "INT", "US"], index=0)
 
@@ -283,7 +286,7 @@ with tab1:
 
     campaigns = ["All"] + sorted(df["campaignname"].dropna().unique().tolist())
     selected_campaign = st.selectbox("Filter by Campaign", campaigns, index=0)
-
+    
     df_filtered = df.copy()
     if selected_campaign != "All":
         df_filtered = df_filtered[df_filtered["campaignname"] == selected_campaign]
@@ -316,8 +319,9 @@ with tab1:
     "country_code", "department"
     ]
 
-    df_filtered = df_filtered[preferred_cols + additional_cols]
-    
+    # df_filtered = df_filtered[preferred_cols + additional_cols]
+    # Quoc add
+    df_filtered = df_filtered[preferred_cols + additional_cols].copy()
 
     edited_df = st.data_editor(
         df_filtered,
@@ -330,9 +334,9 @@ with tab1:
             "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)")
         },
         num_rows="dynamic",
-        key="confirm_editor",
-        use_container_width=True,
-        hide_index=False
+        key="confirm_editor"
+       # use_container_width=True,
+       # hide_index=False
     )
 
     if st.button("Submit Confirmed Terms"):
@@ -345,11 +349,33 @@ with tab1:
             st.error("Please add a text reason for any 'Other' selections before submitting!")
             st.stop()
 
-        df.update(edited_df)
-        # df.loc[edited_df.index] = edited_df
+        # df.update(edited_df)
+        # # df.loc[edited_df.index] = edited_df
 
-        sheet.update([df.columns.tolist()] + df.astype(str).values.tolist())
+        # sheet.update([df.columns.tolist()] + df.astype(str).values.tolist())
         
+        # st.success("Confirmation status updated to Google Sheet!")
+
+        # Reload original df (with row_index)
+        full_data = pd.DataFrame(sheet.get_all_records())
+        full_data["confirm_from_mkt"] = full_data["confirm_from_mkt"].astype(str).str.lower() == "true"
+        if "reason_reject" not in full_data.columns:
+            full_data["reason_reject"] = ""
+        if "reason_category" not in full_data.columns:
+            full_data["reason_category"] = "8. Other  → Other (please specify)"
+        full_data["row_index"] = full_data.index
+
+        # Update only matching rows by row_index
+        for _, row in edited_df.iterrows():
+            idx = int(row["row_index"])
+            for col in preferred_cols:
+                full_data.at[idx, col] = row[col]
+
+        # Remove helper column before saving
+        full_data.drop(columns=["row_index"], inplace=True)
+
+        # Write back to Google Sheet
+        sheet.update([full_data.columns.tolist()] + full_data.astype(str).values.tolist())
         st.success("Confirmation status updated to Google Sheet!")
 
         # Log Writer (Confirmed + Unconfirmed)
