@@ -331,7 +331,8 @@ with tab1:
                 "Reason Category (if Unconfirmed)",
                 options=reason_options
             ),
-            "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)")
+            "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)"), 
+            "row_index": st.column_config.NumberColumn("Index", disabled=True) ## Quoc add
         },
         num_rows="dynamic",
         key="confirm_editor"
