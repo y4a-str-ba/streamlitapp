@@ -69,6 +69,16 @@ sheet = client.open_by_key("1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY").works
 data = sheet.get_all_records()
 df = pd.DataFrame(data)
 
+if "confirm_from_mkt" not in df.columns:
+    df["confirm_from_mkt"] = True
+else:
+    df["confirm_from_mkt"] = df["confirm_from_mkt"].astype(str).str.lower() == "true"
+
+if "reason_reject" not in df.columns:
+    df["reason_reject"] = ""
+if "reason_category" not in df.columns:
+    df["reason_category"] = "8. Other  → Other (please specify)"
+
 # Team filter
 team = st.sidebar.selectbox("Team", ["All", "INT", "US"], index=0)
 
@@ -86,25 +96,15 @@ if "country_code_2" in df.columns:
     country = st.sidebar.selectbox("Country", country_options, index=0)
 else:
     country = "All"
-    
-if "country_code_2" in df.columns:
-    if team == "US":
-        df = df[df["country_code_2"] == "US"]
-    elif team == "INT":
-        df = df[df["country_code_2"] != "US"]
 
-    if country != "All":
-        df = df[df["country_code_2"] == country]
+df_filtered = df.copy()
+if team == "US":
+    df_filtered = df_filtered[df_filtered["country_code_2"] == "US"]
+elif team == "INT":
+    df_filtered = df_filtered[df_filtered["country_code_2"] != "US"]
 
-if "confirm_from_mkt" not in df.columns:
-    df["confirm_from_mkt"] = True
-else:
-    df["confirm_from_mkt"] = df["confirm_from_mkt"].astype(str).str.lower() == "true"
-
-if "reason_reject" not in df.columns:
-    df["reason_reject"] = ""
-if "reason_category" not in df.columns:
-    df["reason_category"] = "8. Other  → Other (please specify)"
+if country != "All":
+    df_filtered = df_filtered[df_filtered["country_code_2"] == country]
 
 # ========== TABS ==========
 tab1, tab2, tab3 = st.tabs(["Search Term Predictions", "Model Performance", "Explain a Search Term"])
