@@ -389,14 +389,23 @@ with tab1:
             f"❌ Not Confirmed: `{total_unconfirmed}`"
         )
 
-        unconfirmed_df = df[df["confirm_from_mkt"] == False]
-        if not unconfirmed_df.empty:
-            unconfirmed_terms = unconfirmed_df["searchterm"].tolist()
-            msg += "\n\n🔍 *Unconfirmed Terms:*"
-            for term in unconfirmed_terms[:10]:
-                msg += f"\n• {term}"
-            if len(unconfirmed_terms) > 10:
-                msg += f"\n...and `{len(unconfirmed_terms) - 10}` more."
+        # unconfirmed_df = df[df["confirm_from_mkt"] == False]
+        # if not unconfirmed_df.empty:
+        #     unconfirmed_terms = unconfirmed_df["searchterm"].tolist()
+        #     msg += "\n\n🔍 *Unconfirmed Terms:*"
+        #     for term in unconfirmed_terms[:10]:
+        #         msg += f"\n• {term}"
+        #     if len(unconfirmed_terms) > 10:
+        #         msg += f"\n...and `{len(unconfirmed_terms) - 10}` more."
+                
+        if "confirm_from_mkt" in df_full and "searchterm" in df_full:
+            unconfirmed_df = df_full[df_full["confirm_from_mkt"] == False]
+            if not unconfirmed_df.empty:
+                msg += "\n\n🔍 *Unconfirmed Terms:*"
+                for term in unconfirmed_df["searchterm"].dropna().astype(str).head(10):
+                    msg += f"\n• {term}"
+                if len(unconfirmed_df) > 10:
+                    msg += f"\n...and `{len(unconfirmed_df) - 10}` more."
 
         # webhook_url = 'https://chat.googleapis.com/v1/spaces/AAQA4vfwkIw/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=TyhGKT_IfWTpa8e5A2N2KlVvK-ZSpu4PMclPG2YmtXs'
         webhook_url = 'https://chat.googleapis.com/v1/spaces/AAQAtlalZHg/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=dAqV50K0MSHsB8PRPIqqLTmThgeGtx78zQ6lOBVME8o'
