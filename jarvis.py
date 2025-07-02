@@ -342,8 +342,11 @@ with tab1:
             st.error("Please add a text reason for any 'Other' selections before submitting!")
             st.stop()
 
-        df.update(edited_df)
+        # df.update(edited_df)
+        df.loc[edited_df.index] = edited_df
+        
         sheet.update([df.columns.tolist()] + df.astype(str).values.tolist())
+        
         st.success("Confirmation status updated to Google Sheet!")
 
         # Log Writer (Confirmed + Unconfirmed)
