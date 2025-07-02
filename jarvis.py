@@ -367,39 +367,24 @@ with tab1:
         # changed_rows = edited_df[df_filtered.columns].ne(df_filtered).any(axis=1)
         # rows_to_update = edited_df[changed_rows]
         
-        # if not rows_to_update.empty:
-        #     # for idx in rows_to_update.index:
-        #     #     row_num = idx + 2  # +2 vì Google Sheets bắt đầu từ 1 và dòng 1 là header
-        #     #     sheet.update(f"A{row_num}:{chr(65 + len(df.columns) - 1)}{row_num}",
-        #     #                  [df.loc[idx].astype(str).tolist()])
-        #     # for idx in rows_to_update.index:
-        #     #     df_full.loc[idx] = edited_df.loc[idx] 
-        #     #     row_num = idx + 2
-        #     #     sheet.update(f"A{row_num}:{chr(64 + len(df_full.columns))}{row_num}",
-        #     #                  [df_full.loc[idx].astype(str).tolist()])
-        #     for idx in rows_to_update.index:
-        #         row_num = idx + 2
-        #         row_data = [str(x) if x is not None else "" for x in df_full.loc[idx]]
-        #         start_cell = rowcol_to_a1(row_num, 1)
-        #         end_cell = rowcol_to_a1(row_num, len(df_full.columns))
-        #         cell_range = f"{start_cell}:{end_cell}"
-        #         sheet.update(cell_range, [row_data])
-        # Quoc add
-        col_count = len(df_full.columns)
-        for idx in rows_to_update:
-            row_num = idx + 2
-            # Ensure clean string values
-            row_data = ["" if pd.isna(x) else str(x) for x in df_full.loc[idx].tolist()]
-            if len(row_data) != col_count:
-                st.warning(f"⚠️ Skipping row {row_num} due to mismatched column count.")
-                continue
-            start_cell = rowcol_to_a1(row_num, 1)
-            end_cell = rowcol_to_a1(row_num, col_count)
-            cell_range = f"{start_cell}:{end_cell}"
-            try:
+        if not rows_to_update.empty:
+            # for idx in rows_to_update.index:
+            #     row_num = idx + 2  # +2 vì Google Sheets bắt đầu từ 1 và dòng 1 là header
+            #     sheet.update(f"A{row_num}:{chr(65 + len(df.columns) - 1)}{row_num}",
+            #                  [df.loc[idx].astype(str).tolist()])
+            # for idx in rows_to_update.index:
+            #     df_full.loc[idx] = edited_df.loc[idx] 
+            #     row_num = idx + 2
+            #     sheet.update(f"A{row_num}:{chr(64 + len(df_full.columns))}{row_num}",
+            #                  [df_full.loc[idx].astype(str).tolist()])
+            for idx in rows_to_update.index:
+                row_num = idx + 2
+                row_data = [str(x) if x is not None else "" for x in df_full.loc[idx]]
+                start_cell = rowcol_to_a1(row_num, 1)
+                end_cell = rowcol_to_a1(row_num, len(df_full.columns))
+                cell_range = f"{start_cell}:{end_cell}"
                 sheet.update(cell_range, [row_data])
-            except Exception as e:
-                st.error(f"🚨 Error updating row {row_num}: {e}")
+
         
         st.success("Confirmation status updated to Google Sheet!")
 
