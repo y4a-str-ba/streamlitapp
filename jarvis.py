@@ -372,8 +372,12 @@ with tab1:
             service_account_info=st.secrets["gcp_service_account"]
         )
     
-        total_confirmed = (df["confirm_from_mkt"] == True).sum()
-        total_unconfirmed = (df["confirm_from_mkt"] == False).sum()
+        # total_confirmed = (df["confirm_from_mkt"] == True).sum()
+        # total_unconfirmed = (df["confirm_from_mkt"] == False).sum()
+
+        total_confirmed = (df_full["confirm_from_mkt"] == True).sum()
+        total_unconfirmed = (df_full["confirm_from_mkt"] == False).sum()
+    
         user = st.session_state.user
         current_sheet = sheet.title
 
