@@ -86,24 +86,18 @@ team = st.sidebar.selectbox("Team", ["All", "INT", "US"], index=0)
 country = "All"
 if "country_code_2" in df.columns:
     all_countries = sorted(df["country_code_2"].dropna().unique())
-    if team == "US":
-        filtered_countries = ["US"]
-    elif team == "INT":
-        filtered_countries = [c for c in all_countries if c != "US"]
-    else:
-        filtered_countries = all_countries
 
+    if team == "US":
+        df = df[df["country_code_2"] == "US"]
+    elif team == "INT":
+        df = df[df["country_code_2"] != "US"]
+
+    filtered_countries = sorted(df["country_code_2"].dropna().unique())
     country_options = ["All"] + filtered_countries
     country = st.sidebar.selectbox("Country", country_options, index=0)
 
-df_filtered = df.copy()
-if team == "US":
-    df_filtered = df_filtered[df_filtered["country_code_2"] == "US"]
-elif team == "INT":
-    df_filtered = df_filtered[df_filtered["country_code_2"] != "US"]
-
-if country != "All":
-    df_filtered = df_filtered[df_filtered["country_code_2"] == country]
+    if country != "All":
+        df = df[df["country_code_2"] == country]
 
 # ========== TABS ==========
 tab1, tab2, tab3 = st.tabs(["Search Term Predictions", "Model Performance", "Explain a Search Term"])
@@ -279,11 +273,12 @@ with tab2:
 # ========== TAB 1 ==========
 with tab1:
     st.subheader("Confirm individual terms")
+    df_filtered = df.copy()
 
     campaigns = ["All"] + sorted(df["campaignname"].dropna().unique().tolist())
     selected_campaign = st.selectbox("Filter by Campaign", campaigns, index=0)
 
-    df_filtered = df.copy()
+
     if selected_campaign != "All":
         df_filtered = df_filtered[df_filtered["campaignname"] == selected_campaign]
 
