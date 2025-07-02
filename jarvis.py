@@ -316,8 +316,7 @@ with tab1:
     "country_code", "department"
     ]
 
-    # df_filtered = df_filtered[preferred_cols + additional_cols]
-    df_filtered = df.loc[preferred_cols + additional_cols]
+    df_filtered = df_filtered[preferred_cols + additional_cols]
 
     edited_df = st.data_editor(
         df_filtered,
