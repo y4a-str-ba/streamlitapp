@@ -385,16 +385,21 @@ with tab1:
         #         cell_range = f"{start_cell}:{end_cell}"
         #         sheet.update(cell_range, [row_data])
         # Quoc add
-        if rows_to_update:
-            for idx in rows_to_update:
-                row_num = idx + 2
-                row_data = [str(x) if x is not None else "" for x in df_full.loc[idx]]
-                start_cell = rowcol_to_a1(row_num, 1)
-                end_cell = rowcol_to_a1(row_num, len(df_full.columns))
-                sheet.update(f"{start_cell}:{end_cell}", [row_data])
-            st.success("✅ Dữ liệu đã được cập nhật thành công.")
-        else:
-            st.info("📭 Không có thay đổi nào để cập nhật.")
+        col_count = len(df_full.columns)
+        for idx in rows_to_update:
+            row_num = idx + 2
+            # Ensure clean string values
+            row_data = ["" if pd.isna(x) else str(x) for x in df_full.loc[idx].tolist()]
+            if len(row_data) != col_count:
+                st.warning(f"⚠️ Skipping row {row_num} due to mismatched column count.")
+                continue
+            start_cell = rowcol_to_a1(row_num, 1)
+            end_cell = rowcol_to_a1(row_num, col_count)
+            cell_range = f"{start_cell}:{end_cell}"
+            try:
+                sheet.update(cell_range, [row_data])
+            except Exception as e:
+                st.error(f"🚨 Error updating row {row_num}: {e}")
         
         st.success("Confirmation status updated to Google Sheet!")
 
