@@ -83,19 +83,18 @@ if "reason_category" not in df.columns:
 team = st.sidebar.selectbox("Team", ["All", "INT", "US"], index=0)
 
 # Country filter
+country = "All"
 if "country_code_2" in df.columns:
     all_countries = sorted(df["country_code_2"].dropna().unique())
     if team == "US":
         filtered_countries = ["US"]
     elif team == "INT":
         filtered_countries = [c for c in all_countries if c != "US"]
-    else:  # ALL
+    else:
         filtered_countries = all_countries
 
     country_options = ["All"] + filtered_countries
     country = st.sidebar.selectbox("Country", country_options, index=0)
-else:
-    country = "All"
 
 df_filtered = df.copy()
 if team == "US":
