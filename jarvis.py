@@ -363,11 +363,11 @@ with tab1:
             #     row_num = idx + 2  # +2 vì Google Sheets bắt đầu từ 1 và dòng 1 là header
             #     sheet.update(f"A{row_num}:{chr(65 + len(df.columns) - 1)}{row_num}",
             #                  [df.loc[idx].astype(str).tolist()])
-            for idx in rows_to_update.index:
-                df_full.loc[idx] = edited_df.loc[idx] 
-                row_num = idx + 2
-                sheet.update(f"A{row_num}:{chr(64 + len(df_full.columns))}{row_num}",
-                             [df_full.loc[idx].astype(str).tolist()])
+            # for idx in rows_to_update.index:
+            #     df_full.loc[idx] = edited_df.loc[idx] 
+            #     row_num = idx + 2
+            #     sheet.update(f"A{row_num}:{chr(64 + len(df_full.columns))}{row_num}",
+            #                  [df_full.loc[idx].astype(str).tolist()])
             for idx in rows_to_update.index:
                 row_num = idx + 2
                 row_data = [str(x) if x is not None else "" for x in df_full.loc[idx]]
