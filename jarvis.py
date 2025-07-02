@@ -67,7 +67,11 @@ client = gspread.authorize(creds)
 sheet_name = f"Summary_Kill_{department}"
 sheet = client.open_by_key("1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY").worksheet(sheet_name)
 data = sheet.get_all_records()
-df = pd.DataFrame(data)
+
+# df = pd.DataFrame(data)
+
+df_full = pd.DataFrame(sheet.get_all_records())
+df = df_full.copy()
 
 # Team filter
 team = st.sidebar.selectbox("Team", ["All", "INT", "US"], index=0)
@@ -353,10 +357,15 @@ with tab1:
         rows_to_update = edited_df[changed_rows]
         
         if not rows_to_update.empty:
+            # for idx in rows_to_update.index:
+            #     row_num = idx + 2  # +2 vì Google Sheets bắt đầu từ 1 và dòng 1 là header
+            #     sheet.update(f"A{row_num}:{chr(65 + len(df.columns) - 1)}{row_num}",
+            #                  [df.loc[idx].astype(str).tolist()])
             for idx in rows_to_update.index:
-                row_num = idx + 2  # +2 vì Google Sheets bắt đầu từ 1 và dòng 1 là header
-                sheet.update(f"A{row_num}:{chr(65 + len(df.columns) - 1)}{row_num}",
-                             [df.loc[idx].astype(str).tolist()])
+                df_full.loc[idx] = edited_df.loc[idx] 
+                row_num = idx + 2
+                sheet.update(f"A{row_num}:{chr(64 + len(df_full.columns))}{row_num}",
+                             [df_full.loc[idx].astype(str).tolist()])
         
         st.success("Confirmation status updated to Google Sheet!")
 
