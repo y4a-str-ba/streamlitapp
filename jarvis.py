@@ -344,10 +344,19 @@ with tab1:
             st.error("Please add a text reason for any 'Other' selections before submitting!")
             st.stop()
 
-        df.update(edited_df)
-        # df.loc[edited_df.index] = edited_df
+        # df.update(edited_df)
+        # # df.loc[edited_df.index] = edited_df
 
-        sheet.update([df.columns.tolist()] + df.astype(str).values.tolist())
+        # sheet.update([df.columns.tolist()] + df.astype(str).values.tolist())
+
+        changed_rows = edited_df[df_filtered.columns].ne(df_filtered).any(axis=1)
+        rows_to_update = edited_df[changed_rows]
+        
+        if not rows_to_update.empty:
+            for idx in rows_to_update.index:
+                row_num = idx + 2  # +2 vì Google Sheets bắt đầu từ 1 và dòng 1 là header
+                sheet.update(f"A{row_num}:{chr(65 + len(df.columns) - 1)}{row_num}",
+                             [df.loc[idx].astype(str).tolist()])
         
         st.success("Confirmation status updated to Google Sheet!")
 
