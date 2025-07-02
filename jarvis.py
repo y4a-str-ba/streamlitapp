@@ -347,13 +347,13 @@ with tab1:
     )
 
     rows_to_update = []
-        compare_cols = df_filtered.columns.intersection(df_full.columns)
-        for idx in edited_df.index:
-            original_row = df_full.loc[idx, compare_cols]
-            new_row = edited_df.loc[idx, compare_cols]
-            if not original_row.equals(new_row):
-                df_full.loc[idx, compare_cols] = new_row
-                rows_to_update.append(idx)
+    compare_cols = df_filtered.columns.intersection(df_full.columns)
+    for idx in edited_df.index:
+        original_row = df_full.loc[idx, compare_cols]
+        new_row = edited_df.loc[idx, compare_cols]
+        if not original_row.equals(new_row):
+            df_full.loc[idx, compare_cols] = new_row
+            rows_to_update.append(idx)
 
     if st.button("Submit Confirmed Terms"):
         invalid_rows = edited_df[
