@@ -346,7 +346,8 @@ with tab1:
             st.stop()
 
         # df.update(edited_df)
-        df.loc[edited_df.index] = edited_df
+        # df.loc[edited_df.index] = edited_df
+        df.loc[edited_df.index, edited_df.columns] = edited_df
 
         sheet.update([df.columns.tolist()] + df.astype(str).values.tolist())
         
