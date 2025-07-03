@@ -407,8 +407,8 @@ with tab1:
                 if len(unconfirmed_df) > 10:
                     msg += f"\n...and `{len(unconfirmed_df) - 10}` more."
 
-        # webhook_url = 'https://chat.googleapis.com/v1/spaces/AAQA4vfwkIw/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=TyhGKT_IfWTpa8e5A2N2KlVvK-ZSpu4PMclPG2YmtXs'
-        webhook_url = 'https://chat.googleapis.com/v1/spaces/AAQAtlalZHg/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=dAqV50K0MSHsB8PRPIqqLTmThgeGtx78zQ6lOBVME8o'
+        webhook_url = 'https://chat.googleapis.com/v1/spaces/AAQA4vfwkIw/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=TyhGKT_IfWTpa8e5A2N2KlVvK-ZSpu4PMclPG2YmtXs'
+        
         requests.post(webhook_url, json={"text": msg})
 
     st.download_button("📥 Export CSV", df.astype(str).to_csv(index=False), "search_terms.csv")
