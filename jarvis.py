@@ -366,7 +366,7 @@ with tab1:
 
         for idx in edited_df.index:
             df_full.loc[idx, edited_df.columns] = edited_df.loc[idx]
-            if edited_df.at[idx, "confirm_from_mkt"] == False:
+            if edited_df.at[idx, "confirm_from_mkt"] == True:
                 df_full.at[idx, "flag"] = 1
         sheet.update([df_full.columns.tolist()] + df_full.astype(str).values.tolist())
         
@@ -408,7 +408,7 @@ with tab1:
         #         msg += f"\n...and `{len(unconfirmed_terms) - 10}` more."
                 
         if "confirm_from_mkt" in df_full and "searchterm" in df_full:
-            unconfirmed_df = df_full[df_full["confirm_from_mkt"] == True]
+            unconfirmed_df = df_full[df_full["confirm_from_mkt"] == False]
             if not unconfirmed_df.empty:
                 msg += "\n\n🔍 *Unconfirmed Terms:*"
                 for term in unconfirmed_df["searchterm"].dropna().astype(str).head(10):
