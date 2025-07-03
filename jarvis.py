@@ -421,6 +421,9 @@ with tab1:
 
     st.download_button("📥 Export CSV", df.astype(str).to_csv(index=False), "search_terms.csv")
 
+    time.sleep(1)
+    st.rerun()
+
     st.markdown("### Today Confirmed Terms")
     if df_confirmed.empty:
         st.info("No confirmed terms yet.")
