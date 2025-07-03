@@ -339,11 +339,7 @@ with tab1:
                 "Reason Category (if Unconfirmed)",
                 options=reason_options
             ),
-            "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)"),
-            "profile_id": st.column_config.Column(visible=False),
-            "campaignid": st.column_config.Column(visible=False),
-            "adgroupid": st.column_config.Column(visible=False),
-            "keywordid": st.column_config.Column(visible=False)
+            "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)")
         },
         num_rows="dynamic",
         key="confirm_editor",
