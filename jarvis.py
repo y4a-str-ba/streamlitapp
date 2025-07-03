@@ -422,17 +422,17 @@ with tab1:
     st.download_button("📥 Export CSV", df.astype(str).to_csv(index=False), "search_terms.csv")
 
     st.markdown("### Confirmed SearchTerms")
-        if df_confirmed.empty:
-            st.info("No confirmed terms yet.")
-        else:
-            # st.dataframe(df_confirmed[cols_to_show], use_container_width=True)
-            cols_to_show = [
-                "searchterm", "campaignname", "adgroupname",
-                "confirm_from_mkt", "reason_category", "reason_reject",
-                "cumulative_clicks", "cumulative_impressions", "cumulative_sales"
-            ]
-            cols_to_show = [col for col in cols_to_show if col in df_confirmed.columns]
-            st.dataframe(df_confirmed[cols_to_show], use_container_width=True)
+    if df_confirmed.empty:
+        st.info("No confirmed terms yet.")
+    else:
+        # st.dataframe(df_confirmed[cols_to_show], use_container_width=True)
+        cols_to_show = [
+            "searchterm", "campaignname", "adgroupname",
+            "confirm_from_mkt", "reason_category", "reason_reject",
+            "cumulative_clicks", "cumulative_impressions", "cumulative_sales"
+        ]
+        cols_to_show = [col for col in cols_to_show if col in df_confirmed.columns]
+        st.dataframe(df_confirmed[cols_to_show], use_container_width=True)
             
 
 # ========== TAB 3 ==========
