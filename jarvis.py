@@ -74,7 +74,13 @@ data = sheet.get_all_records()
 
 # Quoc add
 df_full = pd.DataFrame(sheet.get_all_records())
-df = df_full.copy()
+
+## unconfirmed df
+# df = df_full.copy()
+df = = df_full[df_full["flag"] = 0].copy()
+
+## confirmed df
+df_confirmed = df_full[df_full["flag"] = 1].copy()
 
 # Team filter
 team = st.sidebar.selectbox("Team", ["All", "INT", "US"], index=0)
@@ -363,6 +369,14 @@ with tab1:
         
         st.success("Confirmation status updated to Google Sheet!")
 
+
+        st.markdown("### Confirmed SearchTerms")
+        if df_confirmed.empty:
+            st.info("No confirmed terms yet.")
+        else:
+            st.dataframe(df_confirmed[cols_to_show], use_container_width=True)
+
+        
         # Log Writer (Confirmed + Unconfirmed)
         log_all_terms(
             edited_df=edited_df,
