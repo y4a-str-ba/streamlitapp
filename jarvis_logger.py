@@ -16,7 +16,7 @@ def log_all_terms(edited_df, user, sheet_id, sheet_name, service_account_info):
     # Select columns
     selected_columns = [
         "confirmed_by", "submitted_at", "confirmation_status", "reason_category", "reason_reject",
-        "campaignname", "adgroupname", "searchterm",
+        "campaignname", "adgroupname", "profile_id", "campaignid", "adgroupid", "keywordid", "searchterm",
         "keywordtext", "country_code_2", "cumulative_clicks",
         "cumulative_impressions", "cumulative_cost", "cumulative_sales",
         "country_code", "department" 
