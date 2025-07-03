@@ -323,7 +323,7 @@ with tab1:
 
     preferred_cols = ["confirm_from_mkt", "reason_category", "reason_reject"]
     additional_cols = [
-    "campaignname", "adgroupname", "searchterm",
+    "campaignname", "adgroupname", "profile_id", "campaignid", "adgroupid", "keywordid", "searchterm",
     "keywordtext", "country_code_2", "cumulative_clicks",
     "cumulative_impressions", "cumulative_cost", "cumulative_sales",
     "country_code", "department"
