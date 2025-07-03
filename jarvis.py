@@ -370,21 +370,6 @@ with tab1:
         sheet.update([df_full.columns.tolist()] + df_full.astype(str).values.tolist())
         
         st.success("Confirmation status updated to Google Sheet!")
-
-
-    st.markdown("### Confirmed SearchTerms")
-    if df_confirmed.empty:
-        st.info("No confirmed terms yet.")
-    else:
-        # st.dataframe(df_confirmed[cols_to_show], use_container_width=True)
-        cols_to_show = [
-            "searchterm", "campaignname", "adgroupname",
-            "confirm_from_mkt", "reason_category", "reason_reject",
-            "cumulative_clicks", "cumulative_impressions", "cumulative_sales"
-        ]
-        cols_to_show = [col for col in cols_to_show if col in df_confirmed.columns]
-        st.dataframe(df_confirmed[cols_to_show], use_container_width=True)
-
         
         # Log Writer (Confirmed + Unconfirmed)
         log_all_terms(
@@ -435,6 +420,20 @@ with tab1:
         requests.post(webhook_url, json={"text": msg})
 
     st.download_button("📥 Export CSV", df.astype(str).to_csv(index=False), "search_terms.csv")
+
+    st.markdown("### Confirmed SearchTerms")
+        if df_confirmed.empty:
+            st.info("No confirmed terms yet.")
+        else:
+            # st.dataframe(df_confirmed[cols_to_show], use_container_width=True)
+            cols_to_show = [
+                "searchterm", "campaignname", "adgroupname",
+                "confirm_from_mkt", "reason_category", "reason_reject",
+                "cumulative_clicks", "cumulative_impressions", "cumulative_sales"
+            ]
+            cols_to_show = [col for col in cols_to_show if col in df_confirmed.columns]
+            st.dataframe(df_confirmed[cols_to_show], use_container_width=True)
+            
 
 # ========== TAB 3 ==========
 with tab3:
