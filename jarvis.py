@@ -365,7 +365,7 @@ with tab1:
 
         for idx in edited_df.index:
             df_full.loc[idx, edited_df.columns] = edited_df.loc[idx]
-            if edited_df.at[idx, "confirm_from_mkt"] == True:
+            if edited_df.at[idx, "confirm_from_mkt"] == False:
                 df_full.at[idx, "flag"] = 1
         sheet.update([df_full.columns.tolist()] + df_full.astype(str).values.tolist())
         
