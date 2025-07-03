@@ -77,7 +77,7 @@ df_full = pd.DataFrame(sheet.get_all_records())
 
 ## unconfirmed df
 # df = df_full.copy()
-df = = df_full[df_full["flag"] = 0].copy()
+df = df_full[df_full["flag"] = 0].copy()
 
 ## confirmed df
 df_confirmed = df_full[df_full["flag"] = 1].copy()
