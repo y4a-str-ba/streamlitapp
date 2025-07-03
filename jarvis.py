@@ -365,16 +365,25 @@ with tab1:
 
         for idx in edited_df.index:
             df_full.loc[idx, edited_df.columns] = edited_df.loc[idx]
+            if edited_df.at[idx, "confirm_from_mkt"] == True:
+                df_full.at[idx, "flag"] = 1
         sheet.update([df_full.columns.tolist()] + df_full.astype(str).values.tolist())
         
         st.success("Confirmation status updated to Google Sheet!")
 
 
-        st.markdown("### Confirmed SearchTerms")
-        if df_confirmed.empty:
-            st.info("No confirmed terms yet.")
-        else:
-            st.dataframe(df_confirmed[cols_to_show], use_container_width=True)
+    st.markdown("### Confirmed SearchTerms")
+    if df_confirmed.empty:
+        st.info("No confirmed terms yet.")
+    else:
+        # st.dataframe(df_confirmed[cols_to_show], use_container_width=True)
+        cols_to_show = [
+            "searchterm", "campaignname", "adgroupname",
+            "confirm_from_mkt", "reason_category", "reason_reject",
+            "cumulative_clicks", "cumulative_impressions", "cumulative_sales"
+        ]
+        cols_to_show = [col for col in cols_to_show if col in df_confirmed.columns]
+        st.dataframe(df_confirmed[cols_to_show], use_container_width=True)
 
         
         # Log Writer (Confirmed + Unconfirmed)
