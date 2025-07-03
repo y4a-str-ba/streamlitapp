@@ -419,11 +419,12 @@ with tab1:
         webhook_url = 'https://chat.googleapis.com/v1/spaces/AAQA4vfwkIw/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=TyhGKT_IfWTpa8e5A2N2KlVvK-ZSpu4PMclPG2YmtXs'
         
         requests.post(webhook_url, json={"text": msg})
+        
+        time.sleep(1)
+        st.rerun()
 
     st.download_button("📥 Export CSV", df.astype(str).to_csv(index=False), "search_terms.csv")
-
-    time.sleep(1)
-    st.rerun()
+    
 
     st.markdown("### Today Confirmed Terms")
     if df_confirmed.empty:
