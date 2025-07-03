@@ -408,7 +408,7 @@ with tab1:
         #         msg += f"\n...and `{len(unconfirmed_terms) - 10}` more."
                 
         if "confirm_from_mkt" in df_full and "searchterm" in df_full:
-            unconfirmed_df = df_full[df_full["confirm_from_mkt"] == False]
+            unconfirmed_df = df_full[df_full["confirm_from_mkt"] == True]
             if not unconfirmed_df.empty:
                 msg += "\n\n🔍 *Unconfirmed Terms:*"
                 for term in unconfirmed_df["searchterm"].dropna().astype(str).head(10):
