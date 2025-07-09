@@ -361,14 +361,15 @@ with tab1:
         },
         num_rows="dynamic",
         key="confirm_editor",
-       use_container_width=True,
-       hide_index=False
+        use_container_width=True,
+        hide_index=False
     )
 
      # Auto-apply reason for unconfirmed rows with empty reason_category
     if selected_filter_reason:
-        mask_unconfirmed = edited_df["confirm_from_mkt"] == False
-        df_filtered.loc[mask_unconfirmed, "reason_category"] = selected_filter_reason
+        mask_unconfirmed = (edited_df["confirm_from_mkt"] == False)
+        if mask_unconfirmed.any():
+            edited_df.loc[mask_unconfirmed, "reason_category"] = selected_filter_reason
         
     # Update session state immediately after editing
     st.session_state.df_filtered = edited_df.copy()
