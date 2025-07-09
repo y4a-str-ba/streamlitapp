@@ -376,9 +376,15 @@ with tab1:
 
     if st.button("Submit Confirmed Terms"):
         invalid_rows = edited_df[
-            (edited_df["confirm_from_mkt"] == False) &
-            (edited_df["reason_category"] == reason_options[-1]) &
-            (edited_df["reason_reject"].str.strip() == "")
+        (edited_df["confirm_from_mkt"] == False) &
+        (
+            (edited_df["reason_category"].isna()) |  
+            (edited_df["reason_category"].str.strip() == "") |  
+            (
+                (edited_df["reason_category"] == reason_options[-1]) & 
+                (edited_df["reason_reject"].str.strip() == "")  
+            )
+        )
         ]
         if not invalid_rows.empty:
             st.error("Please add a text reason for any 'Other' selections before submitting!")
