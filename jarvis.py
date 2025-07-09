@@ -68,7 +68,7 @@ creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"],
 client = gspread.authorize(creds)
 
 sheet_name = f"Summary_Kill_{department}"
-sheet = client.open_by_key("1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY").worksheet(sheet_name)
+# sheet = client.open_by_key("1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY").worksheet(sheet_name) # Open after Submit Confirmed Terms in order to avoid calling API many times
 data = sheet.get_all_records()
 
 # df = pd.DataFrame(data)
@@ -377,7 +377,7 @@ with tab1:
             (edited_df["reason_reject"].str.strip() == "")
         ]
         if not invalid_rows.empty:
-            st.error("Please add a text reason for any 'Other' selections before submitting!")
+            st.error("Please add a text reason for any 'Other' selections before submitting!")if st.button
             st.stop()
 
         # df.update(edited_df)
@@ -389,6 +389,9 @@ with tab1:
             df_full.loc[idx, edited_df.columns] = edited_df.loc[idx]
             if edited_df.at[idx, "confirm_from_mkt"] == True:
                 df_full.at[idx, "flag"] = 1
+
+        sheet = client.open_by_key("1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY").worksheet(sheet_name)
+        
         sheet.update([df_full.columns.tolist()] + df_full.astype(str).values.tolist())
         
         st.success("Confirmation status updated to Google Sheet!")
