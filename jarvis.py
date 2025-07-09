@@ -333,22 +333,23 @@ with tab1:
     df_filtered = df_filtered[preferred_cols + additional_cols]
 
     # Add filter reason
-    df_filtered["reason_category"] = (None)
-    df_filtered["reason_reject"] = (None)
+    df_filtered["reason_category"] = None
+    df_filtered["reason_reject"] = None
     
     st.markdown("#### 📌 Apply Reason to all unconfirmed rows")
     selected_filter_reason = st.selectbox(
         "Filter Reason Category",
-        ["(None)"] + reason_options,
-        index=0
+        [""] + reason_options, 
+        index=0,
+        placeholder="Select a reason..." 
     )
-
+    
     # Auto-apply reason for unconfirmed rows with empty reason_category
-    if selected_filter_reason != "(None)":
+    if selected_filter_reason != "":  
         mask_unconfirmed = df_filtered["confirm_from_mkt"] == False
         mask_empty_reason = df_filtered["reason_category"].isna() | (df_filtered["reason_category"].str.strip() == "")
         apply_mask = mask_unconfirmed & mask_empty_reason
-
+    
         df_filtered.loc[apply_mask, "reason_category"] = selected_filter_reason
         
     edited_df = st.data_editor(
