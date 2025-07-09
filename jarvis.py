@@ -118,7 +118,8 @@ else:
 if "reason_reject" not in df.columns:
     df["reason_reject"] = ""
 if "reason_category" not in df.columns:
-    df["reason_category"] = "8. Other  → Other (please specify)"
+    # df["reason_category"] = "8. Other  → Other (please specify)"
+    df["reason_category"] = None
 
 # ========== TABS ==========
 tab1, tab2, tab3 = st.tabs(["Search Term Predictions", "Model Performance", "Explain a Search Term"])
