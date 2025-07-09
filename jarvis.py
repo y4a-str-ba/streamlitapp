@@ -333,8 +333,8 @@ with tab1:
     df_filtered = df_filtered[preferred_cols + additional_cols]
 
     # Add filter reason
-    df_filtered["reason_category"] = None
-    df_filtered["reason_reject"] = None
+    df_filtered["reason_category"] = (None)
+    df_filtered["reason_reject"] = (None)
     
     st.markdown("#### 📌 Apply Reason to all unconfirmed rows")
     selected_filter_reason = st.selectbox(
