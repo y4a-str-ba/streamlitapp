@@ -377,7 +377,7 @@ with tab1:
             (edited_df["reason_reject"].str.strip() == "")
         ]
         if not invalid_rows.empty:
-            st.error("Please add a text reason for any 'Other' selections before submitting!")if st.button
+            st.error("Please add a text reason for any 'Other' selections before submitting!")
             st.stop()
 
         # df.update(edited_df)
