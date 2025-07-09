@@ -332,7 +332,7 @@ with tab1:
 
     df_filtered = df_filtered[preferred_cols + additional_cols]
 
-    Add filter reason
+    # Add filter reason
     df_filtered["reason_category"] = None
     df_filtered["reason_reject"] = None
     
