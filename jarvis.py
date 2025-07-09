@@ -350,7 +350,7 @@ with tab1:
         apply_mask = mask_unconfirmed & mask_empty_reason
     
         df_filtered.loc[apply_mask, "reason_category"] = selected_filter_reason
-        st.experimental_rerun()
+        st.rerun()
         
     edited_df = st.data_editor(
         df_filtered,
