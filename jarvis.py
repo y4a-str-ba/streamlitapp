@@ -332,33 +332,38 @@ with tab1:
 
     df_filtered = df_filtered[preferred_cols + additional_cols]
 
-    # # Bulk reason apply section
-    # st.markdown("#### Bulk Reason for Unconfirmed Terms")
-    # col1, col2 = st.columns([2, 3])
+    # Initialize session_state for bulk_applied
+    if "bulk_applied" not in st.session_state:
+        st.session_state.bulk_applied = False
 
-    # with col1:
-    #     bulk_reason = st.selectbox(
-    #         "Bulk Reason Category",
-    #         ["(None)"] + reason_options,
-    #         index=0,
-    #         key="bulk_reason_select"
-    #     )
+    # Bulk reason section
+    st.markdown("#### Bulk Reason for Unconfirmed Terms")
+    col1, col2 = st.columns([2, 3])
 
-    # bulk_free_text = ""
-    # if bulk_reason == reason_options[-1]:  # If "Other" selected
-    #     with col2:
-    #         bulk_free_text = st.text_input(
-    #             "Bulk Free Text Reason",
-    #             placeholder="Enter reason for all unconfirmed terms",
-    #             key="bulk_reason_text"
-    #         )
+    with col1:
+        bulk_reason = st.selectbox(
+            "Bulk Reason Category",
+            ["(None)"] + reason_options,
+            index=0,
+            key="bulk_reason_select"
+        )
 
-    # # Auto-apply bulk reason to all unchecked rows
-    # if bulk_reason != "(None)":
-    #     mask_unchecked = df_filtered["confirm_from_mkt"] == False
-    #     df_filtered.loc[mask_unchecked, "reason_category"] = bulk_reason
-    #     if bulk_reason == reason_options[-1]:  # If "Other"
-    #         df_filtered.loc[mask_unchecked, "reason_reject"] = bulk_free_text
+    bulk_free_text = ""
+    if bulk_reason == reason_options[-1]:  # If "Other" selected
+        with col2:
+            bulk_free_text = st.text_input(
+                "Bulk Free Text Reason",
+                placeholder="Enter reason for all unconfirmed terms",
+                key="bulk_reason_text"
+            )
+
+    # Auto-apply bulk reason once per session
+    if bulk_reason != "(None)" and not st.session_state.bulk_applied:
+        mask_unchecked = df_filtered["confirm_from_mkt"] == False
+        df_filtered.loc[mask_unchecked, "reason_category"] = bulk_reason
+        if bulk_reason == reason_options[-1]:  
+            df_filtered.loc[mask_unchecked, "reason_reject"] = bulk_free_text
+        st.session_state.bulk_applied = True  
 
     edited_df = st.data_editor(
         df_filtered,
