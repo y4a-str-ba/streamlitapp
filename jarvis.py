@@ -332,39 +332,25 @@ with tab1:
 
     df_filtered = df_filtered[preferred_cols + additional_cols]
 
-    # # Initialize session_state for bulk_applied
-    # if "bulk_applied" not in st.session_state:
-    #     st.session_state.bulk_applied = False
+    # Add filter reason
+    df_filtered["reason_category"] = None
+    df_filtered["reason_reject"] = None
+    
+    st.markdown("#### 📌 Apply Reason to all unconfirmed rows")
+    selected_filter_reason = st.selectbox(
+        "Filter Reason Category",
+        ["(None)"] + reason_options,
+        index=0
+    )
 
-    # # Bulk reason section
-    # st.markdown("#### Bulk Reason for Unconfirmed Terms")
-    # col1, col2 = st.columns([2, 3])
+    # Auto-apply reason for unconfirmed rows with empty reason_category
+    if selected_filter_reason != "(None)":
+        mask_unconfirmed = df_filtered["confirm_from_mkt"] == False
+        mask_empty_reason = df_filtered["reason_category"].isna() | (df_filtered["reason_category"].str.strip() == "")
+        apply_mask = mask_unconfirmed & mask_empty_reason
 
-    # with col1:
-    #     bulk_reason = st.selectbox(
-    #         "Bulk Reason Category",
-    #         ["(None)"] + reason_options,
-    #         index=0,
-    #         key="bulk_reason_select"
-    #     )
-
-    # bulk_free_text = ""
-    # if bulk_reason == reason_options[-1]:  # If "Other" selected
-    #     with col2:
-    #         bulk_free_text = st.text_input(
-    #             "Bulk Free Text Reason",
-    #             placeholder="Enter reason for all unconfirmed terms",
-    #             key="bulk_reason_text"
-    #         )
-
-    # # Auto-apply bulk reason once per session
-    # if bulk_reason != "(None)" and not st.session_state.bulk_applied:
-    #     mask_unchecked = df_filtered["confirm_from_mkt"] == False
-    #     df_filtered.loc[mask_unchecked, "reason_category"] = bulk_reason
-    #     if bulk_reason == reason_options[-1]:  
-    #         df_filtered.loc[mask_unchecked, "reason_reject"] = bulk_free_text
-    #     st.session_state.bulk_applied = True  
-
+        df_filtered.loc[apply_mask, "reason_category"] = selected_filter_reason
+        
     edited_df = st.data_editor(
         df_filtered,
         column_config={
