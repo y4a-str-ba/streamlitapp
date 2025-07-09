@@ -333,7 +333,10 @@ with tab1:
     df_filtered = df_filtered[preferred_cols + additional_cols]
 
     # Add filter reason
-    df_reason_applied = st.session_state.df_filtered.copy()
+    if "df_filtered" in st.session_state:
+        df_reason_applied = st.session_state.df_filtered.copy()
+    else:
+        df_reason_applied = df_filtered.copy()
     
     df_reason_applied["reason_category"] = df_reason_applied["reason_category"].fillna("(None)")
     df_reason_applied["reason_reject"] = df_reason_applied["reason_reject"].fillna("")
