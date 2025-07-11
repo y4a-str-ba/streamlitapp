@@ -345,9 +345,11 @@ with tab1:
     )
     
     # Auto-apply reason for unconfirmed rows with empty reason_category
-    if selected_filter_reason:
-        mask_unconfirmed = df_filtered["confirm_from_mkt"] == False
-        df_filtered.loc[mask_unconfirmed, "reason_category"] = selected_filter_reason
+    # if selected_filter_reason:
+    #     mask_unconfirmed = df_filtered["confirm_from_mkt"] == False
+    #     df_filtered.loc[mask_unconfirmed, "reason_category"] = selected_filter_reason
+
+    df_filtered.loc[df_filtered["confirm_from_mkt"] == False, "reason_category"] = selected_filter_reason
         
     edited_df = st.data_editor(
         df_filtered,
