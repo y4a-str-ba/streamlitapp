@@ -353,8 +353,11 @@ with tab1:
             if col not in temp_df.columns:
                 temp_df[col] = None
 
+        temp_df = temp_df[preferred_cols + additional_cols]
+        
         # Set the default 'confirm' status to True
         temp_df["confirm_from_mkt"] = True
+        
         # Fill NA for reason columns to prevent errors
         temp_df["reason_category"] = temp_df["reason_category"].fillna("")
         temp_df["reason_reject"] = temp_df["reason_reject"].fillna("")
@@ -384,7 +387,7 @@ with tab1:
     # --- Data Editor ---
     # This component displays the data from our session_state dataframe
     edited_df = st.data_editor(
-        st.session_state.data_editor_df,
+        st.session_state.data_editor_df[preferred_cols + additional_cols],
         column_config={
             "confirm_from_mkt": st.column_config.CheckboxColumn("Confirm", required=True),
             "reason_category": st.column_config.SelectboxColumn(
