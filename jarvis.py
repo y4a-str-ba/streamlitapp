@@ -348,8 +348,6 @@ with tab1:
     # if selected_filter_reason:
     #     mask_unconfirmed = df_filtered["confirm_from_mkt"] == False
     #     df_filtered.loc[mask_unconfirmed, "reason_category"] = selected_filter_reason
-
-    df_filtered.loc[df_filtered["confirm_from_mkt"] == False, "reason_category"] = selected_filter_reason
         
     edited_df = st.data_editor(
         df_filtered,
@@ -366,6 +364,8 @@ with tab1:
         use_container_width=True,
         hide_index=False
     )
+
+    edited_df.loc[edited_df["confirm_from_mkt"] == False, "reason_category"] = selected_filter_reason
 
     # Update session state immediately after editing
     st.session_state.df_filtered = edited_df.copy()
