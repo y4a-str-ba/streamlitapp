@@ -306,7 +306,23 @@ with tab1:
         if not is_checked:
             st.session_state.data_editor_df['reason_category'] = st.session_state.selected_filter_reason
 
+    def update_reason_for_unconfirmed():
+        unconfirmed_mask = st.session_state.data_editor_df['confirm_from_mkt'] == False
+        st.session_state.data_editor_df.loc[unconfirmed_mask, 'reason_category'] = st.session_state.selected_filter_reason
+
     st.subheader("Confirm individual terms")
+
+    teams = ["All"] + sorted(df["team"].dropna().unique().tolist())
+    if "selected_team" not in st.session_state:
+        st.session_state.selected_team = "All"
+    selected_team = st.selectbox("Filter by Team", teams, index=teams.index(st.session_state.selected_team))
+    st.session_state.selected_team = selected_team
+
+    countries = ["All"] + sorted(df["country"].dropna().unique().tolist())
+    if "selected_country" not in st.session_state:
+        st.session_state.selected_country = "All"
+    selected_country = st.selectbox("Filter by Country", countries, index=countries.index(st.session_state.selected_country))
+    st.session_state.selected_country = selected_country
 
     # --- Filters ---
     campaigns = ["All"] + sorted(df["campaignname"].dropna().unique().tolist())
