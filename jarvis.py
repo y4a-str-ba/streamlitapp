@@ -391,9 +391,9 @@ with tab1:
     # --- Dynamic Disable Mask ---
     disable_mask = pd.DataFrame(False, index=st.session_state.data_editor_df.index, columns=st.session_state.data_editor_df.columns)
 
-    # Disable all except 3 cột preferred (confirm_from_mkt, reason_category, reason_reject)
+    # Disable all except confirm_from_mkt, reason_category, reason_reject
     for col in preferred_cols[2:] + additional_cols:
-        if col != "reason_reject":  # giữ reason_reject luôn mở
+        if col != "reason_reject":  # Free Text Reason luôn mở
             disable_mask[col] = True
 
     # --- Data Editor ---
