@@ -365,7 +365,8 @@ with tab1:
         hide_index=False
     )
 
-    edited_df.loc[edited_df["confirm_from_mkt"] == False, "reason_category"] = selected_filter_reason
+    mask_unconfirmed = edited_df["confirm_from_mkt"] == False
+    edited_df.loc[mask_unconfirmed, "reason_category"] = selected_filter_reason
 
     # Update session state immediately after editing
     st.session_state.df_filtered = edited_df.copy()
