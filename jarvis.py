@@ -451,8 +451,17 @@ with tab1:
             service_account_info=st.secrets["gcp_service_account"]
         )
 
-        total_confirmed = final_df[final_df["confirm_from_mkt"] == True].shape[0]
-        total_unconfirmed = final_df[final_df["confirm_from_mkt"] == False].shape[0]
+        # Filter df_full by Team/Country for counting
+        df_filtered_flag = df_full.copy()
+        
+        if selected_team != "All" and "team" in df_filtered_flag.columns:
+            df_filtered_flag = df_filtered_flag[df_filtered_flag["team"] == selected_team]
+        
+        if selected_country != "All" and "country" in df_filtered_flag.columns:
+            df_filtered_flag = df_filtered_flag[df_filtered_flag["country"] == selected_country]
+        
+        total_confirmed = df_filtered_flag[df_filtered_flag["flag"] == 1].shape[0]
+        total_unconfirmed = df_filtered_flag[df_filtered_flag["flag"] == 0].shape[0]
 
         user = st.session_state.user
         current_sheet = sheet.title
