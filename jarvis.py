@@ -312,22 +312,23 @@ with tab1:
 
     st.subheader("Confirm individual terms")
 
-    teams = ["All"]
-    if "team" in df.columns:
-        teams += sorted(df["team"].dropna().unique().tolist())
-
-    countries = ["All"]
-    if "country" in df.columns:
-        countries += sorted(df["country"].dropna().unique().tolist())
-
     # Use filters from Sidebar
     selected_team = team
     selected_country = country
 
+    df_filtered = df.copy()
+
+    # Filter theo Sidebar (Team & Country)
+    if selected_team != "All" and "team" in df_filtered.columns:
+        df_filtered = df_filtered[df_filtered["team"] == selected_team]
+
+    if selected_country != "All" and "country" in df_filtered.columns:
+        df_filtered = df_filtered[df_filtered["country"] == selected_country]
+
+    # Filter Campaign/Adgroup
     campaigns = ["All"] + sorted(df["campaignname"].dropna().unique().tolist())
     selected_campaign = st.selectbox("Filter by Campaign", campaigns, index=0)
 
-    df_filtered = df.copy()
     if selected_campaign != "All":
         df_filtered = df_filtered[df_filtered["campaignname"] == selected_campaign]
 
