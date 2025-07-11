@@ -349,8 +349,8 @@ with tab1:
     #     mask_unconfirmed = df_filtered["confirm_from_mkt"] == False
     #     df_filtered.loc[mask_unconfirmed, "reason_category"] = selected_filter_reason
 
-    mask_unconfirmed = (edited_df["confirm_from_mkt"] == False) & (edited_df["reason_category"] == "")
-    edited_df.loc[mask_unconfirmed, "reason_category"] = selected_filter_reason
+    mask_unconfirmed = (df_filtered["confirm_from_mkt"] == False) & (df_filtered["reason_category"] == "")
+    df_filtered.loc[mask_unconfirmed, "reason_category"] = selected_filter_reason
         
     edited_df = st.data_editor(
         df_filtered,
