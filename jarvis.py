@@ -391,17 +391,10 @@ with tab1:
     # --- Dynamic Disable Mask ---
     disable_mask = pd.DataFrame(False, index=st.session_state.data_editor_df.index, columns=st.session_state.data_editor_df.columns)
 
-    # Disable all except confirm_from_mkt, reason_category, reason_reject
+    # Disable all except 3 cột preferred (confirm_from_mkt, reason_category, reason_reject)
     for col in preferred_cols[2:] + additional_cols:
-        disable_mask[col] = True
-
-    # Lock Free Text Reason unless: Confirm == False & Reason Category == Other
-    other_mask = (
-        (st.session_state.data_editor_df["confirm_from_mkt"] == False) &
-        (st.session_state.data_editor_df["reason_category"] == reason_options[-1])  # "8. Other → Other (please specify)"
-    )
-    disable_mask.loc[~other_mask, "reason_reject"] = True
-    disable_mask.loc[other_mask, "reason_reject"] = False
+        if col != "reason_reject":  # giữ reason_reject luôn mở
+            disable_mask[col] = True
 
     # --- Data Editor ---
     edited_df = st.data_editor(
