@@ -388,14 +388,6 @@ with tab1:
         help="Check or uncheck all terms in the current view."
     )
 
-    # --- Dynamic Disable Mask ---
-    disable_mask = pd.DataFrame(False, index=st.session_state.data_editor_df.index, columns=st.session_state.data_editor_df.columns)
-
-    # Disable all except confirm_from_mkt, reason_category, reason_reject
-    for col in preferred_cols[2:] + additional_cols:
-        if col != "reason_reject":  # Free Text Reason luôn mở
-            disable_mask[col] = True
-
     # --- Data Editor ---
     edited_df = st.data_editor(
         st.session_state.data_editor_df,
@@ -407,7 +399,7 @@ with tab1:
             "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)")
         },
         column_order=preferred_cols + additional_cols,
-        disabled=disable_mask,
+        disabled=preferred_cols[2:] + additional_cols,
         key="confirm_editor",
         use_container_width=True,
         hide_index=False
@@ -434,7 +426,7 @@ with tab1:
                 (final_df["reason_category"].isna()) |
                 (final_df["reason_category"].str.strip() == "") |
                 (
-                    (final_df["reason_category"] == reason_options[-1]) &  # Other
+                    (final_df["reason_category"] == reason_options[-1]) &
                     (final_df["reason_reject"].fillna("").str.strip() == "")
                 )
             )
