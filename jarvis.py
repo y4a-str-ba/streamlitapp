@@ -411,7 +411,7 @@ with tab1:
             "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)")
         },
         column_order=preferred_cols + additional_cols,
-        disabled=lambda col: reason_reject_disabled if col == "reason_reject" else preferred_cols[2:] + additional_cols,
+        disabled=preferred_cols[2:] + additional_cols,  # Disable các cột khác
         key="confirm_editor",
         use_container_width=True,
         hide_index=False
@@ -425,20 +425,16 @@ with tab1:
     # --- Submit Button ---
     if st.button("Submit Confirmed Terms"):
         final_df = st.session_state.data_editor_df
-        invalid_rows = final_df[
-            (final_df["confirm_from_mkt"] == False) &
-            (
-                (final_df["reason_category"].isna()) |
-                (final_df["reason_category"].str.strip() == "") |
-                (
-                    (final_df["reason_category"] == reason_options[-1]) &
-                    (final_df["reason_reject"].fillna("").str.strip() == "")
-                )
-            )
-        ]
-        if not invalid_rows.empty:
-            st.error("Please add a text reason for any 'Other' selections before submitting!")
-            st.stop()
+    # Validation for unconfirmed rows
+    invalid_rows = final_df[
+        (final_df["confirm_from_mkt"] == False) &
+        (final_df["reason_category"] == reason_options[-1]) &
+        (final_df["reason_reject"].fillna("").str.strip() == "")
+    ]
+    if not invalid_rows.empty:
+        st.error("Please enter Free Text Reason for all rows with '8. Other' selected!")
+        st.stop()
+
 
         for idx in final_df.index:
             if idx in df_full.index:
