@@ -312,19 +312,18 @@ with tab1:
 
     st.subheader("Confirm individual terms")
 
-    teams = ["All"] + sorted(df["team"].dropna().unique().tolist())
-    if "selected_team" not in st.session_state:
-        st.session_state.selected_team = "All"
-    selected_team = st.selectbox("Filter by Team", teams, index=teams.index(st.session_state.selected_team))
-    st.session_state.selected_team = selected_team
+    teams = ["All"]
+    if "team" in df.columns:
+        teams += sorted(df["team"].dropna().unique().tolist())
 
-    countries = ["All"] + sorted(df["country"].dropna().unique().tolist())
-    if "selected_country" not in st.session_state:
-        st.session_state.selected_country = "All"
-    selected_country = st.selectbox("Filter by Country", countries, index=countries.index(st.session_state.selected_country))
-    st.session_state.selected_country = selected_country
+    countries = ["All"]
+    if "country" in df.columns:
+        countries += sorted(df["country"].dropna().unique().tolist())
 
-    # --- Filters ---
+    # Use filters from Sidebar
+    selected_team = team
+    selected_country = country
+
     campaigns = ["All"] + sorted(df["campaignname"].dropna().unique().tolist())
     selected_campaign = st.selectbox("Filter by Campaign", campaigns, index=0)
 
