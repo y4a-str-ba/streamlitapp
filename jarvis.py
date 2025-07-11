@@ -349,8 +349,8 @@ with tab1:
     #     mask_unconfirmed = df_filtered["confirm_from_mkt"] == False
     #     df_filtered.loc[mask_unconfirmed, "reason_category"] = selected_filter_reason
 
-    mask_unconfirmed = df_filtered["confirm_from_mkt"] == False
-    df_filtered.loc[mask_unconfirmed & (df_filtered["reason_category"] == ""), "reason_category"] = selected_filter_reason
+    mask_unconfirmed = (edited_df["confirm_from_mkt"] == False) & (edited_df["reason_category"] == "")
+    edited_df.loc[mask_unconfirmed, "reason_category"] = selected_filter_reason
         
     edited_df = st.data_editor(
         df_filtered,
@@ -367,6 +367,14 @@ with tab1:
         use_container_width=True,
         hide_index=False
     )
+
+    # After user edits, auto-fill Reason for any newly unchecked rows
+    mask_unconfirmed_after_edit = (
+        (edited_df["confirm_from_mkt"] == False) &
+        (edited_df["reason_category"] == "")
+    )
+    if mask_unconfirmed_after_edit.any():
+        edited_df.loc[mask_unconfirmed_after_edit, "reason_category"] = selected_filter_reason
 
     # Update session state immediately after editing
     st.session_state.df_filtered = edited_df.copy()
