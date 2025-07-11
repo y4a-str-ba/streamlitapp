@@ -373,13 +373,13 @@ with tab1:
         unconfirmed_mask = st.session_state.data_editor_df['confirm_from_mkt'] == False
         st.session_state.data_editor_df.loc[unconfirmed_mask, 'reason_category'] = st.session_state.selected_filter_reason
     
-    st.session_state.selected_filter_reason = st.selectbox(
+    st.selectbox(
         "Filter Reason Category",
         reason_options,
         index=0,
-        help="This reason will be auto-filled for rows you uncheck.",
         key="selected_filter_reason",
-        on_change=handle_reason_change
+        on_change=update_reason_for_unconfirmed,
+        help="This reason will be auto-filled for rows you uncheck."
     )
     
     # The "Select All" checkbox, now with an on_change callback
