@@ -401,7 +401,7 @@ with tab1:
 
     # --- Data Editor ---
     edited_df = st.data_editor(
-        st.session_state.data_editor_df.drop(columns="reason_reject_disabled"),
+        st.session_state.data_editor_df.drop(columns="reason_reject_disabled", errors="ignore"),
         column_config={
             "confirm_from_mkt": st.column_config.CheckboxColumn("Confirm", required=True),
             "reason_category": st.column_config.SelectboxColumn(
