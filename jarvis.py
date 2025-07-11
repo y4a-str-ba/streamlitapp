@@ -323,6 +323,13 @@ with tab1:
         "8. Other  → Other (please specify)"
     ]
 
+    st.markdown("#### Apply Reason to all unconfirmed rows")
+    selected_filter_reason = st.selectbox(
+        "Filter Reason Category",
+        reason_options,
+        index=0
+    )
+
     preferred_cols = ["confirm_from_mkt", "reason_category", "reason_reject"]
     additional_cols = [
     "campaignname", "adgroupname", "profile_id", "campaignid", "adgroupid", "keywordid", "searchterm",
@@ -331,31 +338,41 @@ with tab1:
     "country_code", "department"
     ]
 
-    df_filtered = df_filtered[preferred_cols + additional_cols]
+    for col in preferred_cols + additional_cols:
+        if col not in st.session_state.data_editor_df.columns:
+            st.session_state.data_editor_df[col] = None
+
+    select_all_state = st.checkbox("Select All", value=True)
+    st.session_state.data_editor_df["confirm_from_mkt"] = select_all_state
 
     # Add filter reason
-    df_filtered["reason_category"] = df_filtered["reason_category"].fillna("")
-    df_filtered["reason_reject"] = df_filtered["reason_reject"].fillna("")
+    st.session_state.data_editor_df["reason_category"] = st.session_state.data_editor_df["reason_category"].fillna("")
+    st.session_state.data_editor_df["reason_reject"] = st.session_state.data_editor_df["reason_reject"].fillna("")
+
+    # Add filter reason
+    # df_filtered["reason_category"] = df_filtered["reason_category"].fillna("")
+    # df_filtered["reason_reject"] = df_filtered["reason_reject"].fillna("")
     
-    st.markdown("#### Apply Reason to all unconfirmed rows")
-    selected_filter_reason = st.selectbox(
-        "Filter Reason Category",
-        reason_options,
-        index=0
-    )
+    # st.markdown("#### Apply Reason to all unconfirmed rows")
+    # selected_filter_reason = st.selectbox(
+    #     "Filter Reason Category",
+    #     reason_options,
+    #     index=0
+    # )
     
     # Auto-apply reason for unconfirmed rows with empty reason_category
-    if selected_filter_reason:
-        mask_unconfirmed = df_filtered["confirm_from_mkt"] == False
-        df_filtered.loc[mask_unconfirmed, "reason_category"] = selected_filter_reason
+    # if selected_filter_reason:
+    #     mask_unconfirmed = df_filtered["confirm_from_mkt"] == False
+    #     df_filtered.loc[mask_unconfirmed, "reason_category"] = selected_filter_reason
         
     edited_df = st.data_editor(
-        df_filtered,
+        st.session_state.data_editor_df[preferred_cols + [c for c in additional_cols if c in st.session_state.data_editor_df.columns]],
         column_config={
-            "confirm_from_mkt": st.column_config.CheckboxColumn("Confirm"),
+            "confirm_from_mkt": st.column_config.CheckboxColumn("Confirm", required=True),
             "reason_category": st.column_config.SelectboxColumn(
                 "Reason Category (if Unconfirmed)",
-                options=reason_options
+                options=reason_options,
+                required=False,
             ),
             "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)")
         },
@@ -365,8 +382,16 @@ with tab1:
         hide_index=False
     )
 
-    # Update session state immediately after editing
-    st.session_state.df_filtered = edited_df.copy()
+    df_before_edit = st.session_state.data_editor_df
+    newly_unchecked_mask = (df_before_edit["confirm_from_mkt"] == True) & (edited_df["confirm_from_mkt"] == False)
+
+    if newly_unchecked_mask.any():
+        df_to_update = edited_df.copy()
+        df_to_update.loc[newly_unchecked_mask, "reason_category"] = selected_filter_reason
+        st.session_state.data_editor_df = df_to_update
+        st.rerun()
+    else:
+        st.session_state.data_editor_df = edited_df.copy()
 
     if st.button("Submit Confirmed Terms"):
         invalid_rows = edited_df[
