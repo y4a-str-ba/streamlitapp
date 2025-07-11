@@ -367,12 +367,19 @@ with tab1:
 
     # --- UI Elements for Auto-filling ---
     st.markdown("#### Apply Reason to all unconfirmed rows")
-    # The selected reason is stored in session_state so the callback function can access it
+
+    def handle_reason_change():
+        # Update all rows where confirm_from_mkt == False
+        unconfirmed_mask = st.session_state.data_editor_df['confirm_from_mkt'] == False
+        st.session_state.data_editor_df.loc[unconfirmed_mask, 'reason_category'] = st.session_state.selected_filter_reason
+    
     st.session_state.selected_filter_reason = st.selectbox(
         "Filter Reason Category",
         reason_options,
         index=0,
-        help="This reason will be auto-filled for rows you uncheck."
+        help="This reason will be auto-filled for rows you uncheck.",
+        key="selected_filter_reason",
+        on_change=handle_reason_change
     )
     
     # The "Select All" checkbox, now with an on_change callback
