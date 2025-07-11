@@ -394,12 +394,12 @@ with tab1:
         help="Check or uncheck all terms in the current view."
     )
 
-    if "reason_reject_disabled" in st.session_state.data_editor_df.columns:
-        data_for_editor = st.session_state.data_editor_df.drop(columns="reason_reject_disabled")
-    else:
-        data_for_editor = st.session_state.data_editor_df
-
-    # --- Data Editor ---
+    if "reason_reject_disabled" not in st.session_state.data_editor_df.columns:
+        st.session_state.data_editor_df["reason_reject_disabled"] = ~(
+            (st.session_state.data_editor_df["confirm_from_mkt"] == False) &
+            (st.session_state.data_editor_df["reason_category"] == reason_options[-1])
+        )
+    
     edited_df = st.data_editor(
         st.session_state.data_editor_df.drop(columns="reason_reject_disabled", errors="ignore"),
         column_config={
