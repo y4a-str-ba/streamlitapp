@@ -418,8 +418,8 @@ with tab1:
         hide_index=False
     )
 
-# Update reason_reject từ reason_reject_display
-st.session_state.data_editor_df["reason_reject"] = edited_df["reason_reject_display"]
+    # Update reason_reject từ reason_reject_display
+    st.session_state.data_editor_df["reason_reject"] = edited_df["reason_reject_display"]
 
 
     # --- Handle Row Edits ---
