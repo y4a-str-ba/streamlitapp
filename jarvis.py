@@ -487,18 +487,18 @@ with tab1:
         st.rerun()
 
     # --- Display Confirmed Terms ---
-    st.download_button("📥 Export CSV", df.astype(str).to_csv(index=False), "search_terms.csv")
-    st.markdown("### Today Confirmed Terms")
-    if df_confirmed.empty:
-        st.info("No confirmed terms yet.")
-    else:
-        cols_to_show = [
-            "searchterm", "campaignname", "adgroupname",
-            "reason_category", "reason_reject", "country_code_2", "department",
-            "cumulative_clicks", "cumulative_impressions", "cumulative_sales"
-        ]
-        cols_to_show = [col for col in cols_to_show if col in df_confirmed.columns]
-        st.dataframe(df_confirmed[cols_to_show], use_container_width=True)
+    # st.download_button("📥 Export CSV", df.astype(str).to_csv(index=False), "search_terms.csv")
+    # st.markdown("### Today Confirmed Terms")
+    # if df_confirmed.empty:
+    #     st.info("No confirmed terms yet.")
+    # else:
+    #     cols_to_show = [
+    #         "searchterm", "campaignname", "adgroupname",
+    #         "reason_category", "reason_reject", "country_code_2", "department",
+    #         "cumulative_clicks", "cumulative_impressions", "cumulative_sales"
+    #     ]
+    #     cols_to_show = [col for col in cols_to_show if col in df_confirmed.columns]
+    #     st.dataframe(df_confirmed[cols_to_show], use_container_width=True)
             
 
 # ========== TAB 3 ==========
