@@ -352,8 +352,6 @@ with tab1:
         for col in preferred_cols + additional_cols:
             if col not in temp_df.columns:
                 temp_df[col] = None
-
-        temp_df = temp_df[preferred_cols + additional_cols]
         
         # Set the default 'confirm' status to True
         temp_df["confirm_from_mkt"] = True
@@ -361,6 +359,8 @@ with tab1:
         # Fill NA for reason columns to prevent errors
         temp_df["reason_category"] = temp_df["reason_category"].fillna("")
         temp_df["reason_reject"] = temp_df["reason_reject"].fillna("")
+
+        temp_df = temp_df[preferred_cols + additional_cols]
         
         # Assign the fully prepared dataframe to session_state
         st.session_state.data_editor_df = temp_df.copy()
@@ -387,7 +387,7 @@ with tab1:
     # --- Data Editor ---
     # This component displays the data from our session_state dataframe
     edited_df = st.data_editor(
-        st.session_state.data_editor_df[preferred_cols + additional_cols],
+        st.session_state.data_editor_df,
         column_config={
             "confirm_from_mkt": st.column_config.CheckboxColumn("Confirm", required=True),
             "reason_category": st.column_config.SelectboxColumn(
@@ -395,7 +395,8 @@ with tab1:
             ),
             "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)")
         },
-        disabled=preferred_cols[2:] + additional_cols, # Make all columns except the first three read-only
+        column_order=preferred_cols + additional_cols,
+        disabled=preferred_cols[2:] + additional_cols,
         key="confirm_editor",
         use_container_width=True,
         hide_index=False
