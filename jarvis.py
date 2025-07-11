@@ -394,15 +394,15 @@ with tab1:
         help="Check or uncheck all terms in the current view."
     )
 
-    # --- Dynamic enable/disable Free Text Reason ---
-    reason_reject_disabled = ~(
-        (st.session_state.data_editor_df["confirm_from_mkt"] == False) &
-        (st.session_state.data_editor_df["reason_category"] == reason_options[-1])
+    # --- Logic to disable/enable Free Text Reason ---
+    df_editor = st.session_state.data_editor_df.copy()
+    df_editor["reason_reject_disabled"] = ~(
+        (df_editor["confirm_from_mkt"] == False) & (df_editor["reason_category"] == reason_options[-1])
     )
 
     # --- Data Editor ---
     edited_df = st.data_editor(
-        st.session_state.data_editor_df,
+        df_editor.drop(columns=["reason_reject_disabled"]),
         column_config={
             "confirm_from_mkt": st.column_config.CheckboxColumn("Confirm", required=True),
             "reason_category": st.column_config.SelectboxColumn(
@@ -410,17 +410,20 @@ with tab1:
             ),
             "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)")
         },
+        disabled={
+            "reason_category": df_editor["confirm_from_mkt"].tolist(),
+            "reason_reject": df_editor["reason_reject_disabled"].tolist()
+        },
         column_order=preferred_cols + additional_cols,
-        disabled=preferred_cols[2:] + additional_cols,  # Disable các cột khác
         key="confirm_editor",
         use_container_width=True,
         hide_index=False
     )
 
-    # --- Sync edits ---
-    df_before_edit = st.session_state.data_editor_df
-    if not df_before_edit.equals(edited_df):
-        st.session_state.data_editor_df.update(edited_df)
+    # --- Handle changes ---
+    if not edited_df.equals(st.session_state.data_editor_df):
+        st.session_state.data_editor_df = edited_df.copy()
+        st.rerun()
 
     # --- Submit Button ---
     if st.button("Submit Confirmed Terms"):
