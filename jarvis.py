@@ -388,6 +388,21 @@ with tab1:
         help="Check or uncheck all terms in the current view."
     )
 
+    # --- Dynamic Disable Mask ---
+    disable_mask = pd.DataFrame(False, index=st.session_state.data_editor_df.index, columns=st.session_state.data_editor_df.columns)
+
+    # Disable all except confirm_from_mkt, reason_category, reason_reject
+    for col in preferred_cols[2:] + additional_cols:
+        disable_mask[col] = True
+
+    # Lock Free Text Reason unless: Confirm == False & Reason Category == Other
+    other_mask = (
+        (st.session_state.data_editor_df["confirm_from_mkt"] == False) &
+        (st.session_state.data_editor_df["reason_category"] == reason_options[-1])  # "8. Other → Other (please specify)"
+    )
+    disable_mask.loc[~other_mask, "reason_reject"] = True
+    disable_mask.loc[other_mask, "reason_reject"] = False
+
     # --- Data Editor ---
     edited_df = st.data_editor(
         st.session_state.data_editor_df,
@@ -399,7 +414,7 @@ with tab1:
             "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)")
         },
         column_order=preferred_cols + additional_cols,
-        disabled=preferred_cols[2:] + additional_cols,
+        disabled=disable_mask,
         key="confirm_editor",
         use_container_width=True,
         hide_index=False
@@ -426,7 +441,7 @@ with tab1:
                 (final_df["reason_category"].isna()) |
                 (final_df["reason_category"].str.strip() == "") |
                 (
-                    (final_df["reason_category"] == reason_options[-1]) &
+                    (final_df["reason_category"] == reason_options[-1]) &  # Other
                     (final_df["reason_reject"].fillna("").str.strip() == "")
                 )
             )
