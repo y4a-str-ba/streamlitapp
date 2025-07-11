@@ -348,6 +348,9 @@ with tab1:
     # if selected_filter_reason:
     #     mask_unconfirmed = df_filtered["confirm_from_mkt"] == False
     #     df_filtered.loc[mask_unconfirmed, "reason_category"] = selected_filter_reason
+
+    def force_rerun():
+        st.session_state._rerun = True
         
     edited_df = st.data_editor(
         df_filtered,
