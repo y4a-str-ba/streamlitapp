@@ -369,12 +369,6 @@ with tab1:
 
         st.session_state.data_editor_df = temp_df.copy()
 
-        # Set reason_reject_disabled flag per row
-        st.session_state.data_editor_df["reason_reject_disabled"] = (
-        st.session_state.data_editor_df["confirm_from_mkt"] |
-        (st.session_state.data_editor_df["reason_category"] != "8. Other")
-        )
-
     # --- UI Elements ---
     st.markdown("#### Apply Reason to all unconfirmed rows")
     st.selectbox(
@@ -394,15 +388,9 @@ with tab1:
         help="Check or uncheck all terms in the current view."
     )
 
-    # --- Logic to disable/enable Free Text Reason ---
-    df_editor = st.session_state.data_editor_df.copy()
-    df_editor["reason_reject_disabled"] = ~(
-        (df_editor["confirm_from_mkt"] == False) & (df_editor["reason_category"] == reason_options[-1])
-    )
-
     # --- Data Editor ---
     edited_df = st.data_editor(
-        df_editor.drop(columns=["reason_reject_disabled"]),
+        st.session_state.data_editor_df,
         column_config={
             "confirm_from_mkt": st.column_config.CheckboxColumn("Confirm", required=True),
             "reason_category": st.column_config.SelectboxColumn(
@@ -410,35 +398,42 @@ with tab1:
             ),
             "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)")
         },
-        disabled={
-            "reason_category": df_editor["confirm_from_mkt"].tolist(),
-            "reason_reject": df_editor["reason_reject_disabled"].tolist()
-        },
         column_order=preferred_cols + additional_cols,
+        disabled=preferred_cols[2:] + additional_cols,
         key="confirm_editor",
         use_container_width=True,
         hide_index=False
     )
 
-    # --- Handle changes ---
-    if not edited_df.equals(st.session_state.data_editor_df):
-        st.session_state.data_editor_df = edited_df.copy()
-        st.rerun()
+    # --- Handle Row Edits ---
+    df_before_edit = st.session_state.data_editor_df
+    newly_unchecked_mask = (df_before_edit["confirm_from_mkt"] == True) & (edited_df["confirm_from_mkt"] == False)
 
-    # --- Submit Button ---
+    if newly_unchecked_mask.any():
+        df_to_update = edited_df.copy()
+        df_to_update.loc[newly_unchecked_mask, "reason_category"] = st.session_state.selected_filter_reason
+        st.session_state.data_editor_df = df_to_update
+        st.rerun()
+    elif not df_before_edit.equals(edited_df):
+        st.session_state.data_editor_df = edited_df.copy()
+
+    # --- Submission Logic ---
     if st.button("Submit Confirmed Terms"):
         final_df = st.session_state.data_editor_df
-    
-        # Validation for unconfirmed rows
         invalid_rows = final_df[
             (final_df["confirm_from_mkt"] == False) &
-            (final_df["reason_category"] == reason_options[-1]) &
-            (final_df["reason_reject"].fillna("").str.strip() == "")
+            (
+                (final_df["reason_category"].isna()) |
+                (final_df["reason_category"].str.strip() == "") |
+                (
+                    (final_df["reason_category"] == reason_options[-1]) &
+                    (final_df["reason_reject"].fillna("").str.strip() == "")
+                )
+            )
         ]
         if not invalid_rows.empty:
-            st.error("Please enter Free Text Reason for all rows with '8. Other' selected!")
+            st.error("Please add a text reason for any 'Other' selections before submitting!")
             st.stop()
-
 
         for idx in final_df.index:
             if idx in df_full.index:
@@ -456,18 +451,14 @@ with tab1:
             service_account_info=st.secrets["gcp_service_account"]
         )
 
-        total_confirmed = final_df[final_df["confirm_from_mkt"] == True].shape[0]
-        total_unconfirmed = final_df[final_df["confirm_from_mkt"] == False].shape[0]
-
-
+        total_confirmed = df_full[df_full["flag"] == 1].shape[0]
+        total_unconfirmed = df_full[df_full["flag"] == 0].shape[0]
         user = st.session_state.user
         current_sheet = sheet.title
         msg = (
             f"📢 *Jarvis Confirmation Report*\n"
             f"👤 User: `{user}`\n"
             f"📄 Sheet: `{current_sheet}`\n"
-            f"🏷️ Team: `{selected_team}`\n"
-            f"🌎 Country: `{selected_country}`\n"
             f"✅ Confirmed: `{total_confirmed}`\n"
             f"❌ Not Confirmed: `{total_unconfirmed}`"
         )
