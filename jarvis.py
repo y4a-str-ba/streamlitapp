@@ -368,8 +368,8 @@ with tab1:
     # --- UI Elements for Auto-filling ---
     st.markdown("#### Apply Reason to all unconfirmed rows")
 
-    def handle_reason_change():
-        # Update all rows where confirm_from_mkt == False
+    def update_reason_for_unconfirmed():
+        # Update only rows where confirm_from_mkt == False
         unconfirmed_mask = st.session_state.data_editor_df['confirm_from_mkt'] == False
         st.session_state.data_editor_df.loc[unconfirmed_mask, 'reason_category'] = st.session_state.selected_filter_reason
     
