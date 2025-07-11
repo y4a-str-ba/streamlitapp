@@ -425,15 +425,16 @@ with tab1:
     # --- Submit Button ---
     if st.button("Submit Confirmed Terms"):
         final_df = st.session_state.data_editor_df
-    # Validation for unconfirmed rows
-    invalid_rows = final_df[
-        (final_df["confirm_from_mkt"] == False) &
-        (final_df["reason_category"] == reason_options[-1]) &
-        (final_df["reason_reject"].fillna("").str.strip() == "")
-    ]
-    if not invalid_rows.empty:
-        st.error("Please enter Free Text Reason for all rows with '8. Other' selected!")
-        st.stop()
+    
+        # Validation for unconfirmed rows
+        invalid_rows = final_df[
+            (final_df["confirm_from_mkt"] == False) &
+            (final_df["reason_category"] == reason_options[-1]) &
+            (final_df["reason_reject"].fillna("").str.strip() == "")
+        ]
+        if not invalid_rows.empty:
+            st.error("Please enter Free Text Reason for all rows with '8. Other' selected!")
+            st.stop()
 
 
         for idx in final_df.index:
