@@ -394,30 +394,33 @@ with tab1:
         help="Check or uncheck all terms in the current view."
     )
 
-    if "reason_reject_disabled" not in st.session_state.data_editor_df.columns:
-        st.session_state.data_editor_df["reason_reject_disabled"] = ~(
-            (st.session_state.data_editor_df["confirm_from_mkt"] == False) &
-            (st.session_state.data_editor_df["reason_category"] == reason_options[-1])
-        )
+    # Update reason_reject_display để enable/disable theo điều kiện
+    st.session_state.data_editor_df["reason_reject_display"] = st.session_state.data_editor_df.apply(
+        lambda row: row["reason_reject"] if (
+            (row["confirm_from_mkt"] == False) and (row["reason_category"] == reason_options[-1])
+        ) else "",
+        axis=1
+    )
     
     edited_df = st.data_editor(
-        st.session_state.data_editor_df.drop(columns="reason_reject_disabled", errors="ignore"),
+        st.session_state.data_editor_df,
         column_config={
             "confirm_from_mkt": st.column_config.CheckboxColumn("Confirm", required=True),
             "reason_category": st.column_config.SelectboxColumn(
                 "Reason Category (if Unconfirmed)", options=reason_options
             ),
-            "reason_reject": st.column_config.TextColumn(
-                "Free Text Reason (if Unconfirmed)",
-                disabled=st.session_state.data_editor_df["reason_reject_disabled"].tolist()
-            )
+            "reason_reject_display": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)")
         },
-        column_order=preferred_cols + additional_cols,
+        column_order=["confirm_from_mkt", "reason_category", "reason_reject_display"] + additional_cols,
         disabled=preferred_cols[2:] + additional_cols,
         key="confirm_editor",
         use_container_width=True,
         hide_index=False
     )
+
+# Update reason_reject từ reason_reject_display
+st.session_state.data_editor_df["reason_reject"] = edited_df["reason_reject_display"]
+
 
     # --- Handle Row Edits ---
     df_before_edit = st.session_state.data_editor_df
@@ -433,7 +436,7 @@ with tab1:
 
     # --- Submission Logic ---
     if st.button("Submit Confirmed Terms"):
-        final_df = st.session_state.data_editor_df
+        final_df = st.session_state.data_editor_df.drop(columns=["reason_reject_display"])
         invalid_rows = final_df[
             (final_df["confirm_from_mkt"] == False) &
             (
