@@ -394,9 +394,14 @@ with tab1:
         help="Check or uncheck all terms in the current view."
     )
 
+    if "reason_reject_disabled" in st.session_state.data_editor_df.columns:
+        data_for_editor = st.session_state.data_editor_df.drop(columns="reason_reject_disabled")
+    else:
+        data_for_editor = st.session_state.data_editor_df
+
     # --- Data Editor ---
     edited_df = st.data_editor(
-        st.session_state.data_editor_df.drop(columns="reason_reject_disabled"),
+        data_for_editor,
         column_config={
             "confirm_from_mkt": st.column_config.CheckboxColumn("Confirm", required=True),
             "reason_category": st.column_config.SelectboxColumn(
@@ -404,7 +409,7 @@ with tab1:
             ),
             "reason_reject": st.column_config.TextColumn(
                 "Free Text Reason (if Unconfirmed)",
-                disabled=st.session_state.data_editor_df["reason_reject_disabled"].tolist()
+                disabled=st.session_state.data_editor_df.get("reason_reject_disabled", [True] * len(st.session_state.data_editor_df)).tolist()
             )
         },
         column_order=preferred_cols + additional_cols,
