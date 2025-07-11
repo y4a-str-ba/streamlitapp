@@ -401,20 +401,23 @@ with tab1:
 
     # --- Data Editor ---
     edited_df = st.data_editor(
-        data_for_editor,
-    column_config={
-        "reason_category": st.column_config.SelectboxColumn(
-            "Reason Category (if Unconfirmed)", options=reason_options
-        ),
-        "reason_reject": st.column_config.TextColumn(
-            "Free Text Reason (if Unconfirmed)",
-            disabled=st.session_state.data_editor_df.get(
-                "reason_reject_disabled",
-                [True] * len(st.session_state.data_editor_df)
+        st.session_state.data_editor_df,
+        column_config={
+            "confirm_from_mkt": st.column_config.CheckboxColumn("Confirm", required=True),
+            "reason_category": st.column_config.SelectboxColumn(
+                "Reason Category (if Unconfirmed)",
+                options=reason_options
+            ),
+            "reason_reject": st.column_config.TextColumn(
+                "Free Text Reason (if Unconfirmed)",
+                disabled=st.session_state.data_editor_df.get(
+                    "reason_reject_disabled",
+                    [True] * len(st.session_state.data_editor_df)
+                )
             )
-        )
-    }
+        },
         column_order=preferred_cols + additional_cols,
+        disabled=preferred_cols[2:] + additional_cols,
         key="confirm_editor",
         use_container_width=True,
         hide_index=False
