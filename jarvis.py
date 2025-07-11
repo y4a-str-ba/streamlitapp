@@ -451,14 +451,17 @@ with tab1:
             service_account_info=st.secrets["gcp_service_account"]
         )
 
-        total_confirmed = df_full[df_full["flag"] == 1].shape[0]
-        total_unconfirmed = df_full[df_full["flag"] == 0].shape[0]
+        total_confirmed = final_df[final_df["confirm_from_mkt"] == True].shape[0]
+        total_unconfirmed = final_df[final_df["confirm_from_mkt"] == False].shape[0]
+
         user = st.session_state.user
         current_sheet = sheet.title
         msg = (
             f"📢 *Jarvis Confirmation Report*\n"
             f"👤 User: `{user}`\n"
             f"📄 Sheet: `{current_sheet}`\n"
+            f"🏷️ Team: `{selected_team}`\n"
+            f"🌎 Country: `{selected_country}`\n"
             f"✅ Confirmed: `{total_confirmed}`\n"
             f"❌ Not Confirmed: `{total_unconfirmed}`"
         )
