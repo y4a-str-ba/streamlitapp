@@ -399,7 +399,14 @@ with tab1:
             "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)")
         },
         column_order=preferred_cols + additional_cols,
-        disabled=preferred_cols[2:] + additional_cols,
+        disabled=[
+            *(preferred_cols[2:] + additional_cols),
+            # Disable reason_reject unless "8. Other" is selected
+            *(
+                [] if st.session_state.data_editor_df["reason_category"].eq("8. Other").any()
+                else ["reason_reject"]
+            )
+        ],
         key="confirm_editor",
         use_container_width=True,
         hide_index=False
