@@ -369,6 +369,12 @@ with tab1:
 
         st.session_state.data_editor_df = temp_df.copy()
 
+        # Set reason_reject_disabled flag per row
+        st.session_state.data_editor_df["reason_reject_disabled"] = (
+        st.session_state.data_editor_df["confirm_from_mkt"] |
+        (st.session_state.data_editor_df["reason_category"] != "8. Other")
+        )
+
     # --- UI Elements ---
     st.markdown("#### Apply Reason to all unconfirmed rows")
     st.selectbox(
@@ -390,23 +396,18 @@ with tab1:
 
     # --- Data Editor ---
     edited_df = st.data_editor(
-        st.session_state.data_editor_df,
+        st.session_state.data_editor_df.drop(columns="reason_reject_disabled"),
         column_config={
             "confirm_from_mkt": st.column_config.CheckboxColumn("Confirm", required=True),
             "reason_category": st.column_config.SelectboxColumn(
                 "Reason Category (if Unconfirmed)", options=reason_options
             ),
-            "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)")
+            "reason_reject": st.column_config.TextColumn(
+                "Free Text Reason (if Unconfirmed)",
+                disabled=st.session_state.data_editor_df["reason_reject_disabled"].tolist()
+            )
         },
         column_order=preferred_cols + additional_cols,
-        disabled=[
-            *(preferred_cols[2:] + additional_cols),
-            # Disable reason_reject unless "8. Other" is selected
-            *(
-                [] if st.session_state.data_editor_df["reason_category"].eq("8. Other").any()
-                else ["reason_reject"]
-            )
-        ],
         key="confirm_editor",
         use_container_width=True,
         hide_index=False
