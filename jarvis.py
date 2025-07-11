@@ -294,11 +294,24 @@ with tab2:
 
 # ========== TAB 1 ==========
 with tab1:
+    # This callback function is triggered when the main "Select All" checkbox changes.
+    def handle_select_all():
+        # Get the new state (True/False) of the checkbox from session_state
+        is_checked = st.session_state.select_all_checkbox
+
+        # Apply the new state to the entire 'confirm_from_mkt' column in our stateful dataframe
+        st.session_state.data_editor_df['confirm_from_mkt'] = is_checked
+
+        # If the action was to uncheck all rows, also auto-fill the reason category
+        if not is_checked:
+            st.session_state.data_editor_df['reason_category'] = st.session_state.selected_filter_reason
+
     st.subheader("Confirm individual terms")
 
+    # --- Filters ---
     campaigns = ["All"] + sorted(df["campaignname"].dropna().unique().tolist())
     selected_campaign = st.selectbox("Filter by Campaign", campaigns, index=0)
-    
+
     df_filtered = df.copy()
     if selected_campaign != "All":
         df_filtered = df_filtered[df_filtered["campaignname"] == selected_campaign]
@@ -308,7 +321,8 @@ with tab1:
 
     if selected_adgroup != "All":
         df_filtered = df_filtered[df_filtered["adgroupname"] == selected_adgroup]
-
+    
+    # --- Column and Reason Definitions ---
     reason_options = [
         "1. High CR → Strong conversion rate",
         "2. Low ACOS → Efficient ACOS performance",
@@ -319,7 +333,6 @@ with tab1:
         "7. Brand Name/Product Mapping  → Contains branded & Product keyword",
         "8. Other  → Other (please specify)"
     ]
-    
     preferred_cols = ["confirm_from_mkt", "reason_category", "reason_reject"]
     additional_cols = [
         "campaignname", "adgroupname", "profile_id", "campaignid", "adgroupid", "keywordid", "searchterm",
@@ -327,77 +340,86 @@ with tab1:
         "cumulative_impressions", "cumulative_cost", "cumulative_sales",
         "country_code", "department"
     ]
-    
-    st.markdown("#### Apply Reason to all unconfirmed rows")
-    selected_filter_reason = st.selectbox(
-        "Filter Reason Category",
-        reason_options,
-        index=0,
-        help="Lý do này sẽ được tự động điền vào các dòng bạn vừa bỏ tick 'Confirm'."
-    )
 
-
+    # --- Robust Session State Initialization ---
+    # This block ensures the dataframe for the editor is always correctly prepared.
     filter_key = f"{selected_campaign}-{selected_adgroup}"
     if "data_editor_df" not in st.session_state or st.session_state.get("filter_key") != filter_key:
         st.session_state.filter_key = filter_key
-        
-
         temp_df = df_filtered.copy()
         
-
+        # Ensure all required columns exist before assigning to session_state
         for col in preferred_cols + additional_cols:
             if col not in temp_df.columns:
-                temp_df[col] = None  
+                temp_df[col] = None
 
-
-        if "confirm_from_mkt" not in temp_df.columns or temp_df["confirm_from_mkt"].isnull().all():
-            temp_df["confirm_from_mkt"] = True
-
-
+        # Set the default 'confirm' status to True
+        temp_df["confirm_from_mkt"] = True
+        # Fill NA for reason columns to prevent errors
         temp_df["reason_category"] = temp_df["reason_category"].fillna("")
         temp_df["reason_reject"] = temp_df["reason_reject"].fillna("")
         
-
+        # Assign the fully prepared dataframe to session_state
         st.session_state.data_editor_df = temp_df.copy()
 
+    # --- UI Elements for Auto-filling ---
+    st.markdown("#### Apply Reason to all unconfirmed rows")
+    # The selected reason is stored in session_state so the callback function can access it
+    st.session_state.selected_filter_reason = st.selectbox(
+        "Filter Reason Category",
+        reason_options,
+        index=0,
+        help="This reason will be auto-filled for rows you uncheck."
+    )
+    
+    # The "Select All" checkbox, now with an on_change callback
+    st.checkbox(
+        "Select All",
+        value=st.session_state.data_editor_df['confirm_from_mkt'].all(), # The value reflects the current state
+        key="select_all_checkbox",
+        on_change=handle_select_all,
+        help="Check or uncheck all terms in the current view."
+    )
 
-
+    # --- Data Editor ---
+    # This component displays the data from our session_state dataframe
     edited_df = st.data_editor(
-        st.session_state.data_editor_df[preferred_cols + [c for c in additional_cols if c in st.session_state.data_editor_df.columns]],
+        st.session_state.data_editor_df,
         column_config={
             "confirm_from_mkt": st.column_config.CheckboxColumn("Confirm", required=True),
             "reason_category": st.column_config.SelectboxColumn(
-                "Reason Category (if Unconfirmed)",
-                options=reason_options,
+                "Reason Category (if Unconfirmed)", options=reason_options
             ),
             "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)")
         },
-        num_rows="dynamic",
+        disabled=preferred_cols[2:] + additional_cols, # Make all columns except the first three read-only
         key="confirm_editor",
         use_container_width=True,
         hide_index=False
     )
-    
 
+    # --- Logic to handle INDIVIDUAL row edits ---
     df_before_edit = st.session_state.data_editor_df
-    if not df_before_edit.equals(edited_df):
+    # Find rows that were individually unchecked by the user inside the data_editor
+    newly_unchecked_mask = (df_before_edit["confirm_from_mkt"] == True) & (edited_df["confirm_from_mkt"] == False)
 
-        newly_unchecked_mask = (df_before_edit["confirm_from_mkt"] == True) & (edited_df["confirm_from_mkt"] == False)
-
+    if newly_unchecked_mask.any():
+        # If a specific uncheck action is detected, apply the reason, update state, and rerun
         df_to_update = edited_df.copy()
-        
-
-        if newly_unchecked_mask.any():
-            df_to_update.loc[newly_unchecked_mask, "reason_category"] = selected_filter_reason
-        
-
+        df_to_update.loc[newly_unchecked_mask, "reason_category"] = st.session_state.selected_filter_reason
         st.session_state.data_editor_df = df_to_update
         st.rerun()
+    else:
+        # For any other changes (e.g., re-checking a box, editing text),
+        # just silently update the state without a forced rerun.
+        if not df_before_edit.equals(edited_df):
+            st.session_state.data_editor_df = edited_df.copy()
 
-
+    # --- Submission Logic ---
     if st.button("Submit Confirmed Terms"):
         final_df = st.session_state.data_editor_df
         
+        # Validation for unconfirmed rows
         invalid_rows = final_df[
             (final_df["confirm_from_mkt"] == False) &
             (
@@ -413,17 +435,17 @@ with tab1:
             st.error("Please add a text reason for any 'Other' selections before submitting!")
             st.stop()
 
+        # Update the main dataframe (df_full) with changes from the editor
         for idx in final_df.index:
             if idx in df_full.index:
                 df_full.loc[idx, final_df.columns] = final_df.loc[idx]
-                if final_df.at[idx, "confirm_from_mkt"] == True:
-                    df_full.at[idx, "flag"] = 1
-                else:
-                    df_full.at[idx, "flag"] = 0
+                df_full.at[idx, "flag"] = 1 if final_df.at[idx, "confirm_from_mkt"] else 0
 
+        # Push updates to Google Sheet
         sheet.update([df_full.columns.tolist()] + df_full.astype(str).values.tolist())
         st.success("Confirmation status updated to Google Sheet!")
         
+        # Log the action
         log_all_terms(
             edited_df=final_df,
             user=st.session_state.user,
@@ -432,6 +454,7 @@ with tab1:
             service_account_info=st.secrets["gcp_service_account"]
         )
     
+        # Prepare and send notification
         total_confirmed = df_full[df_full["flag"] == 1].shape[0]
         total_unconfirmed = df_full[df_full["flag"] == 0].shape[0]
         user = st.session_state.user
@@ -443,25 +466,17 @@ with tab1:
             f"✅ Confirmed: `{total_confirmed}`\n"
             f"❌ Not Confirmed: `{total_unconfirmed}`"
         )
-        
-        if "searchterm" in final_df:
-            unconfirmed_df = final_df[final_df["confirm_from_mkt"] == False]
-            if not unconfirmed_df.empty:
-                msg += "\n\n🔍 *Unconfirmed Terms:*"
-                for term in unconfirmed_df["searchterm"].dropna().astype(str).head(10):
-                    msg += f"\n• {term}"
-                if len(unconfirmed_df) > 10:
-                    msg += f"\n...and `{len(unconfirmed_df) - 10}` more."
-
         webhook_url = 'https://chat.googleapis.com/v1/spaces/AAQA4vfwkIw/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=TyhGKT_IfWTpa8e5A2N2KlVvK-ZSpu4PMclPG2YmtXs'
         requests.post(webhook_url, json={"text": msg})
         
+        # Clean up session state and rerun the app to fetch fresh data
         del st.session_state.data_editor_df
+        del st.session_state.selected_filter_reason
         time.sleep(1)
         st.rerun()
 
+    # --- Display Confirmed Terms ---
     st.download_button("📥 Export CSV", df.astype(str).to_csv(index=False), "search_terms.csv")
-    
     st.markdown("### Today Confirmed Terms")
     if df_confirmed.empty:
         st.info("No confirmed terms yet.")
