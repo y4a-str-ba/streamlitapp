@@ -401,74 +401,57 @@ with tab1:
         st.rerun()
 
     if st.button("Submit Confirmed Terms"):
-        invalid_rows = edited_df[
-        (edited_df["confirm_from_mkt"] == False) &
-        (
-            (edited_df["reason_category"].isna()) |  
-            (edited_df["reason_category"].str.strip() == "") |  
+        final_df = st.session_state.data_editor_df
+        
+        invalid_rows = final_df[
+            (final_df["confirm_from_mkt"] == False) &
             (
-                (edited_df["reason_category"] == reason_options[-1]) & 
-                (edited_df["reason_reject"].str.strip() == "")  
+                (final_df["reason_category"].isna()) |
+                (final_df["reason_category"].str.strip() == "") |
+                (
+                    (final_df["reason_category"] == reason_options[-1]) &
+                    (final_df["reason_reject"].fillna("").str.strip() == "")
+                )
             )
-        )
         ]
         if not invalid_rows.empty:
             st.error("Please add a text reason for any 'Other' selections before submitting!")
             st.stop()
 
-        # df.update(edited_df)
-        # # df.loc[edited_df.index] = edited_df
+        for idx in final_df.index:
+            if idx in df_full.index:
+                df_full.loc[idx, final_df.columns] = final_df.loc[idx]
+                if final_df.at[idx, "confirm_from_mkt"] == True:
+                    df_full.at[idx, "flag"] = 1
+                else:
+                    df_full.at[idx, "flag"] = 0
 
-        # sheet.update([df.columns.tolist()] + df.astype(str).values.tolist())
-
-        for idx in edited_df.index:
-            df_full.loc[idx, edited_df.columns] = edited_df.loc[idx]
-            if edited_df.at[idx, "confirm_from_mkt"] == True:
-                df_full.at[idx, "flag"] = 1
-
-        # sheet = client.open_by_key("1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY").worksheet(sheet_name)
-        
         sheet.update([df_full.columns.tolist()] + df_full.astype(str).values.tolist())
-        
         st.success("Confirmation status updated to Google Sheet!")
         
         # Log Writer (Confirmed + Unconfirmed)
         log_all_terms(
-            edited_df=edited_df,
+            edited_df=final_df,
             user=st.session_state.user,
-            sheet_id="1xORIj-ha6_yXddi-V_6nMNsxM8-A5imI6HSoPUPv9Aw",        
-            sheet_name="Jarvis Confirmation Log",        
+            sheet_id="1xORIj-ha6_yXddi-V_6nMNsxM8-A5imI6HSoPUPv9Aw",
+            sheet_name="Jarvis Confirmation Log",
             service_account_info=st.secrets["gcp_service_account"]
         )
     
-        # total_confirmed = (df["confirm_from_mkt"] == True).sum()
-        # total_unconfirmed = (df["confirm_from_mkt"] == False).sum()
-
-        total_confirmed = df_full["confirm_from_mkt"].eq(True).sum() if "confirm_from_mkt" in df_full else 0
-        total_unconfirmed = df_full["confirm_from_mkt"].eq(False).sum() if "confirm_from_mkt" in df_full else 0
-    
+        total_confirmed = df_full[df_full["flag"] == 1].shape[0]
+        total_unconfirmed = df_full[df_full["flag"] == 0].shape[0]
         user = st.session_state.user
         current_sheet = sheet.title
-
         msg = (
-            "📢 *Jarvis Confirmation Report*\n"
+            f"📢 *Jarvis Confirmation Report*\n"
             f"👤 User: `{user}`\n"
             f"📄 Sheet: `{current_sheet}`\n"
             f"✅ Confirmed: `{total_confirmed}`\n"
             f"❌ Not Confirmed: `{total_unconfirmed}`"
         )
-
-        # unconfirmed_df = df[df["confirm_from_mkt"] == False]
-        # if not unconfirmed_df.empty:
-        #     unconfirmed_terms = unconfirmed_df["searchterm"].tolist()
-        #     msg += "\n\n🔍 *Unconfirmed Terms:*"
-        #     for term in unconfirmed_terms[:10]:
-        #         msg += f"\n• {term}"
-        #     if len(unconfirmed_terms) > 10:
-        #         msg += f"\n...and `{len(unconfirmed_terms) - 10}` more."
-                
-        if "confirm_from_mkt" in df_full and "searchterm" in df_full:
-            unconfirmed_df = df_full[df_full["confirm_from_mkt"] == False]
+        
+        if "searchterm" in final_df:
+            unconfirmed_df = final_df[final_df["confirm_from_mkt"] == False]
             if not unconfirmed_df.empty:
                 msg += "\n\n🔍 *Unconfirmed Terms:*"
                 for term in unconfirmed_df["searchterm"].dropna().astype(str).head(10):
@@ -477,20 +460,18 @@ with tab1:
                     msg += f"\n...and `{len(unconfirmed_df) - 10}` more."
 
         webhook_url = 'https://chat.googleapis.com/v1/spaces/AAQA4vfwkIw/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=TyhGKT_IfWTpa8e5A2N2KlVvK-ZSpu4PMclPG2YmtXs'
-        
         requests.post(webhook_url, json={"text": msg})
         
+        del st.session_state.data_editor_df
         time.sleep(1)
         st.rerun()
 
     st.download_button("📥 Export CSV", df.astype(str).to_csv(index=False), "search_terms.csv")
     
-
     st.markdown("### Today Confirmed Terms")
     if df_confirmed.empty:
         st.info("No confirmed terms yet.")
     else:
-        # st.dataframe(df_confirmed[cols_to_show], use_container_width=True)
         cols_to_show = [
             "searchterm", "campaignname", "adgroupname",
             "reason_category", "reason_reject", "country_code_2", "department",
