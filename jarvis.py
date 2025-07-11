@@ -409,7 +409,9 @@ with tab1:
             ),
             "reason_reject": st.column_config.TextColumn(
                 "Free Text Reason (if Unconfirmed)",
-                disabled=st.session_state.data_editor_df.get("reason_reject_disabled", [True] * len(st.session_state.data_editor_df)).tolist()
+            disabled=st.session_state.data_editor_df.get(
+                "reason_reject_disabled",
+                [True] * len(st.session_state.data_editor_df)
             )
         },
         column_order=preferred_cols + additional_cols,
