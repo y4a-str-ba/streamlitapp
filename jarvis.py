@@ -399,7 +399,7 @@ with tab1:
             "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)")
         },
         column_order=preferred_cols + additional_cols,
-        disabled=preferred_cols[2:] + additional_cols,
+        disabled=additional_cols,
         key="confirm_editor",
         use_container_width=True,
         hide_index=False
