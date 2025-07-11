@@ -452,16 +452,17 @@ with tab1:
         )
 
         # Filter df_full by Team/Country for counting
-        df_filtered_flag = df_full.copy()
+        df_filtered_alert = df_full.copy()
         
-        if selected_team != "All" and "team" in df_filtered_flag.columns:
-            df_filtered_flag = df_filtered_flag[df_filtered_flag["team"] == selected_team]
+        if selected_team != "All" and "team" in df_filtered_alert.columns:
+            df_filtered_alert = df_filtered_alert[df_filtered_alert["team"] == selected_team]
         
-        if selected_country != "All" and "country" in df_filtered_flag.columns:
-            df_filtered_flag = df_filtered_flag[df_filtered_flag["country"] == selected_country]
+        if selected_country != "All" and "country" in df_filtered_alert.columns:
+            df_filtered_alert = df_filtered_alert[df_filtered_alert["country"] == selected_country]
         
-        total_confirmed = df_filtered_flag[df_filtered_flag["flag"] == 1].shape[0]
-        total_unconfirmed = df_filtered_flag[df_filtered_flag["flag"] == 0].shape[0]
+        total_confirmed = df_filtered_alert[df_filtered_alert["flag"] == 1].shape[0]
+        total_unconfirmed = df_filtered_alert[df_filtered_alert["flag"] == 0].shape[0]
+
 
         user = st.session_state.user
         current_sheet = sheet.title
