@@ -309,9 +309,6 @@ with tab1:
     if selected_adgroup != "All":
         df_filtered = df_filtered[df_filtered["adgroupname"] == selected_adgroup]
 
-    select_all = st.checkbox("Select All", value=True)
-    df_filtered["confirm_from_mkt"] = select_all
-
     reason_options = [
         "1. High CR → Strong conversion rate",
         "2. Low ACOS → Efficient ACOS performance",
@@ -322,56 +319,49 @@ with tab1:
         "7. Brand Name/Product Mapping  → Contains branded & Product keyword",
         "8. Other  → Other (please specify)"
     ]
-
+    
     preferred_cols = ["confirm_from_mkt", "reason_category", "reason_reject"]
     additional_cols = [
-    "campaignname", "adgroupname", "profile_id", "campaignid", "adgroupid", "keywordid", "searchterm",
-    "keywordtext", "country_code_2", "cumulative_clicks",
-    "cumulative_impressions", "cumulative_cost", "cumulative_sales",
-    "country_code", "department"
+        "campaignname", "adgroupname", "profile_id", "campaignid", "adgroupid", "keywordid", "searchterm",
+        "keywordtext", "country_code_2", "cumulative_clicks",
+        "cumulative_impressions", "cumulative_cost", "cumulative_sales",
+        "country_code", "department"
     ]
-
+    
     st.markdown("#### Apply Reason to all unconfirmed rows")
     selected_filter_reason = st.selectbox(
         "Filter Reason Category",
         reason_options,
-        index=0
+        index=0,
+        help="Lý do này sẽ được tự động điền vào các dòng bạn vừa bỏ tick 'Confirm'."
     )
+
 
     filter_key = f"{selected_campaign}-{selected_adgroup}"
     if "data_editor_df" not in st.session_state or st.session_state.get("filter_key") != filter_key:
         st.session_state.filter_key = filter_key
         
+
         temp_df = df_filtered.copy()
+        
 
         for col in preferred_cols + additional_cols:
             if col not in temp_df.columns:
-                temp_df[col] = None
+                temp_df[col] = None  
+
 
         if "confirm_from_mkt" not in temp_df.columns or temp_df["confirm_from_mkt"].isnull().all():
             temp_df["confirm_from_mkt"] = True
 
+
         temp_df["reason_category"] = temp_df["reason_category"].fillna("")
         temp_df["reason_reject"] = temp_df["reason_reject"].fillna("")
         
+
         st.session_state.data_editor_df = temp_df.copy()
 
-    # Add filter reason
-    # df_filtered["reason_category"] = df_filtered["reason_category"].fillna("")
-    # df_filtered["reason_reject"] = df_filtered["reason_reject"].fillna("")
-    
-    # st.markdown("#### Apply Reason to all unconfirmed rows")
-    # selected_filter_reason = st.selectbox(
-    #     "Filter Reason Category",
-    #     reason_options,
-    #     index=0
-    # )
-    
-    # Auto-apply reason for unconfirmed rows with empty reason_category
-    # if selected_filter_reason:
-    #     mask_unconfirmed = df_filtered["confirm_from_mkt"] == False
-    #     df_filtered.loc[mask_unconfirmed, "reason_category"] = selected_filter_reason
-        
+
+
     edited_df = st.data_editor(
         st.session_state.data_editor_df[preferred_cols + [c for c in additional_cols if c in st.session_state.data_editor_df.columns]],
         column_config={
@@ -387,18 +377,23 @@ with tab1:
         use_container_width=True,
         hide_index=False
     )
+    
 
     df_before_edit = st.session_state.data_editor_df
     if not df_before_edit.equals(edited_df):
+
         newly_unchecked_mask = (df_before_edit["confirm_from_mkt"] == True) & (edited_df["confirm_from_mkt"] == False)
 
         df_to_update = edited_df.copy()
         
+
         if newly_unchecked_mask.any():
             df_to_update.loc[newly_unchecked_mask, "reason_category"] = selected_filter_reason
         
+
         st.session_state.data_editor_df = df_to_update
         st.rerun()
+
 
     if st.button("Submit Confirmed Terms"):
         final_df = st.session_state.data_editor_df
@@ -429,7 +424,6 @@ with tab1:
         sheet.update([df_full.columns.tolist()] + df_full.astype(str).values.tolist())
         st.success("Confirmation status updated to Google Sheet!")
         
-        # Log Writer (Confirmed + Unconfirmed)
         log_all_terms(
             edited_df=final_df,
             user=st.session_state.user,
