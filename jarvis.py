@@ -359,7 +359,7 @@ with tab1:
     ]
 
     # --- Session State Initialization ---
-    filter_key = f"{selected_team}-{selected_country}-{selected_campaign}-{selected_adgroup}"
+    filter_key = f"{selected_team}-{selected_country}-{selected_campaign}-{selected_adgroup}-{selected_search_term}"
     if "data_editor_df" not in st.session_state or st.session_state.get("filter_key") != filter_key:
         st.session_state.filter_key = filter_key
         temp_df = df_filtered.copy()
