@@ -333,16 +333,11 @@ with tab1:
         df_filtered = df_filtered[df_filtered["adgroupname"] == selected_adgroup]
 
     # Filter Search Term
-    search_terms = sorted(df_filtered["searchterm"].dropna().unique().tolist())
-    search_term_input = st.text_input(
-        "Filter by Search Term",
-        ""
-    )
-    
-    if search_term_input:
-        df_filtered = df_filtered[
-            df_filtered["searchterm"].str.contains(search_term_input, case=False, na=False)
-        ]
+    search_terms = ["All"] + sorted(df_filtered["searchterm"].dropna().unique().tolist())
+    selected_search_term = st.selectbox("Filter by Search Term", search_terms)
+
+    if selected_search_term != "All":
+        df_filtered = df_filtered[df_filtered["searchterm"] == selected_search_term]
 
     # --- Column and Reason Definitions ---
     reason_options = [
