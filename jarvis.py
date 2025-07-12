@@ -411,20 +411,7 @@ with tab1:
         use_container_width=True,
         hide_index=False
     )
-
-    # --- Handle Row Edits ---
-    # df_before_edit = st.session_state.data_editor_df
-    # newly_unchecked_mask = (df_before_edit["confirm_from_mkt"] == True) & (edited_df["confirm_from_mkt"] == False)
-
-    # if newly_unchecked_mask.any():
-    #     df_to_update = edited_df.copy()
-    #     df_to_update.loc[newly_unchecked_mask, "reason_category"] = st.session_state.selected_filter_reason
-    #     st.session_state.data_editor_df = df_to_update
-    #     st.rerun()
-    # elif not df_before_edit.equals(edited_df):
-    #     st.session_state.data_editor_df = edited_df.copy()
-
-    # Compare the DataFrames before and after editing to see if there's any change
+    # Compare df before and after editing
     if not st.session_state.data_editor_df.equals(edited_df):
         df_to_update = edited_df.copy()
         newly_unchecked_mask = (st.session_state.data_editor_df["confirm_from_mkt"] == True) & (df_to_update["confirm_from_mkt"] == False)
