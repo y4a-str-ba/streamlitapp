@@ -332,6 +332,18 @@ with tab1:
     if selected_adgroup != "All":
         df_filtered = df_filtered[df_filtered["adgroupname"] == selected_adgroup]
 
+    # Filter Search Term
+    search_terms = sorted(df_filtered["searchterm"].dropna().unique().tolist())
+    search_term_input = st.text_input(
+        "Filter by Search Term",
+        ""
+    )
+    
+    if search_term_input:
+        df_filtered = df_filtered[
+            df_filtered["searchterm"].str.contains(search_term_input, case=False, na=False)
+        ]
+
     # --- Column and Reason Definitions ---
     reason_options = [
         "1. High CR → Strong conversion rate",
