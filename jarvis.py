@@ -67,17 +67,19 @@ scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/au
 creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"], scopes=scope)
 client = gspread.authorize(creds)
 
+@st.cache_resource(show_spinner="Connecting to Google Sheet...")
+def get_sheet(sheet_name):
+    return client.open_by_key("1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY").worksheet(sheet_name)
+
 sheet_name = f"Summary_Kill_{department}"
-sheet = client.open_by_key("1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY").worksheet(sheet_name)
+sheet = get_sheet(sheet_name)
+
 data = sheet.get_all_records()
 
-# df = pd.DataFrame(data)
-
 # Quoc add
-df_full = pd.DataFrame(sheet.get_all_records())
+df_full = pd.DataFrame(data)
 
 ## unconfirmed df
-# df = df_full.copy()
 df = df_full[df_full["flag"] == 0].copy()
 
 ## confirmed df
@@ -443,7 +445,9 @@ with tab1:
                 df_full.loc[idx, final_df.columns] = final_df.loc[idx]
                 df_full.at[idx, "flag"] = 1 if final_df.at[idx, "confirm_from_mkt"] else 0
 
+        sheet = client.open_by_key("1w3bLxTdo00o0ZY7O3Kbrv3LJs6Enzzfbbjj24yWSMlY").worksheet(sheet_name)
         sheet.update([df_full.columns.tolist()] + df_full.astype(str).values.tolist())
+
         st.success("Confirmation status updated to Google Sheet!")
 
         log_all_terms(
