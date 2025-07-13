@@ -300,7 +300,15 @@ with tab1:
     # Reset Filters
     if st.session_state.get("filters_reset"):
         st.session_state.pop("filters_reset")
-        st.session_state.clear()
+        keys_to_clear = [
+            "selected_team", "selected_country", "selected_campaign",
+            "selected_adgroup", "selected_search_term", "selected_date_range",
+            "filter_key", "data_editor_df"
+        ]
+        for key in keys_to_clear:
+            st.session_state.pop(key, None)
+        
+        st.session_state["filters_reset"] = True
         st.stop()
     
     def handle_select_all():
