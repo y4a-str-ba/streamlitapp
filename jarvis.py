@@ -354,9 +354,9 @@ with tab1:
     ]
     preferred_cols = ["confirm_from_mkt", "reason_category", "reason_reject"]
     additional_cols = [
-        "campaignname", "adgroupname", "profile_id", "campaignid", "adgroupid", "keywordid", "searchterm",
+        "report_date", "campaignname", "adgroupname", "profile_id", "campaignid", "adgroupid", "keywordid", "searchterm",
         "keywordtext", "country_code_2", "cumulative_clicks",
-        "cumulative_impressions", "cumulative_cost", "cumulative_sales",
+        "cumulative_impressions", "cumulative_cost", "cumulative_sales", "get_amount_transformed",
         "country_code", "department"
     ]
 
@@ -405,7 +405,8 @@ with tab1:
             "reason_category": st.column_config.SelectboxColumn(
                 "Reason Category (if Unconfirmed)", options=reason_options
             ),
-            "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)")
+            "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)"),
+            "get_amount_transformed": st.column_config.NumberColumn("converted_amount")
         },
         column_order=preferred_cols + additional_cols,
         disabled=additional_cols,
