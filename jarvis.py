@@ -344,10 +344,14 @@ with tab1:
 
     # Date Range Filter
     if "report_date" in df_filtered.columns:
+        # Convert report_date to datetime
         df_filtered["report_date"] = pd.to_datetime(df_filtered["report_date"], errors="coerce")
+    
+        # Get min & max dates from filtered data
         min_date = df_filtered["report_date"].dropna().min().date()
         max_date = df_filtered["report_date"].dropna().max().date()
     
+        # Show Date Range Picker
         selected_date_range = st.date_input(
             "Filter by Report Date Range",
             value=(min_date, max_date),
@@ -356,14 +360,19 @@ with tab1:
             help="Filter rows by report_date"
         )
     
-        if isinstance(selected_date_range, tuple) and len(selected_date_range) == 2:
+        # Apply filter only when both dates are selected
+        if (
+            isinstance(selected_date_range, (tuple, list)) and
+            len(selected_date_range) == 2 and
+            all(isinstance(d, datetime.date) for d in selected_date_range)
+        ):
             start_date, end_date = selected_date_range
             df_filtered = df_filtered[
                 (df_filtered["report_date"].dt.date >= start_date) &
                 (df_filtered["report_date"].dt.date <= end_date)
             ]
         else:
-            st.info("Please select both start and end date to apply date range filter.")
+            st.warning("Select both start and end date to apply date range filter.")
 
     # --- Column and Reason Definitions ---
     reason_options = [
