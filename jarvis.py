@@ -5,6 +5,7 @@ import plotly.express as px
 import numpy as np
 import requests
 import gspread
+import datetime
 import time
 from google.oauth2.service_account import Credentials
 from jarvis_logger import log_all_terms
@@ -314,14 +315,14 @@ with tab1:
 
     df_filtered = df.copy()
 
-    # Filter Team & Country
+    # Team & Country Filter
     if selected_team != "All" and "team" in df_filtered.columns:
         df_filtered = df_filtered[df_filtered["team"] == selected_team]
 
     if selected_country != "All" and "country" in df_filtered.columns:
         df_filtered = df_filtered[df_filtered["country"] == selected_country]
 
-    # Filter Campaign/Adgroup
+    # Campaign/Adgroup Filter
     campaigns = ["All"] + sorted(df_filtered["campaignname"].dropna().unique().tolist())
     selected_campaign = st.selectbox("Filter by Campaign", campaigns, index=0)
 
@@ -334,12 +335,37 @@ with tab1:
     if selected_adgroup != "All":
         df_filtered = df_filtered[df_filtered["adgroupname"] == selected_adgroup]
 
-    # Filter Search Term
+    # Search Term Filter
     search_terms = ["All"] + sorted(df_filtered["searchterm"].dropna().unique().tolist())
     selected_search_term = st.selectbox("Filter by Search Term", search_terms)
 
     if selected_search_term != "All":
         df_filtered = df_filtered[df_filtered["searchterm"] == selected_search_term]
+
+    # Date Range Filter
+    if "report_date" in df_filtered.columns:
+        # Convert report_date to datetime
+        df_filtered["report_date"] = pd.to_datetime(df_filtered["report_date"], errors="coerce")
+    
+        # Get min & max dates default
+        min_date = df_filtered["report_date"].min().date() if not df_filtered["report_date"].isna().all() else datetime.date.today()
+        max_date = df_filtered["report_date"].max().date() if not df_filtered["report_date"].isna().all() else datetime.date.today()
+    
+        # Date Range Picker
+        selected_date_range = st.date_input(
+            "Filter by Report Date Range",
+            value=(min_date, max_date),
+            min_value=min_date,
+            max_value=max_date,
+            help="Filter rows by report_date"
+        )
+    
+        # Apply filter to df_filtered
+        start_date, end_date = selected_date_range
+        df_filtered = df_filtered[
+            (df_filtered["report_date"].dt.date >= start_date) &
+            (df_filtered["report_date"].dt.date <= end_date)
+        ]
 
     # --- Column and Reason Definitions ---
     reason_options = [
