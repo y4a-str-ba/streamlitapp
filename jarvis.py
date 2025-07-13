@@ -297,6 +297,11 @@ with tab2:
 
 # ========== TAB 1 ==========
 with tab1:
+    # Reset Filters
+    if st.session_state.get("filters_reset"):
+        st.session_state.pop("filters_reset")
+        st.experimental_rerun()
+    
     def handle_select_all():
         is_checked = st.session_state.select_all_checkbox
         st.session_state.data_editor_df['confirm_from_mkt'] = is_checked
@@ -306,19 +311,20 @@ with tab1:
     def update_reason_for_unconfirmed():
         unconfirmed_mask = st.session_state.data_editor_df['confirm_from_mkt'] == False
         st.session_state.data_editor_df.loc[unconfirmed_mask, 'reason_category'] = st.session_state.selected_filter_reason
-
-    def reset_all_filters():
-    # Clear all related session state keys
+        
+    # Reset Filters
+    if st.button("Reset Filters"):
         keys_to_clear = [
-            "selected_team", "selected_country", "selected_campaign", "selected_adgroup",
-            "selected_search_term", "selected_date_range", "filter_key", "data_editor_df"
+            "selected_team", "selected_country", "selected_campaign",
+            "selected_adgroup", "selected_search_term", "selected_date_range",
+            "filter_key", "data_editor_df"
         ]
         for key in keys_to_clear:
             st.session_state.pop(key, None)
-        st.rerun()
-
-
-    st.subheader("Confirm individual terms")
+        st.session_state["filters_reset"] = True 
+        st.experimental_rerun()
+    
+        st.subheader("Confirm individual terms")
 
     # --- Use filters from Sidebar ---
     selected_team = team
@@ -384,9 +390,6 @@ with tab1:
             ]
         else:
             st.warning("Select both start and end date to apply date range filter.")
-
-        # Reset Filters Button
-        st.button("Reset Filters", on_click=reset_all_filters)
 
     # --- Column and Reason Definitions ---
     reason_options = [
