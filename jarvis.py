@@ -347,7 +347,7 @@ with tab1:
         df["report_date"] = pd.to_datetime(df["report_date"], errors="coerce")
         min_date = df["report_date"].dropna().min().date()
         max_date = df["report_date"].dropna().max().date()
-
+    
         selected_date_range = st.date_input(
             "Filter by Report Date Range",
             value=(min_date, max_date),
@@ -355,8 +355,9 @@ with tab1:
             max_value=max_date,
             help="Filter rows by report_date"
         )
-
-        # Apply to df_filtered
+    
+        df_filtered["report_date"] = pd.to_datetime(df_filtered["report_date"], errors="coerce")
+    
         start_date, end_date = selected_date_range
         df_filtered = df_filtered[
             (df_filtered["report_date"].dt.date >= start_date) &
