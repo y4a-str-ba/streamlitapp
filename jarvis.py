@@ -356,11 +356,14 @@ with tab1:
             help="Filter rows by report_date"
         )
     
-        start_date, end_date = selected_date_range
-        df_filtered = df_filtered[
-            (df_filtered["report_date"].dt.date >= start_date) &
-            (df_filtered["report_date"].dt.date <= end_date)
-        ]
+        if isinstance(selected_date_range, tuple) and len(selected_date_range) == 2:
+            start_date, end_date = selected_date_range
+            df_filtered = df_filtered[
+                (df_filtered["report_date"].dt.date >= start_date) &
+                (df_filtered["report_date"].dt.date <= end_date)
+            ]
+        else:
+            st.info("Please select both start and end date to apply date range filter.")
 
     # --- Column and Reason Definitions ---
     reason_options = [
