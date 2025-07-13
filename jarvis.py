@@ -374,6 +374,18 @@ with tab1:
         else:
             st.warning("Select both start and end date to apply date range filter.")
 
+        # Reset Filters Button
+        if st.button("Reset Filters"):
+            st.session_state.pop("selected_team", None)
+            st.session_state.pop("selected_country", None)
+            st.session_state.pop("selected_campaign", None)
+            st.session_state.pop("selected_adgroup", None)
+            st.session_state.pop("selected_search_term", None)
+            st.session_state.pop("selected_date_range", None)
+            st.session_state.pop("filter_key", None)
+            st.session_state.pop("data_editor_df", None)
+            st.rerun()
+
     # --- Column and Reason Definitions ---
     reason_options = [
         "1. High CR → Strong conversion rate",
