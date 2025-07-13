@@ -343,10 +343,10 @@ with tab1:
         df_filtered = df_filtered[df_filtered["searchterm"] == selected_search_term]
 
     # Date Range Filter
-    if "report_date" in df.columns: 
-        df["report_date"] = pd.to_datetime(df["report_date"], errors="coerce")
-        min_date = df["report_date"].dropna().min().date()
-        max_date = df["report_date"].dropna().max().date()
+    if "report_date" in df_filtered.columns:
+        df_filtered["report_date"] = pd.to_datetime(df_filtered["report_date"], errors="coerce")
+        min_date = df_filtered["report_date"].dropna().min().date()
+        max_date = df_filtered["report_date"].dropna().max().date()
     
         selected_date_range = st.date_input(
             "Filter by Report Date Range",
@@ -355,8 +355,6 @@ with tab1:
             max_value=max_date,
             help="Filter rows by report_date"
         )
-    
-        df_filtered["report_date"] = pd.to_datetime(df_filtered["report_date"], errors="coerce")
     
         start_date, end_date = selected_date_range
         df_filtered = df_filtered[
@@ -384,7 +382,7 @@ with tab1:
     ]
 
     # --- Session State Initialization ---
-    filter_key = f"{selected_team}-{selected_country}-{selected_campaign}-{selected_adgroup}-{selected_search_term}"
+    filter_key = f"{selected_team}-{selected_country}-{selected_campaign}-{selected_adgroup}-{selected_search_term}-{start_date}-{end_date}"
     if "data_editor_df" not in st.session_state or st.session_state.get("filter_key") != filter_key:
         st.session_state.filter_key = filter_key
         temp_df = df_filtered.copy()
