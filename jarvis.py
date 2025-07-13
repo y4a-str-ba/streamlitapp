@@ -300,7 +300,8 @@ with tab1:
     # Reset Filters
     if st.session_state.get("filters_reset"):
         st.session_state.pop("filters_reset")
-        st.experimental_rerun()
+        st.session_state.clear()
+        st.stop()
     
     def handle_select_all():
         is_checked = st.session_state.select_all_checkbox
@@ -311,18 +312,6 @@ with tab1:
     def update_reason_for_unconfirmed():
         unconfirmed_mask = st.session_state.data_editor_df['confirm_from_mkt'] == False
         st.session_state.data_editor_df.loc[unconfirmed_mask, 'reason_category'] = st.session_state.selected_filter_reason
-        
-    # Reset Filters
-    if st.button("Reset Filters"):
-        keys_to_clear = [
-            "selected_team", "selected_country", "selected_campaign",
-            "selected_adgroup", "selected_search_term", "selected_date_range",
-            "filter_key", "data_editor_df"
-        ]
-        for key in keys_to_clear:
-            st.session_state.pop(key, None)
-        st.session_state["filters_reset"] = True 
-        st.experimental_rerun()
     
         st.subheader("Confirm individual terms")
 
@@ -391,6 +380,17 @@ with tab1:
         else:
             st.warning("Select both start and end date to apply date range filter.")
 
+        # Reset Filters
+        if st.button("Reset Filters"):
+            keys_to_clear = [
+                "selected_team", "selected_country", "selected_campaign",
+                "selected_adgroup", "selected_search_term", "selected_date_range",
+                "filter_key", "data_editor_df"
+            ]
+            for key in keys_to_clear:
+                st.session_state.pop(key, None)
+            st.session_state["filters_reset"] = True
+        
     # --- Column and Reason Definitions ---
     reason_options = [
         "1. High CR → Strong conversion rate",
