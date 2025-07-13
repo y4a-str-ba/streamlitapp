@@ -309,13 +309,13 @@ with tab1:
 
     def reset_all_filters():
     # Clear all related session state keys
-    keys_to_clear = [
-        "selected_team", "selected_country", "selected_campaign", "selected_adgroup",
-        "selected_search_term", "selected_date_range", "filter_key", "data_editor_df"
-    ]
-    for key in keys_to_clear:
-        st.session_state.pop(key, None)
-    st.rerun()
+        keys_to_clear = [
+            "selected_team", "selected_country", "selected_campaign", "selected_adgroup",
+            "selected_search_term", "selected_date_range", "filter_key", "data_editor_df"
+        ]
+        for key in keys_to_clear:
+            st.session_state.pop(key, None)
+        st.rerun()
 
 
     st.subheader("Confirm individual terms")
