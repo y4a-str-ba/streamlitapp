@@ -343,15 +343,11 @@ with tab1:
         df_filtered = df_filtered[df_filtered["searchterm"] == selected_search_term]
 
     # Date Range Filter
-    if "report_date" in df_filtered.columns:
-        # Convert report_date to datetime
-        df_filtered["report_date"] = pd.to_datetime(df_filtered["report_date"], errors="coerce")
-    
-        # Get min & max dates default
-        min_date = df_filtered["report_date"].min().date() if not df_filtered["report_date"].isna().all() else datetime.date.today()
-        max_date = df_filtered["report_date"].max().date() if not df_filtered["report_date"].isna().all() else datetime.date.today()
-    
-        # Date Range Picker
+    if "report_date" in df.columns: 
+        df["report_date"] = pd.to_datetime(df["report_date"], errors="coerce")
+        min_date = df["report_date"].dropna().min().date()
+        max_date = df["report_date"].dropna().max().date()
+
         selected_date_range = st.date_input(
             "Filter by Report Date Range",
             value=(min_date, max_date),
@@ -359,8 +355,8 @@ with tab1:
             max_value=max_date,
             help="Filter rows by report_date"
         )
-    
-        # Apply filter to df_filtered
+
+        # Apply to df_filtered
         start_date, end_date = selected_date_range
         df_filtered = df_filtered[
             (df_filtered["report_date"].dt.date >= start_date) &
