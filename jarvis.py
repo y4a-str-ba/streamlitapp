@@ -297,19 +297,6 @@ with tab2:
 
 # ========== TAB 1 ==========
 with tab1:
-    # Reset Filters
-    if st.session_state.get("filters_reset"):
-        st.session_state.pop("filters_reset")
-        keys_to_clear = [
-            "selected_team", "selected_country", "selected_campaign",
-            "selected_adgroup", "selected_search_term", "selected_date_range",
-            "filter_key", "data_editor_df"
-        ]
-        for key in keys_to_clear:
-            st.session_state.pop(key, None)
-        
-        st.session_state["filters_reset"] = True
-        st.stop()
     
     def handle_select_all():
         is_checked = st.session_state.select_all_checkbox
@@ -387,17 +374,6 @@ with tab1:
             ]
         else:
             st.warning("Select both start and end date to apply date range filter.")
-
-        # Reset Filters
-        if st.button("Reset Filters"):
-            keys_to_clear = [
-                "selected_team", "selected_country", "selected_campaign",
-                "selected_adgroup", "selected_search_term", "selected_date_range",
-                "filter_key", "data_editor_df"
-            ]
-            for key in keys_to_clear:
-                st.session_state.pop(key, None)
-            st.session_state["filters_reset"] = True
         
     # --- Column and Reason Definitions ---
     reason_options = [
