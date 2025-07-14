@@ -403,7 +403,7 @@ with tab1:
     if (
         isinstance(selected_date_range, (tuple, list)) and
         len(selected_date_range) == 2 and
-        all(isinstance(d, datetime.date) for d in selected_date_range)
+        all(isinstance(d, date) for d in selected_date_range)
     ):
         start_date, end_date = selected_date_range
         filter_key = f"{selected_team}-{selected_country}-{selected_campaign}-{selected_adgroup}-{selected_search_term}-{start_date}-{end_date}"
