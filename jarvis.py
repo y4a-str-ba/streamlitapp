@@ -12,7 +12,7 @@ from jarvis_logger import log_all_terms
 
 from gspread.utils import rowcol_to_a1 # Quoc add
 
-st.set_page_config(page_title="Jarvis Dashboard", layout="wide")
+st.set_page_config(page_title="Jarvis Dashboard", layout="wide") 
 
 # ========== LOGIN ==========
 if "logged_in" not in st.session_state:
