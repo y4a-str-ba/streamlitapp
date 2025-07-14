@@ -323,25 +323,80 @@ with tab1:
     if selected_country != "All" and "country" in df_filtered.columns:
         df_filtered = df_filtered[df_filtered["country"] == selected_country]
 
-    # Campaign/Adgroup Filter
-    campaigns = ["All"] + sorted(df_filtered["campaignname"].dropna().unique().tolist())
-    selected_campaign = st.selectbox("Filter by Campaign", campaigns, index=0)
+    # Campaign Filter
+    st.markdown("### Campaign Filter")
+    col1, col2 = st.columns(2)
+    with col1:
+        campaign_operator = st.selectbox(
+            "Operator",
+            ["Contains", "Not Contains", "Equals", "Starts With", "Ends With"],
+            key="campaign_operator"
+        )
+    with col2:
+        campaign_value = st.text_input("Value", key="campaign_value")
 
-    if selected_campaign != "All":
-        df_filtered = df_filtered[df_filtered["campaignname"] == selected_campaign]
+    if campaign_value.strip() != "":
+        if campaign_operator == "Contains":
+            df_filtered = df_filtered[df_filtered["campaignname"].str.contains(campaign_value, case=False, na=False)]
+        elif campaign_operator == "Not Contains":
+            df_filtered = df_filtered[~df_filtered["campaignname"].str.contains(campaign_value, case=False, na=False)]
+        elif campaign_operator == "Equals":
+            df_filtered = df_filtered[df_filtered["campaignname"].str.lower() == campaign_value.strip().lower()]
+        elif campaign_operator == "Starts With":
+            df_filtered = df_filtered[df_filtered["campaignname"].str.startswith(campaign_value, na=False)]
+        elif campaign_operator == "Ends With":
+            df_filtered = df_filtered[df_filtered["campaignname"].str.endswith(campaign_value, na=False)]
+    selected_campaign = campaign_value 
 
-    adgroups = ["All"] + sorted(df_filtered["adgroupname"].dropna().unique().tolist())
-    selected_adgroup = st.selectbox("Filter by Ad Group", adgroups, index=0)
+    # Adgroup Filter
+    st.markdown("### Adgroup Filter")
+    col1, col2 = st.columns(2)
+    with col1:
+        adgroup_operator = st.selectbox(
+            "Operator",
+            ["Contains", "Not Contains", "Equals", "Starts With", "Ends With"],
+            key="adgroup_operator"
+        )
+    with col2:
+        adgroup_value = st.text_input("Value", key="adgroup_value")
 
-    if selected_adgroup != "All":
-        df_filtered = df_filtered[df_filtered["adgroupname"] == selected_adgroup]
+    if adgroup_value.strip() != "":
+        if adgroup_operator == "Contains":
+            df_filtered = df_filtered[df_filtered["adgroupname"].str.contains(adgroup_value, case=False, na=False)]
+        elif adgroup_operator == "Not Contains":
+            df_filtered = df_filtered[~df_filtered["adgroupname"].str.contains(adgroup_value, case=False, na=False)]
+        elif adgroup_operator == "Equals":
+            df_filtered = df_filtered[df_filtered["adgroupname"].str.lower() == adgroup_value.strip().lower()]
+        elif adgroup_operator == "Starts With":
+            df_filtered = df_filtered[df_filtered["adgroupname"].str.startswith(adgroup_value, na=False)]
+        elif adgroup_operator == "Ends With":
+            df_filtered = df_filtered[df_filtered["adgroupname"].str.endswith(adgroup_value, na=False)]
+    selected_adgroup = adgroup_value
 
     # Search Term Filter
-    search_terms = ["All"] + sorted(df_filtered["searchterm"].dropna().unique().tolist())
-    selected_search_term = st.selectbox("Filter by Search Term", search_terms)
+    st.markdown("### Search Term Filter")
+    col1, col2 = st.columns(2)
+    with col1:
+        search_operator = st.selectbox(
+            "Operator",
+            ["Contains", "Not Contains", "Equals", "Starts With", "Ends With"],
+            key="search_operator"
+        )
+    with col2:
+        search_value = st.text_input("Value", key="search_value")
 
-    if selected_search_term != "All":
-        df_filtered = df_filtered[df_filtered["searchterm"] == selected_search_term]
+    if search_value.strip() != "":
+        if search_operator == "Contains":
+            df_filtered = df_filtered[df_filtered["searchterm"].str.contains(search_value, case=False, na=False)]
+        elif search_operator == "Not Contains":
+            df_filtered = df_filtered[~df_filtered["searchterm"].str.contains(search_value, case=False, na=False)]
+        elif search_operator == "Equals":
+            df_filtered = df_filtered[df_filtered["searchterm"].str.lower() == search_value.strip().lower()]
+        elif search_operator == "Starts With":
+            df_filtered = df_filtered[df_filtered["searchterm"].str.startswith(search_value, na=False)]
+        elif search_operator == "Ends With":
+            df_filtered = df_filtered[df_filtered["searchterm"].str.endswith(search_value, na=False)]
+    selected_search_term = search_value
 
     # Date Range Filter
     if "report_date" in df_filtered.columns:
