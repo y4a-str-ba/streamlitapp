@@ -349,8 +349,8 @@ with tab1:
     # Date Range Filter
     if "report_date" in pending_rows.columns:
         pending_rows["report_date"] = pd.to_datetime(pending_rows["report_date"], errors="coerce")
+    
     if not pending_rows.empty and "report_date" in pending_rows.columns:
-        pending_rows["report_date"] = pd.to_datetime(pending_rows["report_date"], errors="coerce")
         min_date = pending_rows["report_date"].dropna().min().date()
         max_date = pending_rows["report_date"].dropna().max().date()
     else:
@@ -363,21 +363,22 @@ with tab1:
         max_value=max_date,
         help="Filter rows by report_date"
     )
-
-        if (
-            isinstance(selected_date_range, (tuple, list)) and
-            len(selected_date_range) == 2 and
-            all(isinstance(d, datetime.date) for d in selected_date_range)
-        ):
-            start_date, end_date = selected_date_range
-            pending_rows = pending_rows[
-                (pending_rows["report_date"].dt.date >= start_date) &
-                (pending_rows["report_date"].dt.date <= end_date)
-            ]
-        else:
-            st.warning("Select both start and end date to apply date range filter.")
-
+    
+    if (
+        isinstance(selected_date_range, (tuple, list))
+        and len(selected_date_range) == 2
+        and all(isinstance(d, datetime.date) for d in selected_date_range)
+    ):
+        start_date, end_date = selected_date_range
+        pending_rows = pending_rows[
+            (pending_rows["report_date"].dt.date >= start_date)
+            & (pending_rows["report_date"].dt.date <= end_date)
+        ]
+    else:
+        st.warning("Select both start and end date to apply date range filter.")
+    
     df_filtered = pd.concat([pending_rows, rejected_rows], ignore_index=True)
+
         
     # --- Column and Reason Definitions ---
     reason_options = [
