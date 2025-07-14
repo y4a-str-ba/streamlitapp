@@ -314,47 +314,44 @@ with tab1:
     selected_team = team
     selected_country = country
 
+    pending_rows = df[df["flag"].isnull()].copy()
+    rejected_rows = df[df["flag"] == 0].copy()
+
     df_filtered = df.copy()
 
     # Team & Country Filter
-    if selected_team != "All" and "team" in df_filtered.columns:
-        df_filtered = df_filtered[df_filtered["team"] == selected_team]
+    if selected_team != "All" and "team" in pending_rows.columns:
+        pending_rows = pending_rows[pending_rows["team"] == selected_team]
 
-    if selected_country != "All" and "country" in df_filtered.columns:
-        df_filtered = df_filtered[df_filtered["country"] == selected_country]
+    if selected_country != "All" and "country" in pending_rows.columns:
+        pending_rows = pending_rows[pending_rows["country"] == selected_country]
 
     # Campaign/Adgroup Filter
-    campaigns = ["All"] + sorted(df_filtered["campaignname"].dropna().unique().tolist())
+    campaigns = ["All"] + sorted(pending_rows["campaignname"].dropna().unique().tolist())
     selected_campaign = st.selectbox("Filter by Campaign", campaigns, index=0)
 
     if selected_campaign != "All":
-        df_filtered = df_filtered[df_filtered["campaignname"] == selected_campaign]
+        pending_rows = pending_rows[pending_rows["campaignname"] == selected_campaign]
 
-    adgroups = ["All"] + sorted(df_filtered["adgroupname"].dropna().unique().tolist())
+    adgroups = ["All"] + sorted(pending_rows["adgroupname"].dropna().unique().tolist())
     selected_adgroup = st.selectbox("Filter by Ad Group", adgroups, index=0)
 
     if selected_adgroup != "All":
-        df_filtered = df_filtered[df_filtered["adgroupname"] == selected_adgroup]
-
-    df_filtered = df_filtered[df_filtered["flag"].isnull() | (df_filtered["flag"] == 0)]
+        pending_rows = pending_rows[pending_rows["adgroupname"] == selected_adgroup]
 
     # Search Term Filter
-    search_terms = ["All"] + sorted(df_filtered["searchterm"].dropna().unique().tolist())
+    search_terms = ["All"] + sorted(pending_rows["searchterm"].dropna().unique().tolist())
     selected_search_term = st.selectbox("Filter by Search Term", search_terms)
 
     if selected_search_term != "All":
-        df_filtered = df_filtered[df_filtered["searchterm"] == selected_search_term]
+        pending_rows = pending_rows[pending_rows["searchterm"] == selected_search_term]
 
     # Date Range Filter
-    if "report_date" in df_filtered.columns:
-        # Convert report_date to datetime
-        df_filtered["report_date"] = pd.to_datetime(df_filtered["report_date"], errors="coerce")
-    
-        # Get min & max dates from filtered data
-        min_date = df_filtered["report_date"].dropna().min().date()
-        max_date = df_filtered["report_date"].dropna().max().date()
-    
-        # Show Date Range Picker
+    if "report_date" in pending_rows.columns:
+        pending_rows["report_date"] = pd.to_datetime(pending_rows["report_date"], errors="coerce")
+        min_date = pending_rows["report_date"].dropna().min().date()
+        max_date = pending_rows["report_date"].dropna().max().date()
+
         selected_date_range = st.date_input(
             "Filter by Report Date Range",
             value=(min_date, max_date),
@@ -362,20 +359,21 @@ with tab1:
             max_value=max_date,
             help="Filter rows by report_date"
         )
-    
-        # Apply filter only when both dates are selected
+
         if (
             isinstance(selected_date_range, (tuple, list)) and
             len(selected_date_range) == 2 and
             all(isinstance(d, datetime.date) for d in selected_date_range)
         ):
             start_date, end_date = selected_date_range
-            df_filtered = df_filtered[
-                (df_filtered["report_date"].dt.date >= start_date) &
-                (df_filtered["report_date"].dt.date <= end_date)
+            pending_rows = pending_rows[
+                (pending_rows["report_date"].dt.date >= start_date) &
+                (pending_rows["report_date"].dt.date <= end_date)
             ]
         else:
             st.warning("Select both start and end date to apply date range filter.")
+
+    df_filtered = pd.concat([pending_rows, rejected_rows], ignore_index=True)
         
     # --- Column and Reason Definitions ---
     reason_options = [
