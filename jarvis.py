@@ -336,6 +336,8 @@ with tab1:
     if selected_adgroup != "All":
         df_filtered = df_filtered[df_filtered["adgroupname"] == selected_adgroup]
 
+    df_filtered = df_filtered[df_filtered["flag"].isnull() | (df_filtered["flag"] == 0)]
+
     # Search Term Filter
     search_terms = ["All"] + sorted(df_filtered["searchterm"].dropna().unique().tolist())
     selected_search_term = st.selectbox("Filter by Search Term", search_terms)
