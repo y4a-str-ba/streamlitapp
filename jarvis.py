@@ -314,7 +314,7 @@ with tab1:
     selected_team = team
     selected_country = country
 
-    df_filtered = df.copy()
+    df_filtered = df[df["confirm_from_mkt"].isin([False, None])].copy()
 
     # Team & Country Filter
     if selected_team != "All" and "team" in df_filtered.columns:
@@ -414,7 +414,7 @@ with tab1:
             if col not in temp_df.columns:
                 temp_df[col] = None
 
-        temp_df["confirm_from_mkt"] = True
+        temp_df["confirm_from_mkt"] = temp_df["confirm_from_mkt"].fillna(True)
         temp_df["reason_category"] = temp_df["reason_category"].fillna("")
         temp_df["reason_reject"] = temp_df["reason_reject"].fillna("")
         temp_df = temp_df[preferred_cols + additional_cols]
