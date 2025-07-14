@@ -349,16 +349,20 @@ with tab1:
     # Date Range Filter
     if "report_date" in pending_rows.columns:
         pending_rows["report_date"] = pd.to_datetime(pending_rows["report_date"], errors="coerce")
+    if not pending_rows.empty and "report_date" in pending_rows.columns:
+        pending_rows["report_date"] = pd.to_datetime(pending_rows["report_date"], errors="coerce")
         min_date = pending_rows["report_date"].dropna().min().date()
         max_date = pending_rows["report_date"].dropna().max().date()
-
-        selected_date_range = st.date_input(
-            "Filter by Report Date Range",
-            value=(min_date, max_date),
-            min_value=min_date,
-            max_value=max_date,
-            help="Filter rows by report_date"
-        )
+    else:
+        min_date = max_date = date.today()  # fallback
+    
+    selected_date_range = st.date_input(
+        "Filter by Report Date Range",
+        value=(min_date, max_date),
+        min_value=min_date,
+        max_value=max_date,
+        help="Filter rows by report_date"
+    )
 
         if (
             isinstance(selected_date_range, (tuple, list)) and
