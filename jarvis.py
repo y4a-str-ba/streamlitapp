@@ -506,12 +506,24 @@ with tab1:
         total_unconfirmed = final_df[final_df["confirm_from_mkt"] == False].shape[0]
         user = st.session_state.user
         current_sheet = sheet.title
+
+        filter_campaign = selected_campaign if selected_campaign != "All" else "All Campaigns"
+        filter_adgroup = selected_adgroup if selected_adgroup != "All" else "All Adgroups"
+        
+        if isinstance(selected_date_range, (tuple, list)) and len(selected_date_range) == 2:
+            date_range_str = f"{selected_date_range[0]} → {selected_date_range[1]}"
+        else:
+            date_range_str = "All Dates"
+    
         msg = (
             f"📢 *Jarvis Confirmation Report*\n"
             f"👤 User: `{user}`\n"
             f"📄 Sheet: `{current_sheet}`\n"
             f"🏷️ Team: `{selected_team}`\n"
             f"🌎 Country: `{selected_country}`\n"
+            f"📌 Campaign: `{filter_campaign}`\n"
+            f"📌 Adgroup: `{filter_adgroup}`\n"
+            f"📅 Date Range: `{date_range_str}`\n"
             f"✅ Confirmed: `{total_confirmed}`\n"
             f"❌ Not Confirmed: `{total_unconfirmed}`"
         )
