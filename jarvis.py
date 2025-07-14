@@ -314,14 +314,12 @@ with tab1:
     selected_team = team
     selected_country = country
 
-    pending_rows = df_full[df_full["flag"].isna()]
-    rejected_rows = df_full[df_full["flag"] == 0]
-    df_filtered = pd.concat([pending_rows, rejected_rows], ignore_index=True)
-    
+    df_filtered = df.copy()
+
     # Team & Country Filter
     if selected_team != "All" and "team" in df_filtered.columns:
         df_filtered = df_filtered[df_filtered["team"] == selected_team]
-    
+
     if selected_country != "All" and "country" in df_filtered.columns:
         df_filtered = df_filtered[df_filtered["country"] == selected_country]
 
@@ -361,7 +359,7 @@ with tab1:
             min_value=min_date,
             max_value=max_date,
             help="Filter rows by report_date"
-        ) 
+        )
     
         # Apply filter only when both dates are selected
         if (
