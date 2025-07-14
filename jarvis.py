@@ -530,6 +530,8 @@ with tab1:
         webhook_url = 'https://chat.googleapis.com/v1/spaces/AAQA4vfwkIw/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=TyhGKT_IfWTpa8e5A2N2KlVvK-ZSpu4PMclPG2YmtXs'
         requests.post(webhook_url, json={"text": msg})
 
+        df = df_full[df_full["flag"] == 0].copy()
+
         del st.session_state.data_editor_df
         del st.session_state.selected_filter_reason
         time.sleep(1)
