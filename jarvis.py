@@ -324,11 +324,27 @@ with tab1:
         df_filtered = df_filtered[df_filtered["country"] == selected_country]
 
     # Campaign/Adgroup Filter
-    campaigns = ["All"] + sorted(df_filtered["campaignname"].dropna().unique().tolist())
-    selected_campaign = st.selectbox("Filter by Campaign", campaigns, index=0)
-
-    if selected_campaign != "All":
-        df_filtered = df_filtered[df_filtered["campaignname"] == selected_campaign]
+    campaign_operators = ["Contains", "Not Contains", "Equals", "Starts With", "Ends With"]
+    campaign_operator = st.selectbox("Campaign Filter - Operator", campaign_operators, index=0)
+    campaign_value = st.text_input("Campaign Filter - Value", "")
+    
+    # Tạo biến selected_campaign cho phần dưới dùng
+    selected_campaign = f"{campaign_operator} '{campaign_value}'" if campaign_value.strip() else "All"
+    
+    # Apply filter logic
+    if campaign_value.strip() != "":
+        if campaign_operator == "Contains":
+            df_filtered = df_filtered[df_filtered["campaignname"].str.contains(campaign_value, case=False, na=False)]
+        elif campaign_operator == "Not Contains":
+            df_filtered = df_filtered[~df_filtered["campaignname"].str.contains(campaign_value, case=False, na=False)]
+        elif campaign_operator == "Equals":
+            df_filtered = df_filtered[df_filtered["campaignname"].str.lower() == campaign_value.lower()]
+        elif campaign_operator == "Starts With":
+            df_filtered = df_filtered[df_filtered["campaignname"].str.startswith(campaign_value, na=False)]
+        elif campaign_operator == "Ends With":
+            df_filtered = df_filtered[df_filtered["campaignname"].str.endswith(campaign_value, na=False)]
+    else:
+        selected_campaign = "All Campaigns"
 
     adgroups = ["All"] + sorted(df_filtered["adgroupname"].dropna().unique().tolist())
     selected_adgroup = st.selectbox("Filter by Ad Group", adgroups, index=0)
