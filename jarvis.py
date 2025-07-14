@@ -5,7 +5,6 @@ import plotly.express as px
 import numpy as np
 import requests
 import gspread
-from datetime import date
 import time
 from google.oauth2.service_account import Credentials
 from jarvis_logger import log_all_terms
@@ -81,13 +80,13 @@ data = sheet.get_all_records()
 df_full = pd.DataFrame(data)
 
 ## unconfirmed df
-df = df_full[df_full["flag"].isnull() | (df_full["flag"] == 0)].copy()
+df = df_full[df_full["flag"] == 0].copy()
 
 ## confirmed df
 df_confirmed = df_full[df_full["flag"] == 1].copy()
 
 # Team filter
-team = st.sidebar.selectbox("Team", ["INT", "US"], index=0)
+team = st.sidebar.selectbox("Team", ["All", "INT", "US"], index=0)
 
 # Country filter
 if "country_code_2" in df.columns:
@@ -297,7 +296,6 @@ with tab2:
 
 # ========== TAB 1 ==========
 with tab1:
-    
     def handle_select_all():
         is_checked = st.session_state.select_all_checkbox
         st.session_state.data_editor_df['confirm_from_mkt'] = is_checked
@@ -307,79 +305,42 @@ with tab1:
     def update_reason_for_unconfirmed():
         unconfirmed_mask = st.session_state.data_editor_df['confirm_from_mkt'] == False
         st.session_state.data_editor_df.loc[unconfirmed_mask, 'reason_category'] = st.session_state.selected_filter_reason
-    
-        st.subheader("Confirm individual terms")
+
+    st.subheader("Confirm individual terms")
 
     # --- Use filters from Sidebar ---
     selected_team = team
     selected_country = country
 
-    pending_rows = df[df["flag"].isnull()].copy()
-    rejected_rows = df[df["flag"] == 0].copy()
-
     df_filtered = df.copy()
 
-    # Team & Country Filter
-    if selected_team != "All" and "team" in pending_rows.columns:
-        pending_rows = pending_rows[pending_rows["team"] == selected_team]
+    # Filter Team & Country
+    if selected_team != "All" and "team" in df_filtered.columns:
+        df_filtered = df_filtered[df_filtered["team"] == selected_team]
 
-    if selected_country != "All" and "country" in pending_rows.columns:
-        pending_rows = pending_rows[pending_rows["country"] == selected_country]
+    if selected_country != "All" and "country" in df_filtered.columns:
+        df_filtered = df_filtered[df_filtered["country"] == selected_country]
 
-    # Campaign/Adgroup Filter
-    campaigns = ["All"] + sorted(pending_rows["campaignname"].dropna().unique().tolist())
+    # Filter Campaign/Adgroup
+    campaigns = ["All"] + sorted(df_filtered["campaignname"].dropna().unique().tolist())
     selected_campaign = st.selectbox("Filter by Campaign", campaigns, index=0)
 
     if selected_campaign != "All":
-        pending_rows = pending_rows[pending_rows["campaignname"] == selected_campaign]
+        df_filtered = df_filtered[df_filtered["campaignname"] == selected_campaign]
 
-    adgroups = ["All"] + sorted(pending_rows["adgroupname"].dropna().unique().tolist())
+    adgroups = ["All"] + sorted(df_filtered["adgroupname"].dropna().unique().tolist())
     selected_adgroup = st.selectbox("Filter by Ad Group", adgroups, index=0)
 
     if selected_adgroup != "All":
-        pending_rows = pending_rows[pending_rows["adgroupname"] == selected_adgroup]
+        df_filtered = df_filtered[df_filtered["adgroupname"] == selected_adgroup]
 
-    # Search Term Filter
-    search_terms = ["All"] + sorted(pending_rows["searchterm"].dropna().unique().tolist())
+    # Filter Search Term
+    search_terms = ["All"] + sorted(df_filtered["searchterm"].dropna().unique().tolist())
     selected_search_term = st.selectbox("Filter by Search Term", search_terms)
 
     if selected_search_term != "All":
-        pending_rows = pending_rows[pending_rows["searchterm"] == selected_search_term]
+        df_filtered = df_filtered[df_filtered["searchterm"] == selected_search_term]
 
-    # Date Range Filter
-    if "report_date" in pending_rows.columns:
-        pending_rows["report_date"] = pd.to_datetime(pending_rows["report_date"], errors="coerce")
-    
-    if not pending_rows.empty and "report_date" in pending_rows.columns:
-        min_date = pending_rows["report_date"].dropna().min().date()
-        max_date = pending_rows["report_date"].dropna().max().date()
-    else:
-        min_date = max_date = date.today()
-    
-    selected_date_range = st.date_input(
-        "Filter by Report Date Range",
-        value=(min_date, max_date),
-        min_value=min_date,
-        max_value=max_date,
-        help="Filter rows by report_date"
-    )
-    
-    if (
-        isinstance(selected_date_range, (tuple, list))
-        and len(selected_date_range) == 2
-        and all(isinstance(d, date) for d in selected_date_range)
-    ):
-        start_date, end_date = selected_date_range
-        pending_rows = pending_rows[
-            (pending_rows["report_date"].dt.date >= start_date)
-            & (pending_rows["report_date"].dt.date <= end_date)
-        ]
-    else:
-        st.warning("Select both start and end date to apply date range filter.")
-    
-    df_filtered = pd.concat([pending_rows, rejected_rows], ignore_index=True)
-
-        
     # --- Column and Reason Definitions ---
     reason_options = [
         "1. High CR → Strong conversion rate",
@@ -393,23 +354,14 @@ with tab1:
     ]
     preferred_cols = ["confirm_from_mkt", "reason_category", "reason_reject"]
     additional_cols = [
-        "report_date", "campaignname", "adgroupname", "profile_id", "campaignid", "adgroupid", "keywordid", "searchterm",
+        "campaignname", "adgroupname", "profile_id", "campaignid", "adgroupid", "keywordid", "searchterm",
         "keywordtext", "country_code_2", "cumulative_clicks",
-        "cumulative_impressions", "cumulative_cost", "cumulative_sales", "get_amount_transformed",
+        "cumulative_impressions", "cumulative_cost", "cumulative_sales",
         "country_code", "department"
     ]
 
     # --- Session State Initialization ---
-    if (
-        isinstance(selected_date_range, (tuple, list)) and
-        len(selected_date_range) == 2 and
-        all(isinstance(d, date) for d in selected_date_range)
-    ):
-        start_date, end_date = selected_date_range
-        filter_key = f"{selected_team}-{selected_country}-{selected_campaign}-{selected_adgroup}-{selected_search_term}-{start_date}-{end_date}"
-    else:
-        filter_key = f"{selected_team}-{selected_country}-{selected_campaign}-{selected_adgroup}-{selected_search_term}"
-
+    filter_key = f"{selected_team}-{selected_country}-{selected_campaign}-{selected_adgroup}-{selected_search_term}"
     if "data_editor_df" not in st.session_state or st.session_state.get("filter_key") != filter_key:
         st.session_state.filter_key = filter_key
         temp_df = df_filtered.copy()
@@ -453,8 +405,7 @@ with tab1:
             "reason_category": st.column_config.SelectboxColumn(
                 "Reason Category (if Unconfirmed)", options=reason_options
             ),
-            "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)"),
-            "get_amount_transformed": st.column_config.NumberColumn("converted_amount")
+            "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)")
         },
         column_order=preferred_cols + additional_cols,
         disabled=additional_cols,
@@ -511,24 +462,12 @@ with tab1:
         total_unconfirmed = final_df[final_df["confirm_from_mkt"] == False].shape[0]
         user = st.session_state.user
         current_sheet = sheet.title
-
-        filter_campaign = selected_campaign if selected_campaign != "All" else "All Campaigns"
-        filter_adgroup = selected_adgroup if selected_adgroup != "All" else "All Adgroups"
-        
-        if isinstance(selected_date_range, (tuple, list)) and len(selected_date_range) == 2:
-            date_range_str = f"{selected_date_range[0]} → {selected_date_range[1]}"
-        else:
-            date_range_str = "All Dates"
-    
         msg = (
             f"📢 *Jarvis Confirmation Report*\n"
             f"👤 User: `{user}`\n"
             f"📄 Sheet: `{current_sheet}`\n"
             f"🏷️ Team: `{selected_team}`\n"
             f"🌎 Country: `{selected_country}`\n"
-            f"📌 Campaign: `{filter_campaign}`\n"
-            f"📌 Adgroup: `{filter_adgroup}`\n"
-            f"📅 Date Range: `{date_range_str}`\n"
             f"✅ Confirmed: `{total_confirmed}`\n"
             f"❌ Not Confirmed: `{total_unconfirmed}`"
         )
