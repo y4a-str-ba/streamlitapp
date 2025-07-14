@@ -359,7 +359,7 @@ with tab1:
             min_value=min_date,
             max_value=max_date,
             help="Filter rows by report_date"
-        )
+        ) 
     
         # Apply filter only when both dates are selected
         if (
