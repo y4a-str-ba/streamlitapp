@@ -86,7 +86,7 @@ df = df_full[df_full["flag"] == 0].copy()
 df_confirmed = df_full[df_full["flag"] == 1].copy()
 
 # Team filter
-team = st.sidebar.selectbox("Team", ["All", "INT", "US"], index=0)
+team = st.sidebar.selectbox("Team", ["INT", "US"], index=0)
 
 # Country filter
 if "country_code_2" in df.columns:
