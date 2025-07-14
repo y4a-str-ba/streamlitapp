@@ -5,7 +5,7 @@ import plotly.express as px
 import numpy as np
 import requests
 import gspread
-import datetime
+from datetime import date
 import time
 from google.oauth2.service_account import Credentials
 from jarvis_logger import log_all_terms
