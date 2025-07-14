@@ -354,7 +354,7 @@ with tab1:
         min_date = pending_rows["report_date"].dropna().min().date()
         max_date = pending_rows["report_date"].dropna().max().date()
     else:
-        min_date = max_date = datetime.date.today()
+        min_date = max_date = date.today()
     
     selected_date_range = st.date_input(
         "Filter by Report Date Range",
