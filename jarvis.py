@@ -485,7 +485,7 @@ with tab1:
         st.session_state.data_editor_df = temp_df.copy()
 
     # --- UI Elements ---
-    st.markdown("#### Apply Reason to all unconfirmed rows")
+    st.markdown("#### Apply Reason To All Unconfirmed Rows")
     st.selectbox(
         "Filter Reason Category",
         reason_options,
