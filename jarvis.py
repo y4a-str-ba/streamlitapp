@@ -399,7 +399,7 @@ with tab1:
     selected_search_term = search_value
 
     # Date Range Filter
-    st.markdown("### Date Range Filter")
+    st.markdown("### Date Range Filter") 
     if "report_date" in df_full.columns:
         # Convert report_date to datetime
         df_full["report_date"] = pd.to_datetime(df_full["report_date"], errors="coerce")
