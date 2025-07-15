@@ -325,7 +325,7 @@ with tab1:
 
     # Campaign Filter
     st.markdown("### Campaign Filter")
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns([1, 5])
     with col1:
         campaign_operator = st.selectbox(
             "Operator",
@@ -350,7 +350,7 @@ with tab1:
 
     # Adgroup Filter
     st.markdown("### Adgroup Filter")
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns([1, 5])
     with col1:
         adgroup_operator = st.selectbox(
             "Operator",
@@ -375,7 +375,7 @@ with tab1:
 
     # Search Term Filter
     st.markdown("### Search Term Filter")
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns([1, 5])
     with col1:
         search_operator = st.selectbox(
             "Operator",
