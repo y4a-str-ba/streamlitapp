@@ -449,12 +449,13 @@ with tab1:
         "7. Brand Name/Product Mapping → Contains branded & Product keyword",
         "8. Other → Other (please specify)"
     ]
-    preferred_cols = ["confirm_from_mkt", "reason_category", "reason_reject"]
+    preferred_cols = ["confirm_from_mkt", "searchterm", "reason_category", "reason_reject"]
     additional_cols = [
-        "report_date", "campaignname", "adgroupname", "profile_id", "campaignid", "adgroupid", "keywordid", "searchterm",
-        "keywordtext", "country_code_2", "cumulative_clicks",
-        "cumulative_impressions", "cumulative_cost", "cumulative_sales", "get_amount_transformed",
-        "country_code", "department"
+        "report_date", "campaignname", "adgroupname",
+        "keywordtext", "cumulative_clicks", "cumulative_impressions",
+        "cumulative_cost", "cumulative_sales", "get_amount_transformed", 
+        "profile_id", "campaignid", "adgroupid", "keywordid",
+        "country_code_2", "country_code", "department"
     ]
 
     # --- Session State Initialization ---
