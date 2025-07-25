@@ -505,7 +505,7 @@ with tab1:
             
             if st.button("🔄 Reset Filters"):
                 st.session_state.metric_filters = []
-                st.rerun()
+                st.rerun() 
         
     # --- Column and Reason Definitions ---
     reason_options = [
