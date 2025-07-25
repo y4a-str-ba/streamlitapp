@@ -468,38 +468,38 @@ with tab1:
         if "metric_filters" not in st.session_state:
             st.session_state.metric_filters = []
         
-        col1, col2, col3, col4 = st.columns([1, 1, 2, 1])
+        col1, col2, col3, col4 = st.columns([1.5, 1, 2, 1])
         with col1:
             selected_metric_label = st.selectbox("Metric", list(metric_map.keys()), key="metric_filter_column")
         with col2:
             selected_operator = st.selectbox("Operator", list(comparison_ops.keys()), index=1, key="metric_filter_operator")
         with col3:
-            input_value = st.number_input("Value", key="metric_filter_value", value=1.0, step=0.1)
+            input_value = st.number_input("Value", key="metric_filter_value", value=1.0, step=0.1, format="%.6f")
         with col4:
-            if st.button("+ Add Filter"):
-                metric_col = metric_map[selected_metric_label]
+            if st.button("➕ Add Filter"):
                 st.session_state.metric_filters.append({
                     "label": selected_metric_label,
-                    "col": metric_col,
+                    "col": metric_map[selected_metric_label],
                     "op": selected_operator,
-                    "value": input_value,
-                    "op_func": comparison_ops[selected_operator]
+                    "value": round(float(input_value), 6),  # avoid floating point issue
                 })
         
-        # Apply all metric filters
-        if st.session_state.metric_filters:
-            for f in st.session_state.metric_filters:
-                try:
-                    df_filtered[f["col"]] = pd.to_numeric(df_filtered[f["col"]], errors="coerce")
-                    df_filtered = df_filtered[f["op_func"](df_filtered[f["col"]], f["value"])]
-                except Exception as e:
-                    st.warning(f"❌ Error applying filter on {f['label']}: {e}")
+        # Apply All Filters to df
+        df_filtered = df.copy()
+        for f in st.session_state.metric_filters:
+            try:
+                df_filtered[f["col"]] = pd.to_numeric(df_filtered[f["col"]], errors="coerce")
+                op_func = comparison_ops[f["op"]]
+                df_filtered = df_filtered[op_func(df_filtered[f["col"]], f["value"])]
+            except Exception as e:
+                st.warning(f"❌ Error applying filter on {f['label']}: {e}")
         
-        # Optionally display current filters
+        # -Show Applied Filters
         if st.session_state.metric_filters:
-            st.markdown("**📌 Applied Metric Filters:**")
-            for i, f in enumerate(st.session_state.metric_filters, 1):
+            st.markdown("#### ✅ Applied Filters")
+            for f in st.session_state.metric_filters:
                 st.markdown(f"- {f['label']} {f['op']} {f['value']}")
+
         
     # --- Column and Reason Definitions ---
     reason_options = [
