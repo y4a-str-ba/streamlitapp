@@ -469,9 +469,9 @@ with tab1:
         with col1:
             selected_metric_label = st.selectbox("Metric", list(metric_map.keys()), key="metric_filter_column")
         with col2:
-            selected_operator = st.selectbox("Operator", list(comparison_ops.keys()), key="metric_filter_operator")
+            selected_operator = st.selectbox("Operator", list(comparison_ops.keys()), index=1, key="metric_filter_operator")
         with col3:
-            input_value = st.number_input("Value", key="metric_filter_value", value=0.0, step=0.1)
+            input_value = st.number_input("Value", key="metric_filter_value", value=1.0, step=0.1)
         
         # Apply filter if all selected
         metric_col = metric_map[selected_metric_label]
