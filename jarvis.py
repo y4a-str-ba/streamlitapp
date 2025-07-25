@@ -494,12 +494,16 @@ with tab1:
             except Exception as e:
                 st.warning(f"❌ Error applying filter on {f['label']}: {e}")
         
-        # -Show Applied Filters
+        # Show Applied Filters
         if st.session_state.metric_filters:
-            st.markdown("#### ✅ Applied Filters")
-            for f in st.session_state.metric_filters:
+            st.markdown("**📌 Applied Metric Filters:**")
+            for i, f in enumerate(st.session_state.metric_filters, 1):
                 st.markdown(f"- {f['label']} {f['op']} {f['value']}")
-
+        
+            # Add this block to reset filters
+            if st.button("🔄 Reset Filters"):
+                st.session_state.metric_filters = []
+                st.rerun()
         
     # --- Column and Reason Definitions ---
     reason_options = [
