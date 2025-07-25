@@ -458,59 +458,29 @@ with tab1:
         }
         
         comparison_ops = {
-            "=": lambda series, val: series == val,
-            ">": lambda series, val: series > val,
-            "<": lambda series, val: series < val,
-            ">=": lambda series, val: series >= val,
-            "<=": lambda series, val: series <= val,
+            "=": lambda x, y: x == y,
+            ">": lambda x, y: x > y,
+            "<": lambda x, y: x < y,
+            ">=": lambda x, y: x >= y,
+            "<=": lambda x, y: x <= y,
         }
         
-        # Init filter state
-        if "metric_filters" not in st.session_state:
-            st.session_state.metric_filters = []
+        col1, col2, col3 = st.columns([1, 1, 3])
+        with col1:
+            selected_metric_label = st.selectbox("Metric", list(metric_map.keys()), key="metric_filter_column")
+        with col2:
+            selected_operator = st.selectbox("Operator", list(comparison_ops.keys()), index=1, key="metric_filter_operator")
+        with col3:
+            input_value = st.number_input("Value", key="metric_filter_value", value=1.0, step=0.1)
         
-        # Input UI
-        with st.container():
-            col1, col2, col3 = st.columns([1.5, 1, 2])
-            with col1:
-                selected_metric_label = st.selectbox("Metric", list(metric_map.keys()), key="metric_filter_column")
-            with col2:
-                selected_operator = st.selectbox("Operator", list(comparison_ops.keys()), index=1, key="metric_filter_operator")
-            with col3:
-                input_value = st.number_input("Value", key="metric_filter_value", value=1.0, step=0.1, format="%.6f")
-        
-            # Add filter button on new row
-            if st.button("➕ Add Filter"):
-                st.session_state.metric_filters.append({
-                    "label": selected_metric_label,
-                    "col": metric_map[selected_metric_label],
-                    "op": selected_operator,
-                    "value": round(float(input_value), 6),
-                })
-        
-        # Apply filters
-        df_filtered = df.copy()
-        
-        # Convert all relevant metric columns to numeric once
-        for col in metric_map.values():
-            if col in df_filtered.columns:
-                df_filtered[col] = pd.to_numeric(df_filtered[col], errors="coerce")
-        
-        # Apply all filters
-        for f in st.session_state.metric_filters:
-            col = f["col"]
-            op_func = comparison_ops[f["op"]]
-            df_filtered = df_filtered[op_func(df_filtered[col], f["value"])]
-        
-        # Show applied filters
-        if st.session_state.metric_filters:
-            st.markdown("**📌 Applied Metric Filters:**")
-            for i, f in enumerate(st.session_state.metric_filters, 1):
-                st.markdown(f"- {f['label']} {f['op']} {f['value']}")
-        
-            if st.button("🔄 Reset Filters"):
-                st.session_state.metric_filters = []
-        st.rerun()
+        # Apply filter if all selected
+        metric_col = metric_map[selected_metric_label]
+        if selected_operator and input_value is not None:
+            try:
+                df_filtered[metric_col] = pd.to_numeric(df_filtered[metric_col], errors="coerce")
+                df_filtered = df_filtered[comparison_ops[selected_operator](df_filtered[metric_col], input_value)]
+            except Exception as e:
+                st.warning(f"Error applying filter on {selected_metric_label}: {e}")
         
     # --- Column and Reason Definitions ---
     reason_options = [
