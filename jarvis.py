@@ -125,6 +125,12 @@ if "reason_category" not in df.columns:
     # df["reason_category"] = "8. Other  → Other (please specify)"
     df["reason_category"] = None
 
+if "reason_category_previous" not in df.columns:
+    df["reason_category_previous"] = ""
+
+if "reason_reject_previous" not in df.columns:
+    df["reason_reject_previous"] = ""
+
 # ========== TABS ==========
 tab1, tab2, tab3 = st.tabs(["Search Term Predictions", "Model Performance", "Explain a Search Term"])
 
@@ -451,7 +457,14 @@ with tab1:
         "7. Brand Name/Product Mapping → Contains branded & Product keyword",
         "8. Other → Other (please specify)"
     ]
-    preferred_cols = ["confirm_from_mkt", "searchterm", "reason_category", "reason_reject"]
+    preferred_cols = [
+    "confirm_from_mkt", 
+    "searchterm", 
+    "reason_category", 
+    "reason_reject", 
+    "reason_category_previous", 
+    "reason_reject_previous"
+    ]
     additional_cols = [
         "report_date", "campaignname", "adgroupname",
         "keywordtext", "cumulative_clicks", "cumulative_impressions",
@@ -515,6 +528,8 @@ with tab1:
                 "Reason Category (if Unconfirmed)", options=reason_options
             ),
             "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)"),
+            "reason_category_previous": st.column_config.TextColumn("Prev Reason Category", disabled=True),
+            "reason_reject_previous": st.column_config.TextColumn("Prev Free Text Reason", disabled=True),
             "get_amount_transformed": st.column_config.NumberColumn("converted_amount")
         },
         column_order=preferred_cols + additional_cols,
