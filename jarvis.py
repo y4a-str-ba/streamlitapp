@@ -484,7 +484,7 @@ with tab1:
                 "label": selected_metric_label,
                 "col": metric_map[selected_metric_label],
                 "op": selected_operator,
-                "value": round(float(input_value), 6),  # fix float precision
+                "value": round(float(input_value), 4),  # fix float precision
             })
         
         # Apply filters
