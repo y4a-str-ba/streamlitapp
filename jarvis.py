@@ -516,10 +516,12 @@ with tab1:
         all(isinstance(d, datetime.date) for d in selected_date_range)
     ):
         start_date, end_date = selected_date_range
-        filter_key = f"{selected_team}-{selected_country}-{selected_campaign}-{selected_adgroup}-{selected_search_term}-{start_date}-{end_date}"
     else:
-        filter_key = f"{selected_team}-{selected_country}-{selected_campaign}-{selected_adgroup}-{selected_search_term}"
-
+        start_date = end_date = "all"
+    
+    metric_key = f"{selected_metric_label}-{selected_operator}-{input_value}"
+    filter_key = f"{selected_team}-{selected_country}-{selected_campaign}-{selected_adgroup}-{selected_search_term}-{start_date}-{end_date}-{metric_key}"
+    
     if "data_editor_df" not in st.session_state or st.session_state.get("filter_key") != filter_key:
         st.session_state.filter_key = filter_key
         temp_df = df_filtered.copy()
