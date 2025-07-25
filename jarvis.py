@@ -445,6 +445,42 @@ with tab1:
             ]
         else:
             st.warning("Select both start and end date to apply date range filter.")
+
+        # Performance Metrics Filter
+        st.markdown("### Performance Metrics Filter")
+        
+        metric_map = {
+            "Clicks": "cumulative_clicks",
+            "Impressions": "cumulative_impressions",
+            "Cost": "cumulative_cost",
+            "Sales": "cumulative_sales",
+            "Converted Amount": "get_amount_transformed"
+        }
+        
+        comparison_ops = {
+            "=": lambda x, y: x == y,
+            ">": lambda x, y: x > y,
+            "<": lambda x, y: x < y,
+            ">=": lambda x, y: x >= y,
+            "<=": lambda x, y: x <= y,
+        }
+        
+        col1, col2, col3 = st.columns([1, 1, 3])
+        with col1:
+            selected_metric_label = st.selectbox("Metric", list(metric_map.keys()), key="metric_filter_column")
+        with col2:
+            selected_operator = st.selectbox("Operator", list(comparison_ops.keys()), key="metric_filter_operator")
+        with col3:
+            input_value = st.number_input("Value", key="metric_filter_value", value=0.0, step=0.1)
+        
+        # Apply filter if all selected
+        metric_col = metric_map[selected_metric_label]
+        if selected_operator and input_value is not None:
+            try:
+                df_filtered[metric_col] = pd.to_numeric(df_filtered[metric_col], errors="coerce")
+                df_filtered = df_filtered[comparison_ops[selected_operator](df_filtered[metric_col], input_value)]
+            except Exception as e:
+                st.warning(f"Error applying filter on {selected_metric_label}: {e}")
         
     # --- Column and Reason Definitions ---
     reason_options = [
