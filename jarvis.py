@@ -490,14 +490,17 @@ with tab1:
         
         # Apply filters
         df_filtered = df.copy()
-        try:
-            for f in st.session_state.metric_filters:
-                col = f["col"]
-                op_func = comparison_ops[f["op"]]
+        
+        # Convert all relevant metric columns to numeric once
+        for col in metric_map.values():
+            if col in df_filtered.columns:
                 df_filtered[col] = pd.to_numeric(df_filtered[col], errors="coerce")
-                df_filtered = df_filtered[op_func(df_filtered[col], f["value"])]
-        except Exception as e:
-            st.warning(f"❌ Error applying filter on {f['label']}: {e}")
+        
+        # Apply all filters
+        for f in st.session_state.metric_filters:
+            col = f["col"]
+            op_func = comparison_ops[f["op"]]
+            df_filtered = df_filtered[op_func(df_filtered[col], f["value"])]
         
         # Show applied filters
         if st.session_state.metric_filters:
@@ -507,7 +510,7 @@ with tab1:
         
             if st.button("🔄 Reset Filters"):
                 st.session_state.metric_filters = []
-                st.rerun()
+        st.rerun()
         
     # --- Column and Reason Definitions ---
     reason_options = [
