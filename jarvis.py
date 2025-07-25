@@ -470,7 +470,7 @@ with tab1:
             st.session_state.metric_filters = []
         
         # Filter input UI
-        col1, col2, col3 = st.columns([1, 1, 3])
+        col1, col2, col3 = st.columns([1, 1, 4])
         with col1:
             selected_metric_label = st.selectbox("Metric", list(metric_map.keys()), key="metric_filter_column")
         with col2:
