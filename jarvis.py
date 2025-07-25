@@ -528,8 +528,8 @@ with tab1:
                 "Reason Category (if Unconfirmed)", options=reason_options
             ),
             "reason_reject": st.column_config.TextColumn("Free Text Reason (if Unconfirmed)"),
-            "reason_category_previous": st.column_config.TextColumn("Prev Reason Category", disabled=True),
-            "reason_reject_previous": st.column_config.TextColumn("Prev Free Text Reason", disabled=True),
+            "reason_category_previous": st.column_config.TextColumn("Previous Reason Category", disabled=True),
+            "reason_reject_previous": st.column_config.TextColumn("Previous Free Text Reason", disabled=True),
             "get_amount_transformed": st.column_config.NumberColumn("converted_amount")
         },
         column_order=preferred_cols + additional_cols,
