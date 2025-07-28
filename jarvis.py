@@ -512,7 +512,7 @@ with tab1:
             st.session_state.metric_filters[i]['val'] = cols[2].number_input("Value", key=f"val_{i}", value=f['val'])
             cols[3].button("Remove", key=f"remove_{i}", on_click=remove_metric_filter, args=(i,))
     
-        st.button("+ Add Filter", on_click=add_metric_filter, help="Add another metric filter (logic is AND).")
+        st.button("+ Add Filter", on_click=add_metric_filter)
     
         # Apply all metric filters to the DataFrame
         metric_filters_applied_str = ""
