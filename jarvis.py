@@ -55,24 +55,26 @@ if not st.session_state.logged_in:
     st.stop()
 # ========== SIDEBAR ==========
 def reset_all_filters():
-    # Resets all filter widgets and clears the data editor state.
     st.session_state.team_filter = "INT"
     st.session_state.country_filter = "All"
-    
+
     st.session_state.campaign_value = ""
     st.session_state.adgroup_value = ""
     st.session_state.search_value = ""
-    
-    if "report_date" in df_full.columns:
-        df_full["report_date"] = pd.to_datetime(df_full["report_date"], errors="coerce")
-        if not df_full["report_date"].dropna().empty:
-            min_date_reset = df_full["report_date"].dropna().min().date()
-            max_date_reset = df_full["report_date"].dropna().max().date()
-            st.session_state.date_range_picker = (min_date_reset, max_date_reset)
+    st.session_state.metric_filters = []
 
-    st.session_state.metric_filters = [] # Clear metric filters
-    
-    # Delete the DataFrame to force a full data reload
+    try:
+        df_full["report_date"] = pd.to_datetime(df_full["report_date"], errors="coerce")
+        valid_dates = df_full["report_date"].dropna()
+        if not valid_dates.empty:
+            min_date = valid_dates.min().date()
+            max_date = valid_dates.max().date()
+            st.session_state.date_range_picker = (min_date, max_date)
+        else:
+            st.session_state.date_range_picker = (None, None)
+    except Exception:
+        st.session_state.date_range_picker = (None, None)
+
     if 'data_editor_df' in st.session_state:
         del st.session_state.data_editor_df
     if 'filter_key' in st.session_state:
@@ -466,10 +468,11 @@ with tab1:
         # Show Date Range Picker
         selected_date_range = st.date_input(
             "Filter by Report Date Range",
-            value=(min_date, max_date),
+            value=st.session_state.get("date_range_picker", (min_date, max_date)),
             min_value=min_date,
             max_value=max_date,
-            help="Filter rows by report_date"
+            help="Filter rows by report_date",
+            key="date_range_picker"
         )
     
         # Apply date filter safely
