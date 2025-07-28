@@ -317,6 +317,43 @@ with tab1:
     
         st.subheader("Confirm individual terms")
 
+        def add_metric_filter():
+        # Appends a new, default filter dictionary to the list in session state.
+        st.session_state.metric_filters.append({
+            "metric": "Clicks", "op": ">", "val": 0.0
+        })
+
+    def remove_metric_filter(index):
+        # Removes a filter from the list by its index.
+        if 0 <= index < len(st.session_state.metric_filters):
+            st.session_state.metric_filters.pop(index)
+
+    def reset_all_filters():
+        # Resets all filter widgets and clears the data editor state.
+        st.session_state.team_filter = "INT"
+        st.session_state.country_filter = "All"
+        
+        st.session_state.campaign_value = ""
+        st.session_state.adgroup_value = ""
+        st.session_state.search_value = ""
+        
+        if "report_date" in df_full.columns:
+            df_full["report_date"] = pd.to_datetime(df_full["report_date"], errors="coerce")
+            if not df_full["report_date"].dropna().empty:
+                min_date_reset = df_full["report_date"].dropna().min().date()
+                max_date_reset = df_full["report_date"].dropna().max().date()
+                st.session_state.date_range_picker = (min_date_reset, max_date_reset)
+
+        st.session_state.metric_filters = [] # Clear metric filters
+        
+        # Delete the DataFrame to force a full data reload
+        if 'data_editor_df' in st.session_state:
+            del st.session_state.data_editor_df
+        if 'filter_key' in st.session_state:
+            del st.session_state.filter_key
+
+    st.subheader("Confirm individual terms")
+
     # --- Use filters from Sidebar ---
     selected_team = team
     selected_country = country
@@ -329,6 +366,11 @@ with tab1:
 
     if selected_country != "All" and "country" in df_filtered.columns:
         df_filtered = df_filtered[df_filtered["country"] == selected_country]
+
+    # Filters & Reset Button
+    st.markdown("### Filters")
+    st.button("Reset All Filters", on_click=reset_all_filters, help="Clear all filters and show the original dataset.")
+    st.markdown("---")
 
     # Campaign Filter
     st.markdown("### Campaign Filter")
@@ -407,6 +449,7 @@ with tab1:
 
     # Date Range Filter
     st.markdown("### Date Range Filter") 
+    selected_date_range = None
     if "report_date" in df_full.columns:
         # Convert report_date to datetime
         df_full["report_date"] = pd.to_datetime(df_full["report_date"], errors="coerce")
@@ -447,40 +490,48 @@ with tab1:
             st.warning("Select both start and end date to apply date range filter.")
 
         # Performance Metrics Filter
-        st.markdown("### Performance Metrics Filter")
-        
+        st.markdown("#### Performance Metrics Filter")
+    
+        if 'metric_filters' not in st.session_state:
+            st.session_state.metric_filters = []
+    
         metric_map = {
-            "Clicks": "cumulative_clicks",
-            "Impressions": "cumulative_impressions",
-            "Cost": "cumulative_cost",
-            "Sales": "cumulative_sales",
+            "Clicks": "cumulative_clicks", "Impressions": "cumulative_impressions",
+            "Cost": "cumulative_cost", "Sales": "cumulative_sales",
             "Converted Amount": "get_amount_transformed"
         }
-        
         comparison_ops = {
-            "=": lambda x, y: x == y,
-            ">": lambda x, y: x > y,
-            "<": lambda x, y: x < y,
-            ">=": lambda x, y: x >= y,
-            "<=": lambda x, y: x <= y,
+            "=": lambda x, y: x == y, ">": lambda x, y: x > y, "<": lambda x, y: x < y,
+            ">=": lambda x, y: x >= y, "<=": lambda x, y: x <= y,
         }
+    
+        # Display UI for each active metric filter
+        for i, f in enumerate(st.session_state.metric_filters):
+            cols = st.columns([3, 2, 3, 1])
+            st.session_state.metric_filters[i]['metric'] = cols[0].selectbox("Metric", list(metric_map.keys()), key=f"metric_{i}", index=list(metric_map.keys()).index(f['metric']))
+            st.session_state.metric_filters[i]['op'] = cols[1].selectbox("Operator", list(comparison_ops.keys()), key=f"op_{i}", index=list(comparison_ops.keys()).index(f['op']))
+            st.session_state.metric_filters[i]['val'] = cols[2].number_input("Value", key=f"val_{i}", value=f['val'])
+            cols[3].button("Remove", key=f"remove_{i}", on_click=remove_metric_filter, args=(i,))
+    
+        st.button("+ Add Filter", on_click=add_metric_filter, help="Add another metric filter (logic is AND).")
+    
+        # Apply all metric filters to the DataFrame
+        metric_filters_applied_str = ""
+        if st.session_state.metric_filters:
+            metric_filters_applied_str = str(st.session_state.metric_filters) # For use in filter_key
+            for f in st.session_state.metric_filters:
+                metric_col = metric_map[f['metric']]
+                op_func = comparison_ops[f['op']]
+                value = f['val']
+                try:
+                    if metric_col in df_filtered.columns:
+                        df_filtered[metric_col] = pd.to_numeric(df_filtered[metric_col], errors='coerce')
+                        df_filtered.dropna(subset=[metric_col], inplace=True)
+                        df_filtered = df_filtered[op_func(df_filtered[metric_col], value)]
+                except Exception as e:
+                    st.warning(f"Could not apply filter for {f['metric']}: {e}")
         
-        col1, col2, col3 = st.columns([1, 1, 3])
-        with col1:
-            selected_metric_label = st.selectbox("Metric", list(metric_map.keys()), key="metric_filter_column")
-        with col2:
-            selected_operator = st.selectbox("Operator", list(comparison_ops.keys()), index=1, key="metric_filter_operator")
-        with col3:
-            input_value = st.number_input("Value", key="metric_filter_value", value=1.0, step=0.1)
-        
-        # Apply filter if all selected
-        metric_col = metric_map[selected_metric_label]
-        if selected_operator and input_value is not None:
-            try:
-                df_filtered[metric_col] = pd.to_numeric(df_filtered[metric_col], errors="coerce")
-                df_filtered = df_filtered[comparison_ops[selected_operator](df_filtered[metric_col], input_value)]
-            except Exception as e:
-                st.warning(f"Error applying filter on {selected_metric_label}: {e}")
+        st.markdown("---")
         
     # --- Column and Reason Definitions ---
     reason_options = [
@@ -510,23 +561,19 @@ with tab1:
     ]
 
     # --- Session State Initialization ---
-    if (
-        isinstance(selected_date_range, (tuple, list)) and
-        len(selected_date_range) == 2 and
-        all(isinstance(d, datetime.date) for d in selected_date_range)
-    ):
+    if selected_date_range and len(selected_date_range) == 2:
         start_date, end_date = selected_date_range
     else:
         start_date = end_date = "all"
-    
-    metric_key = f"{selected_metric_label}-{selected_operator}-{input_value}"
-    filter_key = f"{selected_team}-{selected_country}-{selected_campaign}-{selected_adgroup}-{selected_search_term}-{start_date}-{end_date}-{metric_key}"
-    
+
+    # The filter_key now includes the state of all dynamic metric filters
+    filter_key = f"{selected_team}-{selected_country}-{selected_campaign}-{selected_adgroup}-{selected_search_term}-{start_date}-{end_date}-{metric_filters_applied_str}"
+
     if "data_editor_df" not in st.session_state or st.session_state.get("filter_key") != filter_key:
         st.session_state.filter_key = filter_key
         temp_df = df_filtered.copy()
-
-        # Ensure all required columns exist
+        
+        # ... (rest of your session state initialization logic remains the same) ...
         for col in preferred_cols + additional_cols:
             if col not in temp_df.columns:
                 temp_df[col] = None
