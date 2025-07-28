@@ -54,6 +54,30 @@ if not st.session_state.logged_in:
             st.error("\u274c Invalid username or password")
     st.stop()
 # ========== SIDEBAR ==========
+def reset_all_filters():
+    # Resets all filter widgets and clears the data editor state.
+    st.session_state.team_filter = "INT"
+    st.session_state.country_filter = "All"
+    
+    st.session_state.campaign_value = ""
+    st.session_state.adgroup_value = ""
+    st.session_state.search_value = ""
+    
+    if "report_date" in df_full.columns:
+        df_full["report_date"] = pd.to_datetime(df_full["report_date"], errors="coerce")
+        if not df_full["report_date"].dropna().empty:
+            min_date_reset = df_full["report_date"].dropna().min().date()
+            max_date_reset = df_full["report_date"].dropna().max().date()
+            st.session_state.date_range_picker = (min_date_reset, max_date_reset)
+
+    st.session_state.metric_filters = [] # Clear metric filters
+    
+    # Delete the DataFrame to force a full data reload
+    if 'data_editor_df' in st.session_state:
+        del st.session_state.data_editor_df
+    if 'filter_key' in st.session_state:
+        del st.session_state.filter_key
+            
 st.sidebar.image("logo.png", width=180)
 st.sidebar.title("Filters")
 st.sidebar.markdown(f"👤 Logged in as: **{st.session_state.user}**")
@@ -333,30 +357,6 @@ with tab1:
         # Removes a filter from the list by its index.
         if 0 <= index < len(st.session_state.metric_filters):
             st.session_state.metric_filters.pop(index)
-
-    def reset_all_filters():
-        # Resets all filter widgets and clears the data editor state.
-        st.session_state.team_filter = "INT"
-        st.session_state.country_filter = "All"
-        
-        st.session_state.campaign_value = ""
-        st.session_state.adgroup_value = ""
-        st.session_state.search_value = ""
-        
-        if "report_date" in df_full.columns:
-            df_full["report_date"] = pd.to_datetime(df_full["report_date"], errors="coerce")
-            if not df_full["report_date"].dropna().empty:
-                min_date_reset = df_full["report_date"].dropna().min().date()
-                max_date_reset = df_full["report_date"].dropna().max().date()
-                st.session_state.date_range_picker = (min_date_reset, max_date_reset)
-
-        st.session_state.metric_filters = [] # Clear metric filters
-        
-        # Delete the DataFrame to force a full data reload
-        if 'data_editor_df' in st.session_state:
-            del st.session_state.data_editor_df
-        if 'filter_key' in st.session_state:
-            del st.session_state.filter_key
 
     st.subheader("Confirm individual terms")
 
