@@ -92,6 +92,7 @@ def reset_all_filters():
     st.session_state.campaign_value = ""
     st.session_state.adgroup_value = ""
     st.session_state.search_value = ""
+    st.session_state.portfolio_value = ""
     st.session_state.metric_filters = []
 
     try:
