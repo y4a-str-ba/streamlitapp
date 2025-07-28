@@ -102,6 +102,12 @@ if "country_code_2" in df.columns:
 
     country_options = ["All"] + filtered_countries
     country = st.sidebar.selectbox("Country", country_options, index=0)
+
+    # Reset All Filters
+    st.sidebar.markdown("---")
+    st.sidebar.button(
+        "Reset All Filters",
+        on_click=reset_all_filters
 else:
     country = "All"
     
@@ -366,11 +372,6 @@ with tab1:
     if selected_country != "All" and "country" in df_filtered.columns:
         df_filtered = df_filtered[df_filtered["country"] == selected_country]
 
-    # Filters & Reset Button
-    st.markdown("### Filters")
-    st.button("Reset All Filters", on_click=reset_all_filters, help="Clear all filters and show the original dataset.")
-    st.markdown("---")
-
     # Campaign Filter
     st.markdown("### Campaign Filter")
     col1, col2 = st.columns([1, 5])
@@ -489,7 +490,7 @@ with tab1:
             st.warning("Select both start and end date to apply date range filter.")
 
         # Performance Metrics Filter
-        st.markdown("#### Performance Metrics Filter")
+        st.markdown("### Performance Metrics Filter")
     
         if 'metric_filters' not in st.session_state:
             st.session_state.metric_filters = []
