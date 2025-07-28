@@ -468,11 +468,10 @@ with tab1:
         # Show Date Range Picker
         selected_date_range = st.date_input(
             "Filter by Report Date Range",
-            value=st.session_state.get("date_range_picker", (min_date, max_date)),
+            value=(min_date, max_date),
             min_value=min_date,
             max_value=max_date,
-            help="Filter rows by report_date",
-            key="date_range_picker"
+            help="Filter rows by report_date"
         )
     
         # Apply date filter safely
