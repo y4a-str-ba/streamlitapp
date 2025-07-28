@@ -472,6 +472,7 @@ with tab1:
         # Show Date Range Picker
         selected_date_range = st.date_input(
             "Filter by Report Date Range",
+            value=(min_date, max_date),
             min_value=min_date,
             max_value=max_date,
             key="date_range_picker",
@@ -479,22 +480,15 @@ with tab1:
         )
     
         # Apply date filter safely
-        if (
-            isinstance(selected_date_range, (tuple, list)) and
-            len(selected_date_range) == 2 and
-            all(isinstance(d, datetime.date) for d in selected_date_range)
-        ):
+        if isinstance(selected_date_range, (tuple, list)) and len(selected_date_range) == 2:
             start_date, end_date = selected_date_range
-    
-            # Ensure df_filtered report_date is datetime
+            
             df_filtered["report_date"] = pd.to_datetime(df_filtered["report_date"], errors="coerce")
-    
+            
             df_filtered = df_filtered[
                 (df_filtered["report_date"].dt.date >= start_date) &
                 (df_filtered["report_date"].dt.date <= end_date)
             ]
-        else:
-            st.warning("Select both start and end date to apply date range filter.")
 
         # Performance Metrics Filter
         st.markdown("### Performance Metrics Filter")
