@@ -108,6 +108,7 @@ if "country_code_2" in df.columns:
     st.sidebar.button(
         "Reset All Filters",
         on_click=reset_all_filters
+    )
 else:
     country = "All"
     
