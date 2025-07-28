@@ -168,6 +168,9 @@ if "reason_category_previous" not in df.columns:
 if "reason_reject_previous" not in df.columns:
     df["reason_reject_previous"] = ""
 
+if "portfolio_name" not in df.columns:
+    df["portfolio_name"] = ""
+
 # ========== TABS ==========
 tab1, tab2, tab3 = st.tabs(["Search Term Predictions", "Model Performance", "Explain a Search Term"])
 
@@ -454,6 +457,30 @@ with tab1:
             df_filtered = df_filtered[df_filtered["searchterm"].str.endswith(search_value, na=False)]
     selected_search_term = search_value
 
+    # Portfolio Filter
+    st.markdown("### Portfolio Filter")
+    col1, col2 = st.columns([1, 5])
+    with col1:
+        portfolio_operator = st.selectbox(
+            "Operator",
+            ["Contains", "Not Contains", "Equals", "Starts With", "Ends With"],
+            key="portfolio_operator"
+        )
+    with col2:
+        portfolio_value = st.text_input("Value", key="portfolio_value")
+    
+    if portfolio_value.strip() != "":
+        if portfolio_operator == "Contains":
+            df_filtered = df_filtered[df_filtered["portfolio_name"].str.contains(portfolio_value, case=False, na=False)]
+        elif portfolio_operator == "Not Contains":
+            df_filtered = df_filtered[~df_filtered["portfolio_name"].str.contains(portfolio_value, case=False, na=False)]
+        elif portfolio_operator == "Equals":
+            df_filtered = df_filtered[df_filtered["portfolio_name"].str.lower() == portfolio_value.strip().lower()]
+        elif portfolio_operator == "Starts With":
+            df_filtered = df_filtered[df_filtered["portfolio_name"].str.startswith(portfolio_value, na=False)]
+        elif portfolio_operator == "Ends With":
+            df_filtered = df_filtered[df_filtered["portfolio_name"].str.endswith(portfolio_value, na=False)]
+
     # Date Range Filter
     st.markdown("### Date Range Filter") 
     selected_date_range = None
@@ -554,7 +581,7 @@ with tab1:
     "reason_reject_previous"
     ]
     additional_cols = [
-        "report_date", "campaignname", "adgroupname",
+        "report_date", "portfolio_name", "campaignname", "adgroupname",
         "keywordtext", "cumulative_clicks", "cumulative_impressions",
         "cumulative_cost", "cumulative_sales", "get_amount_transformed", 
         "profile_id", "campaignid", "adgroupid", "keywordid",
@@ -568,7 +595,7 @@ with tab1:
         start_date = end_date = "all"
 
     # The filter_key now includes the state of all dynamic metric filters
-    filter_key = f"{selected_team}-{selected_country}-{selected_campaign}-{selected_adgroup}-{selected_search_term}-{start_date}-{end_date}-{metric_filters_applied_str}"
+    filter_key = f"{selected_team}-{selected_country}-{selected_campaign}-{selected_adgroup}-{selected_search_term}-{portfolio_value}-{start_date}-{end_date}-{metric_filters_applied_str}"
 
     if "data_editor_df" not in st.session_state or st.session_state.get("filter_key") != filter_key:
         st.session_state.filter_key = filter_key
