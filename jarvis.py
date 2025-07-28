@@ -58,32 +58,6 @@ if not st.session_state.logged_in:
             st.error("\u274c Invalid username or password")
     st.stop()
 # ========== SIDEBAR ==========
-def reset_all_filters():
-    st.session_state.team_filter = "INT"
-    st.session_state.country_filter = "All"
-
-    st.session_state.campaign_value = ""
-    st.session_state.adgroup_value = ""
-    st.session_state.search_value = ""
-    st.session_state.metric_filters = []
-
-    try:
-        df_full["report_date"] = pd.to_datetime(df_full["report_date"], errors="coerce")
-        valid_dates = df_full["report_date"].dropna()
-        if not valid_dates.empty:
-            min_date = valid_dates.min().date()
-            max_date = valid_dates.max().date()
-            st.session_state.date_range_picker = (min_date, max_date)
-        else:
-            st.session_state.date_range_picker = (None, None)
-    except Exception:
-        st.session_state.date_range_picker = (None, None)
-
-    if 'data_editor_df' in st.session_state:
-        del st.session_state.data_editor_df
-    if 'filter_key' in st.session_state:
-        del st.session_state.filter_key
-            
 st.sidebar.image("logo.png", width=180)
 st.sidebar.title("Filters")
 st.sidebar.markdown(f"👤 Logged in as: **{st.session_state.user}**")
@@ -110,6 +84,32 @@ data = sheet.get_all_records()
 
 # Quoc add
 df_full = pd.DataFrame(data)
+
+def reset_all_filters():
+    st.session_state.team_filter = "INT"
+    st.session_state.country_filter = "All"
+
+    st.session_state.campaign_value = ""
+    st.session_state.adgroup_value = ""
+    st.session_state.search_value = ""
+    st.session_state.metric_filters = []
+
+    try:
+        df_full["report_date"] = pd.to_datetime(df_full["report_date"], errors="coerce")
+        valid_dates = df_full["report_date"].dropna()
+        if not valid_dates.empty:
+            min_date = valid_dates.min().date()
+            max_date = valid_dates.max().date()
+            st.session_state.date_range_picker = (min_date, max_date)
+        else:
+            st.session_state.date_range_picker = (None, None)
+    except Exception:
+        st.session_state.date_range_picker = (None, None)
+
+    if 'data_editor_df' in st.session_state:
+        del st.session_state.data_editor_df
+    if 'filter_key' in st.session_state:
+        del st.session_state.filter_key
 
 ## unconfirmed df
 df = df_full[df_full["flag"] == 0].copy()
@@ -472,9 +472,9 @@ with tab1:
         # Show Date Range Picker
         selected_date_range = st.date_input(
             "Filter by Report Date Range",
-            value=(min_date, max_date),
             min_value=min_date,
             max_value=max_date,
+            key="date_range_picker",
             help="Filter rows by report_date"
         )
     
