@@ -318,10 +318,9 @@ with tab1:
         st.subheader("Confirm individual terms")
 
     def add_metric_filter():
-    # Appends a new, default filter dictionary to the list in session state.
-    st.session_state.metric_filters.append({
-        "metric": "Clicks", "op": ">", "val": 0.0
-    })
+        st.session_state.metric_filters.append({
+            "metric": "Clicks", "op": ">", "val": 0.0
+        })
 
     def remove_metric_filter(index):
         # Removes a filter from the list by its index.
