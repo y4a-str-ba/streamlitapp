@@ -714,6 +714,7 @@ with tab1:
             f"📢 *Jarvis Confirmation Report*\n"
             f"👤 User: `{user}`\n"
             f"📄 Sheet: `{current_sheet}`\n"
+            f"🏢 Department: `{department}`\n"
             f"🏷️ Team: `{selected_team}`\n"
             f"🌎 Country: `{selected_country}`\n"
             f"📌 Campaign: `{filter_campaign}`\n"
