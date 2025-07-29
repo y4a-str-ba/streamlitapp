@@ -409,7 +409,7 @@ with tab1:
     selected_campaign = campaign_value 
 
     # Adgroup Filter
-    st.markdown("### Adgroup Filter")
+    st.markdown("### Ad Group Filter")
     col1, col2 = st.columns([1, 5])
     with col1:
         adgroup_operator = st.selectbox(
