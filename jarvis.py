@@ -7,6 +7,7 @@ import requests
 import gspread
 import datetime
 import time
+import re
 from google.oauth2.service_account import Credentials
 from jarvis_logger import log_all_terms
 
@@ -472,15 +473,17 @@ with tab1:
     
     if portfolio_value.strip() != "":
         if portfolio_operator == "Contains":
-            df_filtered = df_filtered[df_filtered["portfolio_name"].str.contains(portfolio_value, case=False, na=False)]
+            escaped_value = re.escape(portfolio_value)
+            df_filtered = df_filtered[df_filtered["portfolio_name"].str.contains(escaped_value, case=False, na=False, regex=True)]
         elif portfolio_operator == "Not Contains":
-            df_filtered = df_filtered[~df_filtered["portfolio_name"].str.contains(portfolio_value, case=False, na=False)]
+            escaped_value = re.escape(portfolio_value)
+            df_filtered = df_filtered[~df_filtered["portfolio_name"].str.contains(escaped_value, case=False, na=False, regex=True)]
         elif portfolio_operator == "Equals":
             df_filtered = df_filtered[df_filtered["portfolio_name"].str.lower() == portfolio_value.strip().lower()]
         elif portfolio_operator == "Starts With":
-            df_filtered = df_filtered[df_filtered["portfolio_name"].str.startswith(portfolio_value, na=False)]
+            df_filtered = df_filtered[df_filtered["portfolio_name"].str.lower().str.startswith(portfolio_value.strip().lower(), na=False)]
         elif portfolio_operator == "Ends With":
-            df_filtered = df_filtered[df_filtered["portfolio_name"].str.endswith(portfolio_value, na=False)]
+            df_filtered = df_filtered[df_filtered["portfolio_name"].str.lower().str.endswith(portfolio_value.strip().lower(), na=False)]
 
     # Date Range Filter
     st.markdown("### Date Range Filter") 
