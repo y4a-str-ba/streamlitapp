@@ -371,7 +371,7 @@ with tab1:
 
     st.subheader("Confirm individual terms")
 
-    # --- Use filters from Sidebar ---
+    # Use filters from Sidebar
     selected_team = team
     selected_country = country
 
@@ -397,16 +397,19 @@ with tab1:
         campaign_value = st.text_input("Value", key="campaign_value")
 
     if campaign_value.strip() != "":
+        val = campaign_value.strip().lower()
         if campaign_operator == "Contains":
-            df_filtered = df_filtered[df_filtered["campaignname"].str.contains(campaign_value, case=False, na=False)]
+            escaped = re.escape(campaign_value)
+            df_filtered = df_filtered[df_filtered["campaignname"].str.contains(escaped, case=False, na=False, regex=True)]
         elif campaign_operator == "Not Contains":
-            df_filtered = df_filtered[~df_filtered["campaignname"].str.contains(campaign_value, case=False, na=False)]
+            escaped = re.escape(campaign_value)
+            df_filtered = df_filtered[~df_filtered["campaignname"].str.contains(escaped, case=False, na=False, regex=True)]
         elif campaign_operator == "Equals":
-            df_filtered = df_filtered[df_filtered["campaignname"].str.lower() == campaign_value.strip().lower()]
+            df_filtered = df_filtered[df_filtered["campaignname"].str.lower() == val]
         elif campaign_operator == "Starts With":
-            df_filtered = df_filtered[df_filtered["campaignname"].str.startswith(campaign_value, na=False)]
+            df_filtered = df_filtered[df_filtered["campaignname"].str.lower().str.startswith(val, na=False)]
         elif campaign_operator == "Ends With":
-            df_filtered = df_filtered[df_filtered["campaignname"].str.endswith(campaign_value, na=False)]
+            df_filtered = df_filtered[df_filtered["campaignname"].str.lower().str.endswith(val, na=False)]
     selected_campaign = campaign_value 
 
     # Adgroup Filter
@@ -422,16 +425,19 @@ with tab1:
         adgroup_value = st.text_input("Value", key="adgroup_value")
 
     if adgroup_value.strip() != "":
+        val = adgroup_value.strip().lower()
         if adgroup_operator == "Contains":
-            df_filtered = df_filtered[df_filtered["adgroupname"].str.contains(adgroup_value, case=False, na=False)]
+            escaped = re.escape(adgroup_value)
+            df_filtered = df_filtered[df_filtered["adgroupname"].str.contains(escaped, case=False, na=False, regex=True)]
         elif adgroup_operator == "Not Contains":
-            df_filtered = df_filtered[~df_filtered["adgroupname"].str.contains(adgroup_value, case=False, na=False)]
+            escaped = re.escape(adgroup_value)
+            df_filtered = df_filtered[~df_filtered["adgroupname"].str.contains(escaped, case=False, na=False, regex=True)]
         elif adgroup_operator == "Equals":
-            df_filtered = df_filtered[df_filtered["adgroupname"].str.lower() == adgroup_value.strip().lower()]
+            df_filtered = df_filtered[df_filtered["adgroupname"].str.lower() == val]
         elif adgroup_operator == "Starts With":
-            df_filtered = df_filtered[df_filtered["adgroupname"].str.startswith(adgroup_value, na=False)]
+            df_filtered = df_filtered[df_filtered["adgroupname"].str.lower().str.startswith(val, na=False)]
         elif adgroup_operator == "Ends With":
-            df_filtered = df_filtered[df_filtered["adgroupname"].str.endswith(adgroup_value, na=False)]
+            df_filtered = df_filtered[df_filtered["adgroupname"].str.lower().str.endswith(val, na=False)]
     selected_adgroup = adgroup_value
 
     # Search Term Filter
@@ -447,16 +453,19 @@ with tab1:
         search_value = st.text_input("Value", key="search_value")
 
     if search_value.strip() != "":
+        val = search_value.strip().lower()
         if search_operator == "Contains":
-            df_filtered = df_filtered[df_filtered["searchterm"].str.contains(search_value, case=False, na=False)]
+            escaped = re.escape(search_value)
+            df_filtered = df_filtered[df_filtered["searchterm"].str.contains(escaped, case=False, na=False, regex=True)]
         elif search_operator == "Not Contains":
-            df_filtered = df_filtered[~df_filtered["searchterm"].str.contains(search_value, case=False, na=False)]
+            escaped = re.escape(search_value)
+            df_filtered = df_filtered[~df_filtered["searchterm"].str.contains(escaped, case=False, na=False, regex=True)]
         elif search_operator == "Equals":
-            df_filtered = df_filtered[df_filtered["searchterm"].str.lower() == search_value.strip().lower()]
+            df_filtered = df_filtered[df_filtered["searchterm"].str.lower() == val]
         elif search_operator == "Starts With":
-            df_filtered = df_filtered[df_filtered["searchterm"].str.startswith(search_value, na=False)]
+            df_filtered = df_filtered[df_filtered["searchterm"].str.lower().str.startswith(val, na=False)]
         elif search_operator == "Ends With":
-            df_filtered = df_filtered[df_filtered["searchterm"].str.endswith(search_value, na=False)]
+            df_filtered = df_filtered[df_filtered["searchterm"].str.lower().str.endswith(val, na=False)]
     selected_search_term = search_value
 
     # Portfolio Filter
