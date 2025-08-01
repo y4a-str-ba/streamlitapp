@@ -76,17 +76,22 @@ sfo_users = {
     "giangntt@yes4all.com", "trieutk@yes4all.com", "luongct@yes4all.com", "loannt@yes4all.com"
 }
 
+allowed_departments = set()
 if user == "admin":
-    department_options = ["SFO", "SSO"]
+    allowed_departments = {"SSO", "SFO"}
 elif user in sso_users:
-    department_options = ["SSO"]
+    allowed_departments = {"SSO"}
 elif user in sfo_users:
-    department_options = ["SFO"]
+    allowed_departments = {"SFO"}
 else:
     st.error("⛔ You do not have permission to access this dashboard.")
     st.stop()
 
-department = st.sidebar.selectbox("Department", department_options)
+department = st.sidebar.selectbox("Department", ["SSO", "SFO"])
+
+if department not in allowed_departments:
+    st.warning("⛔ You do not have permission to access this department.")
+    st.stop()
 
 # department = st.sidebar.selectbox("Department", ["SFO", "SSO"], index=1)
 # country = st.sidebar.selectbox("Country", ["All", "US", "INT"], index=2)
