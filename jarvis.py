@@ -63,6 +63,30 @@ st.sidebar.image("logo.png", width=180)
 st.sidebar.title("Filters")
 st.sidebar.markdown(f"👤 Logged in as: **{st.session_state.user}**")
 
+# Department Permission Logic
+user = st.session_state.user.lower()
+
+sso_users = {
+    "hanhbth@yes4all.com", "anhdtt@yes4all.com", "hanhhk@yes4all.com", "khanhdnt@yes4all.com",
+    "lyntb@yes4all.com", "hoangl@yes4all.com", "anhttn1@yes4all.com", "tuongnq@yes4all.com",
+    "duylk@yes4all.com", "loint1@yes4all.com", "vynty@yes4all.com", "duongttt@yes4all.com",
+    "thula@yes4all.com", "huonghtk@yes4all.com", "phatpct@yes4all.com", "vynth1@yes4all.com"
+}
+sfo_users = {
+    "giangntt@yes4all.com", "trieutk@yes4all.com", "luongct@yes4all.com", "loannt@yes4all.com"
+}
+
+if user == "admin":
+    department_options = ["SFO", "SSO"]
+elif user in sfo_users:
+    department_options = ["SFO"]
+else:
+    st.error("⛔ You do not have permission to access this dashboard.")
+    st.stop()
+
+department = st.sidebar.selectbox("Department", department_options)
+
+
 department = st.sidebar.selectbox("Department", ["SFO", "SSO"], index=1)
 # country = st.sidebar.selectbox("Country", ["All", "US", "INT"], index=2)
 
