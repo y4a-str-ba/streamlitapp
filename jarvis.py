@@ -66,18 +66,23 @@ st.sidebar.markdown(f"👤 Logged in as: **{st.session_state.user}**")
 # Department Permission Logic
 user = st.session_state.user.lower()
 
+# Department Permission Logic
+user = st.session_state.user.lower()
+
 sso_users = {
-    "hanhbth@yes4all.com", "anhdtt@yes4all.com", "hanhhk@yes4all.com", "khanhdnt@yes4all.com",
-    "lyntb@yes4all.com", "hoangl@yes4all.com", "anhttn1@yes4all.com", "tuongnq@yes4all.com",
-    "duylk@yes4all.com", "loint1@yes4all.com", "vynty@yes4all.com", "duongttt@yes4all.com",
-    "thula@yes4all.com", "huonghtk@yes4all.com", "phatpct@yes4all.com", "vynth1@yes4all.com"
+    "tuongnq@yes4all.com", "vynth1@yes4all.com", "anhdtt@yes4all.com", "hanhhk@yes4all.com",
+    "khanhdnt@yes4all.com", "lyntb@yes4all.com", "hoangl@yes4all.com", "anhttn1@yes4all.com", 
+    "loint1@yes4all.com", "vynty@yes4all.com", "duongttt@yes4all.com", "thula@yes4all.com",
+    "huonghtk@yes4all.com", "phatpct@yes4all.com"
 }
 sfo_users = {
     "giangntt@yes4all.com", "trieutk@yes4all.com", "luongct@yes4all.com", "loannt@yes4all.com"
 }
 
+all_dept_users = {"admin", "hanhbth@yes4all.com", "duylk@yes4all.com" }
+
 allowed_departments = set()
-if user == "admin":
+if user in all_dept_users:
     allowed_departments = {"SSO", "SFO"}
 elif user in sso_users:
     allowed_departments = {"SSO"}
