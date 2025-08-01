@@ -86,8 +86,7 @@ else:
 
 department = st.sidebar.selectbox("Department", department_options)
 
-
-department = st.sidebar.selectbox("Department", ["SFO", "SSO"], index=1)
+# department = st.sidebar.selectbox("Department", ["SFO", "SSO"], index=1)
 # country = st.sidebar.selectbox("Country", ["All", "US", "INT"], index=2)
 
 # department = "SSO"
