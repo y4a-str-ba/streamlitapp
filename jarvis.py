@@ -78,6 +78,8 @@ sfo_users = {
 
 if user == "admin":
     department_options = ["SFO", "SSO"]
+elif user in sso_users:
+    department_options = ["SSO"]
 elif user in sfo_users:
     department_options = ["SFO"]
 else:
