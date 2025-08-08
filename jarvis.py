@@ -35,6 +35,8 @@ if not st.session_state.logged_in:
         "hoangl@yes4all.com": hashlib.sha256("hoang123".encode()).hexdigest(),
         "anhttn1@yes4all.com": hashlib.sha256("anh123".encode()).hexdigest(),
         "tuongnq@yes4all.com": hashlib.sha256("tuong123".encode()).hexdigest(),
+        "phuoctv1@yes4all.com": hashlib.sha256("phuoc123".encode()).hexdigest(),
+        "thinhpn@yes4all.com": hashlib.sha256("thinh123".encode()).hexdigest(),
         "duylk@yes4all.com": hashlib.sha256("kduyle".encode()).hexdigest(),
         "loint1@yes4all.com": hashlib.sha256("loi123".encode()).hexdigest(),
         "vynty@yes4all.com": hashlib.sha256("vy123".encode()).hexdigest(),
@@ -73,7 +75,7 @@ sso_users = {
     "tuongnq@yes4all.com", "vynth1@yes4all.com", "anhdtt@yes4all.com", "hanhhk@yes4all.com",
     "khanhdnt@yes4all.com", "lyntb@yes4all.com", "hoangl@yes4all.com", "anhttn1@yes4all.com", 
     "loint1@yes4all.com", "vynty@yes4all.com", "duongttt@yes4all.com", "thula@yes4all.com",
-    "huonghtk@yes4all.com", "phatpct@yes4all.com"
+    "huonghtk@yes4all.com", "phatpct@yes4all.com", "phuoctv1@yes4all.com", "thinhpn@yes4all.com"
 }
 sfo_users = {
     "giangntt@yes4all.com", "trieutk@yes4all.com", "luongct@yes4all.com", "loannt@yes4all.com"
